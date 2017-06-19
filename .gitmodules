@@ -1,0 +1,3 @@
+[submodule "brat"]
+	path = brat
+	url = https://github.com/nlplab/brat
