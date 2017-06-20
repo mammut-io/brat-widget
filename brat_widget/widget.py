@@ -11,4 +11,4 @@ class Visualizer(widgets.DOMWidget):
     _model_module = Unicode('brat-widget').tag(sync=True)
     _view_module_version = Unicode('^0.1.0').tag(sync=True)
     _model_module_version = Unicode('^0.1.0').tag(sync=True)
-    value = Unicode('Hello Mammut 4!!!!').tag(sync=True)
+    value = Unicode('Hello Mammut 5!!!!').tag(sync=True)

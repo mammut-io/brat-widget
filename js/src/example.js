@@ -38,7 +38,40 @@ var VisualizerView = widgets.DOMWidgetView.extend({
     },
 
     value_changed: function() {
-        this.el.textContent = this.model.get('value');
+        var collData = {
+            entity_types: [{
+                type: 'Person',
+                /* The labels are used when displaying the annotion, in this case
+                 we also provide a short-hand "Per" for cases where
+                 abbreviations are preferable */
+                labels: ['Person', 'Per'],
+                // Blue is a nice colour for a person?
+                bgColor: '#7fa2ff',
+                // Use a slightly darker version of the bgColor for the border
+                borderColor: 'darken'
+            }]
+        };
+        var docData = {
+            // Our text of choice
+            text: "Ed O'Kelley was the man who shot the man who shot Jesse James.",
+            // The entities entry holds all entity annotations
+            entities: [
+                /* Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
+                 note that range of the offsets are [${START},${END}) */
+                ['T1', 'Person', [[0, 11]]],
+                ['T2', 'Person', [[20, 23]]],
+                ['T3', 'Person', [[37, 40]]],
+                ['T4', 'Person', [[50, 61]]],
+            ],
+        };
+        var webFontURLs = [
+            './static/fonts/Astloch-Bold.ttf',
+            './static/fonts/PT_Sans-Caption-Web-Regular.ttf',
+            './static/fonts/Liberation_Sans-Regular.ttf'
+        ];
+        //Util.embed(this.el, collData, docData, webFontURLs);
+        this.el.textContent = 'In Java Script 1';
+        //this.el.textContent = this.model.get('value');
         //this.el.innerHTML = this.model.get('value').bold();
     }
 });

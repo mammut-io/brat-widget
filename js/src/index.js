@@ -8,7 +8,7 @@
 __webpack_public_path__ = document.querySelector('body').getAttribute('data-base-url') + 'nbextensions/brat-widget/';
 
 // brat External libraries
-var $ = require('./lib/jquery.min.js');
+/*var $ = require('./lib/jquery.min.js');
 $ = $.extend(require('./lib/jquery-ui.min.js'));
 $ = $.extend(require('./lib/jquery-ui.combobox.js'));
 $ = $.extend(require('./lib/jquery.svg.min.js'));
@@ -31,6 +31,6 @@ $ = $.extend(require('./brat/annotator_ui.js'));
 $ = $.extend(require('./brat/spinner.js'));
 
 // Export widget models and views, and the npm package version number.
-module.exports = $.extend(require('./example.js'));
-//module.exports = require('./example.js');
+module.exports = $.extend(require('./example.js'));*/
+module.exports = require('./example.js');
 module.exports['version'] = require('../package.json').version;

@@ -7,6 +7,7 @@ Jupiter Widget library for BRAT visualization and annotation functionality.
 
 ```bash
 npm install --save brat-widget
+npm uninstall --save brat-widget
 ```
 
 **For development**
