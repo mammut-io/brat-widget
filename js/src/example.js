@@ -1,6 +1,83 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
 
+//var head = require('headjs');
+//require('./lib/head.load.min.js');
+
+
+var basePath = document.querySelector('body').getAttribute('data-base-url') + 'nbextensions/brat-widget';
+/*
+head.js(
+
+        // brat fonts
+        basePath + '/static/fonts/Astloch-Bold.ttf',
+        basePath + '/static/fonts/Liberation_Sans-Regular.svg',
+        basePath + '/static/fonts/Liberation_Sans-Regular.ttf',
+        basePath + '/static/fonts/PT_Sans-Caption-Web-Regular.svg',
+        basePath + '/static/fonts/PT_Sans-Caption-Web-Regular.ttf',
+        // brat img
+        basePath + '/static/img/arrow.png',
+        basePath + '/static/img/arrow-180.png',
+        basePath + '/static/img/collapse_icon.gif',
+        basePath + '/static/img/expand_icon.gif',
+        basePath + '/static/img/Fugue-document.png',
+        basePath + '/static/img/Fugue-folder-horizontal-open.png',
+        basePath + '/static/img/Fugue-shadowless-document.png',
+        basePath + '/static/img/Fugue-shadowless-exclamation.png',
+        basePath + '/static/img/Fugue-shadowless-exclamation-white.png',
+        basePath + '/static/img/Fugue-shadowless-external.png',
+        basePath + '/static/img/Fugue-shadowless-folder-horizontal-open.png',
+        basePath + '/static/img/Fugue-shadowless-information-balloon.png',
+        basePath + '/static/img/Fugue-shadowless-magnifier.png',
+        basePath + '/static/img/Fugue-shadowless-question.png',
+        basePath + '/static/img/spinner.gif',
+        // brat jquery-theme/images
+        basePath + '/static/jquery-theme/images/ui-bg_flat_0_aaaaaa_40x100.png',
+        basePath + '/static/jquery-theme/images/ui-bg_flat_55_fbec88_40x100.png',
+        basePath + '/static/jquery-theme/images/ui-bg_glass_75_d0e5f5_1x400.png',
+        basePath + '/static/jquery-theme/images/ui-bg_glass_85_dfeffc_1x400.png',
+        basePath + '/static/jquery-theme/images/ui-bg_glass_95_fef1ec_1x400.png',
+        basePath + '/static/jquery-theme/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png',
+        basePath + '/static/jquery-theme/images/ui-bg_inset-hard_100_f5f8f9_1x100.png',
+        basePath + '/static/jquery-theme/images/ui-bg_inset-hard_100_fcfdfd_1x100.png',
+        basePath + '/static/jquery-theme/images/ui-icons_2e83ff_256x240.png',
+        basePath + '/static/jquery-theme/images/ui-icons_6da8d5_256x240.png',
+        basePath + '/static/jquery-theme/images/ui-icons_217bc0_256x240.png',
+        basePath + '/static/jquery-theme/images/ui-icons_469bdd_256x240.png',
+        basePath + '/static/jquery-theme/images/ui-icons_cd0a0a_256x240.png',
+        basePath + '/static/jquery-theme/images/ui-icons_d8e7f3_256x240.png',
+        basePath + '/static/jquery-theme/images/ui-icons_f9bd01_256x240.png',
+        // brat jquery-theme
+        basePath + '/static/jquery-theme/jquery-ui.css',
+        basePath + '/static/jquery-theme/jquery-ui-redmond.css',
+
+
+          // libraries
+          basePath + '/lib/jquery.min.js',
+          basePath + '/lib/jquery-ui.min.js',
+          //basePath + '/lib/jquery-ui.combobox.js',
+          basePath + '/lib/jquery.svg.min.js',
+          basePath + '/lib/jquery.svgdom.min.js',
+          basePath + '/lib/jquery.ba-bbq.min.js',
+          basePath + '/lib/jquery.json.min.js',
+          basePath + '/lib/sprintf.js',
+          basePath + '/lib/webfont.js',
+
+          // brat helpers
+          basePath + '/brat/configuration.js',
+          basePath + '/brat/util.js',
+          basePath + '/brat/annotation_log.js',
+          // brat modules
+          basePath + '/brat/dispatcher.js',
+          basePath + '/brat/url_monitor.js',
+          basePath + '/brat/ajax.js',
+          basePath + '/brat/visualizer.js',
+          basePath + '/brat/visualizer_ui.js',
+          basePath + '/brat/annotator_ui.js',
+          basePath + '/brat/spinner.js'
+      );
+*/
+//var util = require('./brat/util.js');
 
 // Custom Model. Custom widgets models must at least provide default values
 // for model attributes, including
@@ -65,14 +142,33 @@ var VisualizerView = widgets.DOMWidgetView.extend({
             ],
         };
         var webFontURLs = [
-            './static/fonts/Astloch-Bold.ttf',
-            './static/fonts/PT_Sans-Caption-Web-Regular.ttf',
-            './static/fonts/Liberation_Sans-Regular.ttf'
+            basePath + '/static/fonts/Astloch-Bold.ttf',
+            basePath + '/static/fonts/PT_Sans-Caption-Web-Regular.ttf',
+            basePath + '/static/fonts/Liberation_Sans-Regular.ttf'
         ];
+
+        //console.log(util.toString());
+/*
+        head.ready(function() {
+            console.log(Util.toString());
+            this.el.innerHTML = this.model.get('value').bold();
+            //this.el.className = "jupyter-widget";
+            //this.el.innerHTML = '';
+            //this.el.innerHTML = `<div id="embedding-entity-example" class="hasSVG" style="display: block; height: 48.546875px;"></div>`;
+            //Util.embed(this.el, $.extend({}, collData),
+            //Util.embed('embedding-entity-example', $.extend({}, collData),
+            //    $.extend({}, docData), webFontURLs);
+        });
+*/
+        //util.Util.embed(this.el, collData, docData, webFontURLs);
+        //require('./brat/util.js');
         //Util.embed(this.el, collData, docData, webFontURLs);
-        this.el.textContent = 'In Java Script 1';
+        //this.el.textContent = util.hasOwnProperty('Util').toString();
         //this.el.textContent = this.model.get('value');
         //this.el.innerHTML = this.model.get('value').bold();
+/*
+        this.el.innerHTML = `<div id="embedding-entity-example" class="hasSVG" style="display: block; height: 48.546875px;"><svg version="1.1" class="" style="width: 970px; height: 48.546875px;"><!-- document: undefined/undefined --><defs><filter id="Gaussian_Blur"><fegaussianblur in="SourceGraphic" stddeviation="2"></fegaussianblur></filter><marker id="drag_arrow" refX="5" refY="2.5" markerWidth="5" markerHeight="5" orient="auto" markerUnits="strokeWidth" class="drag_fill"><polyline points="0,0 5,2.5 0,5 0.2,2.5"></polyline></marker></defs><g class="background"><rect x="0" y="4.1875" width="970" height="46.546875" class="background0"></rect></g><g class="glow"></g><g class="highlight"><rect x="24" y="31.953125" width="77.900390625" height="15.78125" fill="#e5ecfe" rx="3" ry="3"></rect><rect x="161.42724609375" y="31.953125" width="29.1796875" height="15.78125" fill="#e5ecfe" rx="3" ry="3"></rect><rect x="283.328125" y="31.953125" width="29.1796875" height="15.78125" fill="#e5ecfe" rx="3" ry="3"></rect><rect x="380.376953125" y="31.953125" width="87.53173828125" height="15.78125" fill="#e5ecfe" rx="3" ry="3"></rect></g><g class="text"><text x="0" y="0"><tspan x="24" y="44.546875" data-chunk-id="0">Ed O'Kelley </tspan><tspan x="105.900390625" y="44.546875" data-chunk-id="1">was </tspan><tspan x="136.5751953125" y="44.546875" data-chunk-id="2">the </tspan><tspan x="161.42724609375" y="44.546875" data-chunk-id="3" class="">man </tspan><tspan x="194.60693359375" y="44.546875" data-chunk-id="4">who </tspan><tspan x="226.1240234375" y="44.546875" data-chunk-id="5">shot </tspan><tspan x="258.47607421875" y="44.546875" data-chunk-id="6">the </tspan><tspan x="283.328125" y="44.546875" data-chunk-id="7">man </tspan><tspan x="316.5078125" y="44.546875" data-chunk-id="8">who </tspan><tspan x="348.02490234375" y="44.546875" data-chunk-id="9">shot </tspan><tspan x="380.376953125" y="44.546875" data-chunk-id="10">Jesse James.</tspan></text></g><g transform="translate(0, 44)"><g></g><g transform="translate(24, 0)"><g></g><g class="span"><rect x="20.5" y="-29.28125" width="37.62999725341797" height="10.765625" class="span_Person span_default" fill="#7fa2ff" stroke="#002998" rx="2" ry="1" data-span-id="T1" data-fragment-id="0"></rect><text x="38.5" y="-20.78125" fill="#000000">Person</text><path d="M0,-13.515625C0,-17.515625 38.5,-13.515625 38.5,-17.515625C38.5,-13.515625 77.900390625,-17.515625 77.900390625,-13.515625" class="curly" stroke="#002998"></path></g></g><g transform="translate(105.900390625, 0)"><g></g></g><g transform="translate(136.5751953125, 0)"><g></g></g><g transform="translate(161.42724609375, 0)"><g></g><g class="span"><rect x="4.5" y="-29.28125" width="19.920000076293945" height="10.765625" class="span_Person span_default" fill="#7fa2ff" stroke="#002998" rx="2" ry="1" data-span-id="T2" data-fragment-id="0"></rect><text x="14.5" y="-20.78125" fill="#000000">Per</text><path d="M0,-13.515625C0,-17.515625 14.5,-13.515625 14.5,-17.515625C14.5,-13.515625 29.1796875,-17.515625 29.1796875,-13.515625" class="curly" stroke="#002998"></path></g></g><g transform="translate(194.60693359375, 0)"><g></g></g><g transform="translate(226.1240234375, 0)"><g></g></g><g transform="translate(258.47607421875, 0)"><g></g></g><g transform="translate(283.328125, 0)"><g></g><g class="span"><rect x="4.5" y="-29.28125" width="19.920000076293945" height="10.765625" class="span_Person span_default" fill="#7fa2ff" stroke="#002998" rx="2" ry="1" data-span-id="T3" data-fragment-id="0"></rect><text x="14.5" y="-20.78125" fill="#000000">Per</text><path d="M0,-13.515625C0,-17.515625 14.5,-13.515625 14.5,-17.515625C14.5,-13.515625 29.1796875,-17.515625 29.1796875,-13.515625" class="curly" stroke="#002998"></path></g></g><g transform="translate(316.5078125, 0)"><g></g></g><g transform="translate(348.02490234375, 0)"><g></g></g><g transform="translate(380.376953125, 0)"><g></g><g class="span"><rect x="24.5" y="-29.28125" width="37.62999725341797" height="10.765625" class="span_Person span_default" fill="#7fa2ff" stroke="#002998" rx="2" ry="1" data-span-id="T4" data-fragment-id="0"></rect><text x="43.5" y="-20.78125" fill="#000000">Person</text><path d="M0,-13.515625C0,-17.515625 43.5,-13.515625 43.5,-17.515625C43.5,-13.515625 87.53173828125,-17.515625 87.53173828125,-13.515625" class="curly" stroke="#002998"></path></g></g><g class="arcs"></g></g><g class="sentnum"><a NS1:href="#undefined?focus=sent~1"><text x="18" y="44.546875" data-sent="1">1</text></a><path d="M20,0L20,48.546875"></path></g></svg></div>`;
+*/
     }
 });
 
