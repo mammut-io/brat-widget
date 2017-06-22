@@ -14,11 +14,6 @@
     "ipython",
     "ipywidgets"
   ],
-  "files": [
-    "./brat",
-    "./lib",
-    "./static"
-  ],
   "scripts": {
     "prepublish": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"

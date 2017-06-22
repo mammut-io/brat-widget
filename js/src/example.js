@@ -1,83 +1,5 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
-require('jquery');
-
-//var head = require('headjs');
-//require('./lib/head.load.min.js');
-
-var basePath = document.querySelector('body').getAttribute('data-base-url') + 'nbextensions/brat-widget';
-/*
-head.js(
-
-        // brat fonts
-        basePath + '/static/fonts/Astloch-Bold.ttf',
-        basePath + '/static/fonts/Liberation_Sans-Regular.svg',
-        basePath + '/static/fonts/Liberation_Sans-Regular.ttf',
-        basePath + '/static/fonts/PT_Sans-Caption-Web-Regular.svg',
-        basePath + '/static/fonts/PT_Sans-Caption-Web-Regular.ttf',
-        // brat img
-        basePath + '/static/img/arrow.png',
-        basePath + '/static/img/arrow-180.png',
-        basePath + '/static/img/collapse_icon.gif',
-        basePath + '/static/img/expand_icon.gif',
-        basePath + '/static/img/Fugue-document.png',
-        basePath + '/static/img/Fugue-folder-horizontal-open.png',
-        basePath + '/static/img/Fugue-shadowless-document.png',
-        basePath + '/static/img/Fugue-shadowless-exclamation.png',
-        basePath + '/static/img/Fugue-shadowless-exclamation-white.png',
-        basePath + '/static/img/Fugue-shadowless-external.png',
-        basePath + '/static/img/Fugue-shadowless-folder-horizontal-open.png',
-        basePath + '/static/img/Fugue-shadowless-information-balloon.png',
-        basePath + '/static/img/Fugue-shadowless-magnifier.png',
-        basePath + '/static/img/Fugue-shadowless-question.png',
-        basePath + '/static/img/spinner.gif',
-        // brat jquery-theme/images
-        basePath + '/static/jquery-theme/images/ui-bg_flat_0_aaaaaa_40x100.png',
-        basePath + '/static/jquery-theme/images/ui-bg_flat_55_fbec88_40x100.png',
-        basePath + '/static/jquery-theme/images/ui-bg_glass_75_d0e5f5_1x400.png',
-        basePath + '/static/jquery-theme/images/ui-bg_glass_85_dfeffc_1x400.png',
-        basePath + '/static/jquery-theme/images/ui-bg_glass_95_fef1ec_1x400.png',
-        basePath + '/static/jquery-theme/images/ui-bg_gloss-wave_55_5c9ccc_500x100.png',
-        basePath + '/static/jquery-theme/images/ui-bg_inset-hard_100_f5f8f9_1x100.png',
-        basePath + '/static/jquery-theme/images/ui-bg_inset-hard_100_fcfdfd_1x100.png',
-        basePath + '/static/jquery-theme/images/ui-icons_2e83ff_256x240.png',
-        basePath + '/static/jquery-theme/images/ui-icons_6da8d5_256x240.png',
-        basePath + '/static/jquery-theme/images/ui-icons_217bc0_256x240.png',
-        basePath + '/static/jquery-theme/images/ui-icons_469bdd_256x240.png',
-        basePath + '/static/jquery-theme/images/ui-icons_cd0a0a_256x240.png',
-        basePath + '/static/jquery-theme/images/ui-icons_d8e7f3_256x240.png',
-        basePath + '/static/jquery-theme/images/ui-icons_f9bd01_256x240.png',
-        // brat jquery-theme
-        basePath + '/static/jquery-theme/jquery-ui.css',
-        basePath + '/static/jquery-theme/jquery-ui-redmond.css',
-
-
-          // libraries
-          basePath + '/lib/jquery.min.js',
-          basePath + '/lib/jquery-ui.min.js',
-          //basePath + '/lib/jquery-ui.combobox.js',
-          basePath + '/lib/jquery.svg.min.js',
-          basePath + '/lib/jquery.svgdom.min.js',
-          basePath + '/lib/jquery.ba-bbq.min.js',
-          basePath + '/lib/jquery.json.min.js',
-          basePath + '/lib/sprintf.js',
-          basePath + '/lib/webfont.js',
-
-          // brat helpers
-          basePath + '/brat/configuration.js',
-          basePath + '/brat/util.js',
-          basePath + '/brat/annotation_log.js',
-          // brat modules
-          basePath + '/brat/dispatcher.js',
-          basePath + '/brat/url_monitor.js',
-          basePath + '/brat/ajax.js',
-          basePath + '/brat/visualizer.js',
-          basePath + '/brat/visualizer_ui.js',
-          basePath + '/brat/annotator_ui.js',
-          basePath + '/brat/spinner.js'
-      );
-*/
-//var util = require('./brat/util.js');
 
 // Custom Model. Custom widgets models must at least provide default values
 // for model attributes, including
@@ -141,25 +63,9 @@ var VisualizerView = widgets.DOMWidgetView.extend({
                 ['T4', 'Person', [[50, 61]]],
             ],
         };
-        var webFontURLs = [
-            basePath + '/static/fonts/Astloch-Bold.ttf',
-            basePath + '/static/fonts/PT_Sans-Caption-Web-Regular.ttf',
-            basePath + '/static/fonts/Liberation_Sans-Regular.ttf'
-        ];
 
         //console.log(util.toString());
-/*
-        head.ready(function() {
-            console.log(Util.toString());
-            this.el.innerHTML = this.model.get('value').bold();
-            //this.el.className = "jupyter-widget";
-            //this.el.innerHTML = '';
-            //this.el.innerHTML = `<div id="embedding-entity-example" class="hasSVG" style="display: block; height: 48.546875px;"></div>`;
-            //Util.embed(this.el, $.extend({}, collData),
-            //Util.embed('embedding-entity-example', $.extend({}, collData),
-            //    $.extend({}, docData), webFontURLs);
-        });
-*/
+
         //util.Util.embed(this.el, collData, docData, webFontURLs);
         //require('./brat/util.js');
         //Util.embed(this.el, collData, docData, webFontURLs);

@@ -10,9 +10,6 @@ var loaders = [
     {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file'},
 ];
 
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-
-
 module.exports = [
     {// Notebook extension
         //
@@ -45,14 +42,7 @@ module.exports = [
         module: {
             loaders: loaders
         },
-        externals: ['jupyter-js-widgets'],
-        plugins: [
-            new CopyWebpackPlugin([
-                {from: './src/brat', to: 'brat'},
-                {from: './src/lib', to: 'lib'},
-                {from: './src/static', to: 'static'}
-            ])
-        ]
+        externals: ['jupyter-js-widgets']
     },
     {// Embeddable brat-widget bundle
         //
@@ -79,13 +69,6 @@ module.exports = [
         module: {
             loaders: loaders
         },
-        externals: ['jupyter-js-widgets'],
-        plugins: [
-            new CopyWebpackPlugin([
-                {from: './src/brat', to: 'brat'},
-                {from: './src/lib', to: 'lib'},
-                {from: './src/static', to: 'static'}
-            ])
-        ]
+        externals: ['jupyter-js-widgets']
     }
 ];
