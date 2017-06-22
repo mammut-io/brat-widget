@@ -8,6 +8,7 @@
 __webpack_public_path__ = document.querySelector('body').getAttribute('data-base-url') + 'nbextensions/brat-widget/';
 
 module.exports = {};
+
 var loadedModules = [
 /*
     // brat fonts
@@ -52,10 +53,11 @@ var loadedModules = [
     // brat jquery-theme
     require('./static/jquery-theme/jquery-ui.css'),
     require('./static/jquery-theme/jquery-ui-redmond.css'),
-*/
+
     // brat head js
     require('./lib/head.load.min.js'),
-/*
+
+    require('jquery'),
     require('./lib/jquery.min.js'),
     require('./lib/jquery-ui.min.js'),
     require('./lib/jquery-ui.combobox.js'),
@@ -65,6 +67,7 @@ var loadedModules = [
     require('./lib/jquery.json.min.js'),
     require('./lib/sprintf.js'),
     require('./lib/webfont.js'),
+*/
     // brat helper modules
     require('./brat/configuration.js'),
     require('./brat/util.js'),
@@ -77,7 +80,7 @@ var loadedModules = [
     require('./brat/visualizer_ui.js'),
     require('./brat/annotator_ui.js'),
     require('./brat/spinner.js'),
-*/
+
     // Export widget models and views, and the npm package version number.
     require('./example.js')
 ];
@@ -92,36 +95,5 @@ for (var i in loadedModules) {
         }
     }
 }
-
-/*
-// brat External libraries
-var $ = require('./lib/jquery.min.js');
-$ = $.extend(require('./lib/jquery-ui.min.js'));
-$ = $.extend(require('./lib/jquery-ui.combobox.js'));
-$ = $.extend(require('./lib/jquery.svg.min.js'));
-$ = $.extend(require('./lib/jquery.svgdom.min.js'));
-$ = $.extend(require('./lib/jquery.ba-bbq.min.js'));
-$ = $.extend(require('./lib/jquery.json.min.js'));
-$ = $.extend(require('./lib/sprintf.js'));
-$ = $.extend(require('./lib/webfont.js'));
-//var $ = require('./lib/sprintf.js');
-//$ = $.extend(require('./lib/webfont.js'));
-// brat helper modules
-$ = $.extend(require('./brat/configuration.js'));
-$ = $.extend(require('./brat/util.js'));
-$ = $.extend(require('./brat/annotation_log.js'));
-// brat modules
-$ = $.extend(require('./brat/dispatcher.js'));
-$ = $.extend(require('./brat/url_monitor.js'));
-$ = $.extend(require('./brat/ajax.js'));
-$ = $.extend(require('./brat/visualizer.js'));
-$ = $.extend(require('./brat/visualizer_ui.js'));
-$ = $.extend(require('./brat/annotator_ui.js'));
-$ = $.extend(require('./brat/spinner.js'));
-
-// Export widget models and views, and the npm package version number.
-module.exports = $.extend(require('./example.js'));
-//module.exports = require('./example.js');*/
-
 
 module.exports['version'] = require('../package.json').version;
