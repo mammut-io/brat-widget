@@ -1,6 +1,14 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
 
+// brat jquery-theme
+require('./static/jquery-theme/jquery-ui.css');
+require('./static/jquery-theme/jquery-ui-redmond.css');
+// brat
+require('./static/style-vis.css');
+require('./static/style-ui.css');
+require('./static/style.css');
+
 // Custom Model. Custom widgets models must at least provide default values
 // for model attributes, including
 //
@@ -67,7 +75,6 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         //console.log(util.toString());
 
         //util.Util.embed(this.el, collData, docData, webFontURLs);
-        //require('./brat/util.js');
         //Util.embed(this.el, collData, docData, webFontURLs);
         //this.el.textContent = util.hasOwnProperty('Util').toString();
         //this.el.textContent = this.model.get('value');
