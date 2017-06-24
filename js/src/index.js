@@ -56,6 +56,21 @@ var loadedModules = [
     require('./static/style-ui.css'),
     require('./static/style.css'),
 
+    //brat lib
+    require('./jquery.svg.min.js'),
+    //brat code
+    require('./ajax.js'),
+    require('./annotation_log.js'),
+    require('./annotator_ui.js'),
+    require('./configuration.js'),
+    require('./dispatcher.js'),
+    require('./offline_ajax.js'),
+    require('./spinner.js'),
+    require('./url_monitor.js'),
+    require('./util.js'),
+    require('./visualizer.js'),
+    require('./visualizer_ui.js'),
+
     // Export widget models and views, and the npm package version number.
     require('./example.js')
 ];

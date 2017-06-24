@@ -30,10 +30,8 @@
   "dependencies": {
     "jupyter-js-widgets": "^2.1.4",
     "underscore": "^1.8.3",
-    "headjs": "~1.0.3",
     "jquery": "~3.2.1",
     "jquery-ui": "~1.12.1",
-    "svg-jquery": "~1.0.3",
     "sprintf ": "~0.1.5",
     "webfont": "~7.1.4"
   }

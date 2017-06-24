@@ -1,4 +1,5 @@
 var version = require('./package.json').version;
+var webpack = require("webpack");
 
 // Custom webpack loaders are generally the same for all webpack bundles, hence
 // stored in a separate local variable.
@@ -7,7 +8,7 @@ var loaders = [
     {test: /\.css$/, loader: 'style-loader!css-loader'},
     // Generic file loader, Should be used for anything but leaflet's
     // marker-icon.png, marker-icon-2x.png or marker-shadow.png
-    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file'},
+    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file'}
 ];
 
 module.exports = [
@@ -42,7 +43,18 @@ module.exports = [
         module: {
             loaders: loaders
         },
-        externals: ['jupyter-js-widgets']
+        node: {
+            fs: 'empty',
+            child_process: 'empty'
+        },
+        externals: ['jupyter-js-widgets'],
+        plugins: [
+            new webpack.ProvidePlugin({
+                $: "jquery",
+                jQuery: "jquery",
+                "window.jQuery": "jquery"
+            })
+        ]
     },
     {// Embeddable brat-widget bundle
         //
@@ -69,6 +81,17 @@ module.exports = [
         module: {
             loaders: loaders
         },
-        externals: ['jupyter-js-widgets']
+        node: {
+            fs: 'empty',
+            child_process: 'empty'
+        },
+        externals: ['jupyter-js-widgets'],
+        plugins: [
+            new webpack.ProvidePlugin({
+                $: "jquery",
+                jQuery: "jquery",
+                "window.jQuery": "jquery"
+            })
+        ]
     }
 ];
