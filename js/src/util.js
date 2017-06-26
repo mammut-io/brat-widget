@@ -547,7 +547,6 @@ var Util = (function(window, undefined) {
 
     var fontsLoaded = false;
     var fontNotifyList = false;
-    var timeoutLoadingFonts =  false;
 
     var proceedWithFonts = function() {
       if (fontsLoaded) return;
@@ -603,7 +602,6 @@ var Util = (function(window, undefined) {
       setTimeout(function() {
         if (!fontsLoaded) {
           console.error('Timeout in loading fonts');
-          timeoutLoadingFonts =  true;
           proceedWithFonts();
         }
       }, fontLoadTimeout);

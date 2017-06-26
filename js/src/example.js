@@ -10,9 +10,9 @@ require('./static/style-ui.css');
 require('./static/style.css');
 //brat fonts
 var webFontURLs = [
-            require('./static/fonts/Astloch-Bold.ttf'),
-            require('./static/fonts/PT_Sans-Caption-Web-Regular.ttf'),
-            require('./static/fonts/Liberation_Sans-Regular.ttf')
+            require('file-loader!./static/fonts/Astloch-Bold.ttf'),
+            require('file-loader!./static/fonts/PT_Sans-Caption-Web-Regular.ttf'),
+            require('file-loader!./static/fonts/Liberation_Sans-Regular.ttf')
         ];
 //brat modules
 var Visualizer = require('./visualizer');
@@ -41,7 +41,8 @@ var VisualizerModel = widgets.DOMWidgetModel.extend({
         _view_module : 'brat-widget',
         _model_module_version : '0.1.0',
         _view_module_version : '0.1.0',
-        value : 'Hello World'
+        collection : {},
+        value : {}
     })
 });
 
@@ -54,38 +55,10 @@ var VisualizerView = widgets.DOMWidgetView.extend({
     },
 
     value_changed: function() {
-        var collData = {
-            entity_types: [{
-                type: 'Person',
-                /* The labels are used when displaying the annotion, in this case
-                 we also provide a short-hand "Per" for cases where
-                 abbreviations are preferable */
-                labels: ['Person', 'Per'],
-                // Blue is a nice colour for a person?
-                bgColor: '#7fa2ff',
-                // Use a slightly darker version of the bgColor for the border
-                borderColor: 'darken'
-            }]
-        };
-        var docData = {
-            // Our text of choice
-            text: "Ed O'Kelley was the man who shot the man who shot Jesse James.",
-            // The entities entry holds all entity annotations
-            entities: [
-                /* Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
-                 note that range of the offsets are [${START},${END}) */
-                ['T1', 'Person', [[0, 11]]],
-                ['T2', 'Person', [[20, 23]]],
-                ['T3', 'Person', [[37, 40]]],
-                ['T4', 'Person', [[50, 61]]],
-            ],
-        };
         this.el.id = "brat_" + new Date().getTime().toString();
         console.log(_.isString(this.el));
 
-        this.embed(this.el, collData, docData, webFontURLs);
-        //this.el.textContent = this.model.get('value');
-        //this.el.innerHTML = this.model.get('value').bold();
+        this.embed(this.el, this.model.get('collection'), this.model.get('value'), webFontURLs);
     },
 
         // container: ID or jQuery element

@@ -1,6 +1,6 @@
 var version = require('./package.json').version;
 var webpack = require("webpack");
-
+var brat_fonts_selector = /static\/fonts\/*\.(svg|ttf)/;
 // Custom webpack loaders are generally the same for all webpack bundles, hence
 // stored in a separate local variable.
 var loaders = [
@@ -8,7 +8,8 @@ var loaders = [
     {test: /\.css$/, loader: 'style-loader!css-loader'},
     // Generic file loader, Should be used for anything but leaflet's
     // marker-icon.png, marker-icon-2x.png or marker-shadow.png
-    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file-loader'},
+    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file-loader', exclude: brat_fonts_selector},
+    { test: brat_fonts_selector, loader: 'file-loader?name=[name].[ext]' },
     {
         test: /[\/\\]src[\/\\]lib[\/\\]webfont\.js$/,
         loader: "imports-loader?this=>window"
