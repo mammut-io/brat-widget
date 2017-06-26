@@ -1,7 +1,7 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
-var WebFont = require('webfont');
+require('./lib/webfont');
 
 var Util = (function(window, undefined) {
 
@@ -547,6 +547,7 @@ var Util = (function(window, undefined) {
 
     var fontsLoaded = false;
     var fontNotifyList = false;
+    var timeoutLoadingFonts =  false;
 
     var proceedWithFonts = function() {
       if (fontsLoaded) return;
@@ -570,12 +571,6 @@ var Util = (function(window, undefined) {
       }
 
       fontNotifyList = [dispatcher];
-
-      webFontURLs = webFontURLs || [
-        'static/fonts/Astloch-Bold.ttf',
-        'static/fonts/PT_Sans-Caption-Web-Regular.ttf',
-        'static/fonts/Liberation_Sans-Regular.ttf'
-      ];
 
       var families = [];
       $.each(webFontURLs, function(urlNo, url) {
@@ -608,6 +603,7 @@ var Util = (function(window, undefined) {
       setTimeout(function() {
         if (!fontsLoaded) {
           console.error('Timeout in loading fonts');
+          timeoutLoadingFonts =  true;
           proceedWithFonts();
         }
       }, fontLoadTimeout);

@@ -1,6 +1,16 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
+var _ = require('underscore');
+
+require('./lib/jquery.svg.min');
+
+var URLHash = require('./url_monitor').URLHash;
+
+var Util = require('./util');
+
+var Configuration = require('./configuration');
+
 var Visualizer = (function($, window, undefined) {
     var DocumentData = function(text) {
       this.text = text;
@@ -296,10 +306,11 @@ var Visualizer = (function($, window, undefined) {
     };
 
     var Visualizer = function(dispatcher, svgId, webFontURLs) {
-      var $svgDiv = $('#' + svgId);
-      if (!$svgDiv.length) {
+      var $svgDivArray = (_.isString(svgId) ? $('#' + svgId) : [svgId]);
+      if (!$svgDivArray.length) {
         throw Error('Could not find container with id="' + svgId + '"');
       }
+      var $svgDiv = $svgDivArray[0];
       var that = this;
 
       // OPTIONS

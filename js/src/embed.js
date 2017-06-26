@@ -56,7 +56,8 @@ var loadedModules = [
     require('./static/style.css'),
 
     //brat lib
-    require('./jquery.svg.min.js'),
+    require('./lib/jquery.svg.min.js'),
+    require('./lib/webfont.js'),
     //brat code
     require('./ajax.js'),
     require('./annotation_log.js'),

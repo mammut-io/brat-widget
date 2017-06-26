@@ -8,7 +8,11 @@ var loaders = [
     {test: /\.css$/, loader: 'style-loader!css-loader'},
     // Generic file loader, Should be used for anything but leaflet's
     // marker-icon.png, marker-icon-2x.png or marker-shadow.png
-    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file'}
+    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file-loader'},
+    {
+        test: /[\/\\]src[\/\\]lib[\/\\]webfont\.js$/,
+        loader: "imports-loader?this=>window"
+    }
 ];
 
 module.exports = [
@@ -23,7 +27,7 @@ module.exports = [
         entry: './src/extension.js',
         output: {
             filename: 'extension.js',
-            path: '../brat_widget/static',
+            path: '/Users/Edilmo/git/brat-widget/brat_widget/static',
             libraryTarget: 'amd'
         }
     },
@@ -36,7 +40,7 @@ module.exports = [
         entry: './src/index.js',
         output: {
             filename: 'index.js',
-            path: '../brat_widget/static',
+            path: '/Users/Edilmo/git/brat-widget/brat_widget/static',
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
@@ -73,7 +77,7 @@ module.exports = [
         entry: './src/embed.js',
         output: {
             filename: 'index.js',
-            path: './dist/',
+            path: '/Users/Edilmo/git/brat-widget/js/dist/',
             libraryTarget: 'amd',
             publicPath: 'https://unpkg.com/brat-widget@' + version + '/dist/'
         },

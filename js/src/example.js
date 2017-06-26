@@ -1,21 +1,22 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
 
-require('svg-jquery');
-
-// brat jquery-theme
+// brat jquery-theme styles
 require('./static/jquery-theme/jquery-ui.css');
 require('./static/jquery-theme/jquery-ui-redmond.css');
-// brat
+// brat styles
 require('./static/style-vis.css');
 require('./static/style-ui.css');
 require('./static/style.css');
-
+//brat fonts
 var webFontURLs = [
             require('./static/fonts/Astloch-Bold.ttf'),
             require('./static/fonts/PT_Sans-Caption-Web-Regular.ttf'),
             require('./static/fonts/Liberation_Sans-Regular.ttf')
         ];
+//brat modules
+var Visualizer = require('./visualizer');
+var Dispatcher = require('./dispatcher');
 
 // Custom Model. Custom widgets models must at least provide default values
 // for model attributes, including
@@ -81,11 +82,28 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         };
         this.el.id = "brat_" + new Date().getTime().toString();
         console.log(_.isString(this.el));
-        console.log(Util);
 
-        Util.embed(this.el, collData, docData, webFontURLs);
+        this.embed(this.el, collData, docData, webFontURLs);
         //this.el.textContent = this.model.get('value');
         //this.el.innerHTML = this.model.get('value').bold();
+    },
+
+        // container: ID or jQuery element
+    // collData: the collection data (in the format of the result of
+    //   http://.../brat/ajax.cgi?action=getCollectionInformation&collection=...
+    // docData: the document data (in the format of the result of
+    //   http://.../brat/ajax.cgi?action=getDocument&collection=...&document=...
+    // returns the embedded visualizer's dispatcher object
+    embed: function(container, collData, docData, webFontURLs,
+                         dispatcher) {
+      if (dispatcher === undefined) {
+          dispatcher = new Dispatcher();
+      }
+      var visualizer = new Visualizer(dispatcher, container, webFontURLs);
+      docData.collection = null;
+      dispatcher.post('collectionLoaded', [collData]);
+      dispatcher.post('requestRenderData', [docData]);
+      return dispatcher;
     }
 });
 

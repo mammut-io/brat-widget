@@ -13,6 +13,18 @@ To install use pip:
 
 For a development installation (requires npm),
 ```bash
+    npm install cucumber
+    npm install requirejs
+    npm install jasmine-core
+    npm install jasmine
+    npm install ajv
+    npm install karma
+    npm install webpack@2.2.0
+    npm install karma-webpack
+    npm install karma-jasmine
+    npm install karma-chrome-launcher
+    npm install karma-requirejs
+    npm install -g karma-cli
     conda create -n brat-27 python=2.7
     source activate brat-27
     conda install jupyter
