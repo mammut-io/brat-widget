@@ -58,6 +58,7 @@ var loadedModules = [
     //brat lib
     require('./lib/jquery.svg.min.js'),
     require('./lib/webfont.js'),
+    require('./lib/jquery-ui.min.js'),
     //brat code
     require('./ajax.js'),
     require('./annotation_log.js'),
@@ -72,7 +73,7 @@ var loadedModules = [
     require('./visualizer_ui.js'),
 
     // Export widget models and views, and the npm package version number.
-    require('./example.js')
+    require('./widget.js')
 ];
 
 for (var i in loadedModules) {

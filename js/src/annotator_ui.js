@@ -1,7 +1,10 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
+
+require('./lib/jquery-ui.min');
+
 var AnnotatorUI = (function($, window, undefined) {
-    var AnnotatorUI = function(dispatcher, svg) {
+    var AnnotatorUI = function(dispatcher, svg, initForm) {
       var that = this;
       var arcDragOrigin = null;
       var arcDragOriginBox = null;
