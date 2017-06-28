@@ -2,7 +2,7 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 var Ajax = (function($, window, undefined) {
     var PROTOCOL_VERSION = 1
-    var Ajax = function(dispatcher) {
+    var Ajax = function(base_id, dispatcher) {
       var that = this;
       var pending = 0;
       var count = 0;
@@ -74,7 +74,7 @@ var Ajax = (function($, window, undefined) {
                 // the callback; if it is anything else, the
                 // callback is responsible for handling it
                 if (response.exception == true) {
-                  $('#waiter').dialog('close');
+                  $('#' + base_id + '_waiter').dialog('close');
                 } else if (callback) {
                   $.extend(response, merge);
                   dispatcher.post(0, callback, [response]);
@@ -85,7 +85,7 @@ var Ajax = (function($, window, undefined) {
             error: function(response, textStatus, errorThrown) {
               pending--;
               dispatcher.post('unspin');
-              $('#waiter').dialog('close');
+              $('#' + base_id + '_waiter').dialog('close');
               dispatcher.post('messages', [[['Error: Action' + data.action + ' failed on error ' + response.statusText, 'error']]]);
               console.error(textStatus + ':', errorThrown, response);
             }

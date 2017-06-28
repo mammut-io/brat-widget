@@ -9,6 +9,10 @@ require('./static/jquery-theme/jquery-ui-redmond.css');
 require('./static/style-vis.css');
 require('./static/style-ui.css');
 require('./static/style.css');
+//brat images
+var spinnerGif = require('./static/img/spinner.gif');
+var fugueShadowlessMagnifierPng = require('./static/img/Fugue-shadowless-magnifier.png');
+var fugueShadowlessExternalPng = require('./static/img/Fugue-shadowless-external.png');
 //brat fonts
 var webFontURLs = [
     require('file-loader!./static/fonts/Astloch-Bold.ttf'),
@@ -20,8 +24,8 @@ var Dispatcher = require('./dispatcher');
 var Visualizer = require('./visualizer');
 var URLMonitor = require('./url_monitor').URLMonitor;
 var Ajax = require('./ajax');
-var VisualizerUI = require('./visualizer_ui');
 var AnnotatorUI = require('./annotator_ui');
+var Spinner = require('./spinner')
 var AnnotationLog = require('./annotation_log');
 
 
@@ -69,16 +73,7 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         this.value_changed();
         if (this.dispatcher === undefined) {
             this.el.id = "brat_" + new Date().getTime().toString();
-            //this.embed(this.el, this.model.get('collection'), this.model.get('value'));
             var $divSvg = $("<div id='" + this.el.id + "_svg'></div>").appendTo(this.el);
-            //noinspection JSAnnotator
-            var $divForm = $(`<div id='` +  this.el.id + `_forms'><form>
-  First name:<br>
-  <input type="text" name="firstname">
-  <br>
-  Last name:<br>
-  <input type="text" name="lastname">
-</form></div>`).appendTo(this.el);
             this.embed($divSvg, this.model.get('collection'), this.model.get('value'));
         }
         this.model.on('change:value', this.value_changed, this);
@@ -99,7 +94,7 @@ var VisualizerView = widgets.DOMWidgetView.extend({
             this.dispatcher = new Dispatcher();
         }
         if (this.visualizer === undefined) {
-            this.visualizer = new Visualizer(this.dispatcher, container, webFontURLs);
+            this.visualizer = new Visualizer(this.el.id, this.dispatcher, container, webFontURLs);
         }
         docData.collection = null;
         this.dispatcher.post('collectionLoaded', [collData]);
@@ -108,12 +103,111 @@ var VisualizerView = widgets.DOMWidgetView.extend({
 });
 
 
-var AnnotatorView = VisualizerView.extend({
-        render: function () {
-            AnnotatorView.__super__.render.apply(this);
-        },
+var VisualizerUIsimulator = (function ($, window, undefined) {
+    var VisualizerUIsimulator = function (base_id, dispatcher, svg) {
+        /* START message display - related */
+        var $pulluptrigger = $('#' + base_id + '_pulluptrigger');
+        var showPullupTrigger = function () {
+            $pulluptrigger.show('puff');
+        };
+        var $messageContainer = $('#' + base_id + '_messages');
+        var $messagepullup = $('#' + base_id + '_messagepullup');
+        var pullupTimer = null;
+        var displayMessages = function (msgs) {
+            var initialMessageNum = $messagepullup.children().length;
 
-        initForm: function (form, opts) {
+            if (msgs === false) {
+                console.log('Simulator - Messages: clean all messages.');
+                $messageContainer.children().each(function (msgElNo, msgEl) {
+                    $(msgEl).remove();
+                });
+            } else {
+                $.each(msgs, function (msgNo, msg) {
+                    console.log('Simulator - Messages: ' + msg);
+                    var element;
+                    var timer = null;
+                    try {
+                        element = $('<div class="' + msg[1] + '">' + msg[0] + '</div>');
+                    }
+                    catch (x) {
+                        escaped = msg[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        element = $('<div class="error"><b>[ERROR: could not display the following message normally due to malformed XML:]</b><br/>' + escaped + '</div>');
+                    }
+                    var pullupElement = element.clone();
+                    $messageContainer.append(element);
+                    $messagepullup.append(pullupElement.css('display', 'none'));
+                    slideToggle(pullupElement, true, true);
+
+                    var fader = function () {
+                        if ($messagepullup.is(':visible')) {
+                            element.remove();
+                        } else {
+                            element.hide('slow', function () {
+                                element.remove();
+                            });
+                        }
+                    };
+                    var delay = (msg[2] === undefined)
+                        ? messageDefaultFadeDelay
+                        : (msg[2] === -1)
+                            ? null
+                            : (msg[2] * 1000);
+                    if (delay === null) {
+                        var button = $('<input type="button" value="OK"/>');
+                        element.prepend(button);
+                        button.click(function (evt) {
+                            timer = setTimeout(fader, 0);
+                        });
+                    } else {
+                        timer = setTimeout(fader, delay);
+                        element.mouseover(function () {
+                            clearTimeout(timer);
+                            element.show();
+                        }).mouseout(function () {
+                            timer = setTimeout(fader, messagePostOutFadeDelay);
+                        });
+                    }
+                    // setTimeout(fader, messageDefaultFadeDelay);
+                });
+
+                // limited history - delete oldest
+                var $messages = $messagepullup.children();
+                for (var i = 0; i < $messages.length - maxMessages; i++) {
+                    $($messages[i]).remove();
+                }
+            }
+
+            // if there is change in the number of messages, may need to
+            // tweak trigger visibility
+            var messageNum = $messagepullup.children().length;
+            if (messageNum != initialMessageNum) {
+                if (messageNum == 0) {
+                    // all gone; nothing to trigger
+                    $('#' + base_id + '_pulluptrigger').hide('slow');
+                } else if (initialMessageNum == 0) {
+                    // first messages, show trigger at fade
+                    setTimeout(showPullupTrigger, messageDefaultFadeDelay + 250);
+                }
+            }
+        };
+        // hide pullup trigger by default, show on first message
+        $pulluptrigger.hide();
+        $pulluptrigger.mouseenter(function (evt) {
+            $('#' + base_id + '_pulluptrigger').hide('puff');
+            clearTimeout(pullupTimer);
+            slideToggle($messagepullup.stop(), true, true, true);
+        });
+        $messagepullup.mouseleave(function (evt) {
+            setTimeout(showPullupTrigger, 500);
+            clearTimeout(pullupTimer);
+            pullupTimer = setTimeout(function () {
+                slideToggle($messagepullup.stop(), false, true, true);
+            }, 500);
+        });
+        /* END message display - related */
+
+        /* START form management - related */
+        var initForm = function (form, opts) {
             opts = opts || {};
             //var formId = form.attr('id');
 
@@ -169,34 +263,214 @@ var AnnotatorView = VisualizerView.extend({
                 //form.parent().resizable('option', 'alsoResize',
                 //    '#' + form.attr('id') + ', ' + alsoResize);
             }
+        };
+
+        var unsafeDialogOpen = function ($dialog) {
+            // does not restrict tab key to the dialog
+            // does not set the focus, nor change position
+            // but is much faster than dialog('open') for large dialogs, see
+            // https://github.com/nlplab/brat/issues/934
+
+            var self = $dialog.dialog('instance');
+
+            if (self._isOpen) {
+                return;
+            }
+
+            self._isOpen = true;
+            self.opener = $(self.document[0].activeElement);
+
+            self._size();
+            self._createOverlay();
+            self._moveToTop(null, true);
+
+            if (self.overlay) {
+                self.overlay.css("z-index", self.uiDialog.css("z-index") - 1);
+            }
+            self._show(self.uiDialog, self.options.show);
+            self._trigger('open');
+        };
+
+        var showForm = function (form, unsafe) {
+            currentForm = form;
+            // as suggested in http://stackoverflow.com/questions/2657076/jquery-ui-dialog-fixed-positioning
+            form.parent().css({position: "fixed"});
+            if (unsafe) {
+                unsafeDialogOpen(form);
+            } else {
+                form.dialog('open');
+            }
+            slideToggle($('#pulldown').stop(), false);
+            return form;
+        };
+
+        var hideForm = function () {
+            if (!currentForm) return;
+            // currentForm.fadeOut(function() { currentForm = null; });
+            currentForm.dialog('close');
+            currentForm = null;
+        };
+
+        /* END form management - related */
+
+        dispatcher.on('messages', displayMessages).on('initForm', initForm);
+        return {
+            initForm: initForm
+        };
+    };
+
+    return VisualizerUIsimulator;
+})($, window);
+
+
+var AnnotatorView = VisualizerView.extend({
+        set_ajax_simulator: function (dispatcher) {
+            var PROTOCOL_VERSION = 1;
+            var pending = 0;
+            var count = 0;
+            var pendingList = {};
+
+            // merge data will get merged into the response data
+            // before calling the callback
+            var ajaxCall = function (data, callback, merge, extraOptions) {
+                merge = merge || {};
+                dispatcher.post('spin');
+                pending++;
+                var id = count++;
+
+                // special value: `merge.keep = true` prevents obsolescence
+                pendingList[id] = merge.keep || false;
+                delete merge.keep;
+
+                // If no protocol version is explicitly set, set it to current
+                if (data.toString() == '[object FormData]') {
+                    data.append('protocol', PROTOCOL_VERSION);
+                } else if (data['protocol'] === undefined) {
+                    // TODO: Extract the protocol version somewhere global
+                    data['protocol'] = PROTOCOL_VERSION;
+                }
+
+                options = {
+                    url: 'ajax.cgi',
+                    data: data,
+                    type: 'POST',
+                    success: function (response) {
+                        pending--;
+                        // If no exception is set, verify the server results
+                        if (response.exception == undefined && response.action !== data.action) {
+                            console.error('Action ' + data.action +
+                                ' returned the results of action ' + response.action);
+                            response.exception = true;
+                            dispatcher.post('messages', [[['Protocol error: Action' + data.action + ' returned the results of action ' + response.action + ' maybe the server is unable to run, please run tools/troubleshooting.sh from your installation to diagnose it', 'error', -1]]]);
+                        }
+
+                        // If the request is obsolete, do nothing; if not...
+                        if (pendingList.hasOwnProperty(id)) {
+                            dispatcher.post('messages', [response.messages]);
+                            if (response.exception == 'configurationError'
+                                || response.exception == 'protocolVersionMismatch') {
+                                // this is a no-rescue critical failure.
+                                // Stop *everything*.
+                                pendingList = {};
+                                dispatcher.post('screamingHalt');
+                                // If we had a protocol mismatch, prompt the user for a reload
+                                if (response.exception == 'protocolVersionMismatch') {
+                                    if (confirm('The server is running a different version ' +
+                                            'from brat than your client, possibly due to a ' +
+                                            'server upgrade. Would you like to reload the ' +
+                                            'current page to update your client to the latest ' +
+                                            'version?')) {
+                                        window.location.reload(true);
+                                    } else {
+                                        dispatcher.post('messages', [[['Fatal Error: Protocol ' +
+                                        'version mismatch, please contact the administrator',
+                                            'error', -1]]]);
+                                    }
+                                }
+                                return;
+                            }
+
+                            delete pendingList[id];
+
+                            // if .exception is just Boolean true, do not process
+                            // the callback; if it is anything else, the
+                            // callback is responsible for handling it
+                            if (response.exception == true) {
+                                $('#waiter').dialog('close');
+                            } else if (callback) {
+                                $.extend(response, merge);
+                                dispatcher.post(0, callback, [response]);
+                            }
+                        }
+                        dispatcher.post('unspin');
+                    },
+                    error: function (response, textStatus, errorThrown) {
+                        pending--;
+                        dispatcher.post('unspin');
+                        $('#waiter').dialog('close');
+                        dispatcher.post('messages', [[['Error: Action' + data.action + ' failed on error ' + response.statusText, 'error']]]);
+                        console.error(textStatus + ':', errorThrown, response);
+                    }
+                };
+
+                if (extraOptions) {
+                    $.extend(options, extraOptions);
+                }
+                $.ajax(options);
+                return id;
+            };
+
+            var isReloadOkay = function () {
+                // do not reload while data is pending
+                return pending == 0;
+            };
+
+            var makeObsolete = function (all) {
+                if (all) {
+                    pendingList = {};
+                } else {
+                    $.each(pendingList, function (id, keep) {
+                        if (!keep) delete pendingList[id];
+                    });
+                }
+            };
+
+            dispatcher.on('isReloadOkay', isReloadOkay).on('makeAjaxObsolete', makeObsolete).on('ajax', ajaxCall);
+        },
+
+        render: function () {
+            AnnotatorView.__super__.render.apply(this);
         },
 
         embed: function (container, collData, docData) {
             AnnotatorView.__super__.embed.apply(this, arguments);
             if (this.urlMonitor === undefined) {
-                this.embed_forms(container.id);
-                this.urlMonitor = new URLMonitor(this.dispatcher);
-            }
-            if (this.ajax === undefined) {
-                this.ajax = new Ajax(this.dispatcher);
-            }
-            // if (this.visualizerUI === undefined) {
-            //     var svg = this.visualizer.svg;
-            //     this.visualizerUI = new VisualizerUI(this.dispatcher, svg);
-            // }
-            if (this.annotatorUI === undefined) {
-                var svg = this.visualizer.svg;
-                this.annotatorUI = new AnnotatorUI(this.dispatcher, svg, this.initForm);
-            }
-            if (this.logger === undefined) {
-                this.logger = new AnnotationLog(this.dispatcher);
+                $(this.get_forms_div_str()).appendTo(this.el);
+                $(this.get_messages_div_str()).appendTo(this.el);
+
+                this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
+                //this.set_ajax_simulator(this.dispatcher);
+                this.ajax = new Ajax(this.el.id, this.dispatcher);
+                this.visualizerUI = new VisualizerUIsimulator(this.el.id, this.dispatcher, this.visualizer.svg);
+                this.annotatorUI = new AnnotatorUI(this.el.id, this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm);
+                this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
+                //this.logger = new AnnotationLog(this.dispatcher);
                 this.dispatcher.post('init');
             }
         },
 
-        embed_forms: function (base_id) {
-            //noinspection JSAnnotator
-            var strForms = `<form id="{base_id}_import_form" class="dialog" title="Import">
+        get_interpolat_dom: function (str_to_interpolate) {
+            var o = {base_id: this.el.id};
+            return str_to_interpolate.replace(/{([^{}]*)}/g,
+                function (a, b) {
+                    var r = o[b];
+                    return typeof r === 'string' || typeof r === 'number' ? r : a;
+                }
+            );
+        },
+
+        get_forms_div_str: function () {
+            var strForms = `<div id='{base_id}_forms'><form id="{base_id}_import_form" class="dialog" title="Import">
       <fieldset id="import_form_docid">
         <legend>Document ID</legend>
         <input id="import_docid" class="borderless"/>
@@ -226,7 +500,7 @@ var AnnotatorView = VisualizerView.extend({
           <span id="stored_file_spinner" class="ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only">
             <span class="ui-button-text">
               <img style="vertical-align:bottom" height="18"
-                   src="static/img/spinner.gif"/>
+                   src="` + spinnerGif + `"/>
             </span>
           </span>
           <span id="stored_file_regenerate" title="Regenerate static visualization of the current document">regenerate</span>
@@ -699,7 +973,7 @@ var AnnotatorView = VisualizerView.extend({
         <legend>Normalization</legend>
         <div id="norm_container">
           <select id="span_norm_db"/>
-          <a id="span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="static/img/Fugue-shadowless-magnifier.png" style="vertical-align: middle"/></a>
+          <a id="span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="`+fugueShadowlessMagnifierPng+`" style="vertical-align: middle"/></a>
           <span class="span_norm_label">ID:</span>
           <input id="span_norm_id" class="span_norm_id_input"
                  style="width:20%"/>
@@ -707,7 +981,7 @@ var AnnotatorView = VisualizerView.extend({
           <input id="span_norm_txt" class="span_norm_txt_input"
                  readonly="readonly" style="width:45%"
                  placeholder="Click here to search"/>
-          <a id="span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="static/img/Fugue-shadowless-external.png" style="vertical-align: middle"/></a>
+          <a id="span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="`+fugueShadowlessExternalPng+`" style="vertical-align: middle"/></a>
           <input id="clear_norm_button" type="button"
                  value="&#x2715;" title="Clear normalization"/>
         </div>
@@ -824,14 +1098,22 @@ var AnnotatorView = VisualizerView.extend({
         <thead class="ui-widget-header"/>
         <tbody class="ui-widget-content"/>
       </table>
-    </form>`;
-            var o = { base_id: base_id };
-            return strForms.replace(/{([^{}]*)}/g,
-                function (a, b) {
-                    var r = o[b];
-                    return typeof r === 'string' || typeof r === 'number' ? r : a;
-                }
-            );
+    </form></div>`;
+            return this.get_interpolat_dom(strForms);
+        },
+
+        get_messages_div_str: function () {
+            //noinspection JSAnnotator
+            var strMessages = `<div id='{base_id}_messa_cont'>
+    <img id="{base_id}_spinner" src="`+spinnerGif+`"/>
+    <div id="{base_id}_messagepullup" class="messages" style="display: none"/>
+    <div id="{base_id}_messages" class="messages"/>
+    <div id="{base_id}_pulluptrigger"/>
+    <div id="{base_id}_waiter" class="dialog" title="Please wait">
+      <img src="`+spinnerGif+`"/>
+    </div>
+</div>`;
+            return this.get_interpolat_dom(strMessages);
         }
     })
 ;

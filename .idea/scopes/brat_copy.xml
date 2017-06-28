@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="brat-copy" pattern="file:js/src/annotation_log.js||file:js/src/configuration.js||file:js/src/dispatcher.js||file:js/src/annotator_ui.js||file:js/src/ajax.js||file:js/src/offline_ajax.js||file:js/src/spinner.js||file:js/src/url_monitor.js||file:js/src/util.js||file:js/src/visualizer.js||file:js/src/visualizer_ui.js" />
+</component>

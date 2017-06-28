@@ -4,7 +4,7 @@
 var Util = require('./util');
 
 var URLMonitor = (function($, window, undefined) {
-    var URLMonitor = function(dispatcher) {
+    var URLMonitor = function(base_id, dispatcher) {
       var that = this;
 
       var reloadData = true;
@@ -71,7 +71,7 @@ var URLMonitor = (function($, window, undefined) {
           that.url_hash.setCollection(coll);
 
           // keep "blind" down while loading new collection
-          $('#waiter').dialog('open');
+          $('#' + base_id + '_waiter').dialog('open');
 
           dispatcher.post('ajax', [{
               action: 'getCollectionInformation',

@@ -305,7 +305,7 @@ var Visualizer = (function($, window, undefined) {
       });
     };
 
-    var Visualizer = function(dispatcher, svgId, webFontURLs) {
+    var Visualizer = function(base_id, dispatcher, svgId, webFontURLs) {
       var $svgDivArray = (_.isString(svgId) ? $('#' + svgId) : [svgId]);
       if (!$svgDivArray.length) {
         throw Error('Could not find container with id="' + svgId + '"');
@@ -1147,11 +1147,11 @@ var Visualizer = (function($, window, undefined) {
       var showMtime = function() {
         if (data.mtime) {
             // we're getting seconds and need milliseconds
-            //$('#document_ctime').text("Created: " + Annotator.formatTime(1000 * data.ctime)).css("display", "inline");
-            $('#document_mtime').text("Last modified: " + Util.formatTimeAgo(1000 * data.mtime)).css("display", "inline");
+            //$('#' + base_id + '_document_ctime').text("Created: " + Annotator.formatTime(1000 * data.ctime)).css("display", "inline");
+            $('#' + base_id + '_document_mtime').text("Last modified: " + Util.formatTimeAgo(1000 * data.mtime)).css("display", "inline");
         } else {
-            //$('#document_ctime').css("display", "none");
-            $('#document_mtime').css("display", "none");
+            //$('#' + base_id + '_document_ctime').css("display", "none");
+            $('#' + base_id + '_document_mtime').css("display", "none");
         }
       };
 

@@ -30,13 +30,13 @@ var AnnotationLog = (function(window, undefined) {
             log: _action,
           }, null]);
         }
-      }
+      };
 
       dispatcher.
           on('collectionLoaded', rememberLoggingState).
           on('current', rememberCurrent).
           on('logAction', logAction);
-    }
+    };
 
     return AnnotationLog;
 })(window);

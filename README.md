@@ -46,3 +46,7 @@ For a development installation (requires npm),
     pip uninstall brat-widget
     ./dev-clean.sh
 ```
+
+## Notes of the adaptation:
+
+- The regex `\$\('#([a-zA-Z_]+)'\)` was used to find all the calls to JQuery that look for a specific element in the DOM. And the regex `\$\('#' \+ base_id \+ '_$1'\)` was used to perform the replacement using PyCharm. To find all the replacements use the following regex: `\$\('#' \+ base_id \+ '_([a-zA-Z_]+)'\)`.

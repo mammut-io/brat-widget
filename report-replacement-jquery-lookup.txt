@@ -1,0 +1,351 @@
+Targets
+    Occurrences of '\$\('#([a-zA-Z_])+'\)' in brat-copy
+Found Occurrences  (335 usages found)
+    Usage in comments  (4 usages found)
+        brat-widget  (4 usages found)
+            js/src  (4 usages found)
+                visualizer.js  (2 usages found)
+                    1150 //$('#document_ctime').text("Created: " + Annotator.formatTime(1000 * data.ctime)).css("display", "inline");
+                    1153 //$('#document_ctime').css("display", "none");
+                visualizer_ui.js  (2 usages found)
+                    1726 //$('#document_ctime').text("Created: " + Annotator.formatTime(1000 * sourceData.ctime)).css("display", "inline");
+                    1729 //$('#document_ctime').css("display", "none");
+    Usage in string constants  (331 usages found)
+        brat-widget  (331 usages found)
+            js/src  (331 usages found)
+                ajax.js  (2 usages found)
+                    77 $('#waiter').dialog('close');
+                    88 $('#waiter').dialog('close');
+                annotator_ui.js  (149 usages found)
+                    221 $('#arc_origin').text(Util.spanDisplayForm(spanTypes, originSpan.type) + ' ("' + originSpan.text + '")');
+                    222 $('#arc_target').text(Util.spanDisplayForm(spanTypes, targetSpan.type) + ' ("' + targetSpan.text + '")');
+                    641 if ($('#event_types').find('input').length == 0) {
+                    643 } else if ($('#entity_types').find('input').length == 0) {
+                    651 $('#span_event_section').hide()
+                    652 $('#span_entity_section').show().
+                    656 $('#span_entity_section').hide()
+                    657 $('#span_event_section').show().
+                    662 $('#span_entity_section').show().
+                    665 $('#span_event_section').show().
+                    672 $('#del_span_button').show();
+                    674 $('#del_span_button').hide();
+                    677 $('#span_selected').text(spanText);
+                    724 $('#span_form_split').show();
+                    726 $('#span_form_split').hide();
+                    739 $('#span_form_split').hide();
+                    740 $('#span_notes').val('');
+                    743 $('#span_highlight_link').attr('href', linkHash);
+                    749 $('#span_notes').val(span.annotatorNotes || '');
+                    830 $('#span_norm_db').val(firstDb);
+                    846 var $normDb = $('#span_norm_db');
+                    847 var $normId = $('#span_norm_id');
+                    848 var $normText = $('#span_norm_txt');
+                    910 $('#event_attributes').show();
+                    911 $('#event_attribute_label').show();
+                    912 $('#event_types').
+                    916 $('#event_attributes').hide();
+                    917 $('#event_attribute_label').hide();
+                    918 $('#event_types').
+                    923 $('#entity_attributes').show();
+                    924 $('#entity_attribute_label').show();
+                    925 $('#entity_types').
+                    929 $('#entity_attributes').hide();
+                    930 $('#entity_attribute_label').hide();
+                    931 $('#entity_types').
+                    960 $('#rapid_span_selected').text(text);
+                    963 var $spanTypeDiv = $('#rapid_span_types_div');
+                    1057 $('#arc_notes').val('');
+                    1059 $('#clear_arc_notes_button').button();
+                    1060 $('#clear_arc_notes_button').click(clearArcNotes);
+                    1063 $('#span_notes').val('');
+                    1065 $('#clear_span_notes_button').button();
+                    1066 $('#clear_span_notes_button').click(clearSpanNotes);
+                    1071 $('#clear_norm_button').button();
+                    1072 $('#clear_norm_button').click(clearSpanNorm);
+                    1082 var $idinput = $('#span_norm_id');
+                    1093 $('#span_norm_txt').val(response.value);
+                    1102 $('#span_norm_db').change(spanNormDbUpdate);
+                    1108 var db = $('#span_norm_db').val();
+                    1124 $('#span_norm_id').bind('propertychange keyup input paste', spanNormIdUpdate);
+                    1126 $('#span_norm_db').addClass('ui-widget ui-state-default ui-button-text');
+                    1128 var normSearchDialog = $('#norm_search_dialog');
+                    1143 $('#norm_search_query').autocomplete({
+                    1168 $('#span_norm_id').val(selectedId);
+                    1171 $('#span_norm_txt').val(selectedTxt);
+                    1193 var selectedId = $('#norm_search_id').val(); 
+                    1194 var selectedTxt = $('#norm_search_query').val();
+                    1212 $('#norm_search_query').val($element.attr('data-txt'));
+                    1213 $('#norm_search_id').val($element.attr('data-id'));
+                    1271 var val = $('#norm_search_query').val();
+                    1272 var db = $('#span_norm_db').val();
+                    1279 $('#norm_search_button').click(performNormSearch);
+                    1280 $('#norm_search_query').focus(function() {
+                    1287 if (!$('#span_norm_id').val().match(/^\s*$/) &&
+                    1288 !$('#span_norm_txt').val().match(/^\s*$/)) {
+                    1289 $('#norm_search_id').val($('#span_norm_id').val());
+                    1289 $('#norm_search_id').val($('#span_norm_id').val());
+                    1290 $('#norm_search_query').val($('#span_norm_txt').val());
+                    1290 $('#norm_search_query').val($('#span_norm_txt').val());
+                    1292 $('#norm_search_id').val('');
+                    1293 $('#norm_search_query').val($('#span_selected').text());
+                    1293 $('#norm_search_query').val($('#span_selected').text());
+                    1301 $('#norm_search_button').val('Search ' + $('#span_norm_db').val());
+                    1301 $('#norm_search_button').val('Search ' + $('#span_norm_db').val());
+                    1304 $('#norm_search_query').focus().select();
+                    1306 $('#span_norm_txt').click(showNormSearchDialog);
+                    1307 $('#norm_search_button').button();
+                    1320 arcOptions.comment = $('#arc_notes').val();
+                    1440 $('#arc_highlight_link').attr('href', hash).show(); // TODO incorrect
+                    1470 $('#arc_highlight_link').hide();
+                    1481 $('#arc_form_reverse').show();
+                    1484 $('#arc_form_reverse').hide();
+                    1500 $('#arc_notes').val(arcAnnotatorNotes);
+                    1502 $('#arc_notes').val('');
+                    1508 $('#arc_notes').attr('disabled', 'disabled');
+                    1510 $('#arc_notes_fieldset').attr('disabled', 'disabled');
+                    1512 $('#arc_notes').removeAttr('disabled')
+                    1513 $('#arc_notes_fieldset').removeAttr('disabled')
+                    1548 var arcForm = $('#arc_form');
+                    1571 $('#arc_form_reselect').attr('title', 'Re-select the annotation this connects into.');
+                    1572 $('#arc_form_delete').attr('title', 'Delete this annotation.');
+                    1768 model: $('#rapid_model').val(),
+                    1813 $('#arc_origin').text(Util.spanDisplayForm(spanTypes, originSpan.type)+' ("'+originSpan.text+'")');
+                    1814 $('#arc_target').text(Util.spanDisplayForm(spanTypes, targetSpan.type)+' ("'+targetSpan.text+'")');
+                    2070 var $searchlinks  = $('#span_search_links').empty();
+                    2071 var $searchlinks2 = $('#viewspan_search_links').empty();
+                    2087 $('#span_search_fieldset').show();
+                    2088 $('#viewspan_search_fieldset').show();
+                    2090 $('#span_search_fieldset').hide();
+                    2091 $('#viewspan_search_fieldset').hide();
+                    2110 $taggerButtons = $('#tagger_buttons').empty();
+                    2133 $('#auto_tagging_fieldset').hide();
+                    2134 $('#no_tagger_message').show();
+                    2136 $('#auto_tagging_fieldset').show();
+                    2137 $('#no_tagger_message').hide();
+                    2160 var $norm_select = $('#span_norm_db');
+                    2182 $('#norm_fieldset').hide();
+                    2184 $('#norm_fieldset').show();
+                    2190 $('#span_norm_ref_link').hide();
+                    2196 var $normId = $('#span_norm_id');
+                    2197 var $normLink = $('#span_norm_ref_link');
+                    2199 var $normDb = $('#span_norm_db');
+                    2224 var $dbLink = $('#span_norm_db_link');
+                    2225 var $normDb = $('#span_norm_db');
+                    2242 var $normId = $('#span_norm_id');
+                    2243 var $normText = $('#span_norm_txt');
+                    2257 var normDb = $('#span_norm_db').val();
+                    2258 var normId = $('#span_norm_id').val();
+                    2259 var normText = $('#span_norm_txt').val();
+                    2326 $('#waiter').dialog('close');
+                    2350 var spanForm = $('#span_form');
+                    2351 var rapidSpanForm = $('#rapid_span_form');
+                    2365 $('#waiter').dialog('open');
+                    2376 var splitForm = $('#split_form');
+                    2402 var $roles = $('#split_roles').empty();
+                    2454 $('#waiter').dialog('open');
+                    2463 $('#unlock_type_button').toggle(locked);
+                    2466 $('#unlock_type_button').button().hide().click(function(evt) {
+                    2528 $('#span_form_reselect').attr('title', 'Re-select the text span that this annotation marks.');
+                    2529 $('#span_form_delete').attr('title', 'Delete this annotation.');
+                    2530 $('#span_form_split').attr('title', 'Split this annotation into multiple similar annotations, distributing its arguments.');
+                    2533 $('#span_form_lock').prop('checked', val).button('refresh');
+                    2534 $('#unlock_type_button').toggle(val);
+                    2551 var locked = $('#span_form_lock').is(':checked');
+                    2564 comment: $('#span_notes').val()
+                    2583 $('#waiter').dialog('open');
+                    2587 $('#span_notes').focus(function () {
+                    2613 $('#rapid_span_selected').text());
+                    2623 $('#waiter').dialog('open');
+                    2631 var importForm = $('#import_form');
+                    2633 var _docid = $('#import_docid').val();
+                    2634 var _doctext = $('#import_text').val();
+                    2664 $('#import_button').click(function() {
+                    2670 var importCollForm = $('#import_coll_form');
+                    2691 $('#import_collection_button').click(function() {
+                    2700 $('#delete_document_button').click(function() {
+                    2716 $('#delete_collection_button').click(function() {
+                    2733 $('#undo_button').click(function() {
+                    2760 var $waiter = $('#waiter');
+                url_monitor.js  (1 usage found)
+                    74 $('#waiter').dialog('open');
+                visualizer.js  (2 usages found)
+                    1151 $('#document_mtime').text("Last modified: " + Util.formatTimeAgo(1000 * data.mtime)).css("display", "inline");
+                    1154 $('#document_mtime').css("display", "none");
+                visualizer_ui.js  (177 usages found)
+                    52 $('#no_svg_wrapper').css('display', 'table');
+                    54 $('#no_svg_wrapper').hide();
+                    58 $('#no_svg_wrapper').hide(0);
+                    59 $('#source_files').show();
+                    65 $('#no_svg_wrapper').fadeIn(500);
+                    67 $('#source_files').hide();
+                    128 $('#pulluptrigger').show('puff');
+                    131 var $messageContainer = $('#messages');
+                    132 var $messagepullup = $('#messagepullup');
+                    202 $('#pulluptrigger').hide('slow');
+                    211 $('#pulluptrigger').hide();
+                    212 $('#pulluptrigger').
+                    214 $('#pulluptrigger').hide('puff');
+                    218 $('#messagepullup').
+                    262 var commentPopup = $('#commentpopup');
+                    622 slideToggle($('#pulldown').stop(), false);
+                    658 $('#document_input').val($element.attr('data-doc'));
+                    670 var fileBrowser = $('#collection_browser');
+                    678 $('#no_document_message').hide();
+                    679 $('#loading_message').show();
+                    681 $('#loading_message').hide();
+                    682 $('#no_document_message').show();
+                    683 $('#waiter').dialog('close');
+                    704 $('#document_input').keyup(docInputHandler);
+                    708 var input = $('#document_input').
+                    718 $('#document_input').focus().select();
+                    739 $('#document_input').focus().select();
+                    741 docScroll = $('#document_select')[0].scrollTop;
+                    874 $('#document_select')[0].scrollTop = docScroll;
+                    883 $('#collection_input').val(selectorData.collection);
+                    884 $('#document_input').val(doc);
+                    886 $('#readme').val(selectorData.description || '');
+                    892 $('#more_readme_button').button(); // TODO: more reasonable place
+                    893 $('#more_readme_button').show();
+                    896 $('#readme').val(split_readme_text[0]);
+                    897 $('#more_info_readme').text(selectorData.description);
+                    900 $('#more_readme_button').hide();
+                    901 $('#more_info_readme').text('');
+                    904 selectElementInTable($('#document_select'), doc, args.matchfocus);
+                    906 $('#document_input').focus().select();
+                    909 $('#collection_browser_button').click(function(evt) {
+                    970 addSpanTypesToSelect($('#search_form_entity_type'), response.entity_types);
+                    971 addSpanTypesToSelect($('#search_form_event_type'), response.event_types);
+                    972 addSpanTypesToSelect($('#search_form_relation_type'), response.relation_types);
+                    975 $('#search_form_load_file').addClass('ui-widget ui-state-default ui-button-text');
+                    984 var origin = $('#search_form_event_type').val();
+                    1008 $('#search_form_event_roles').on('change', '.search_event_role select', searchEventRoleChanged);
+                    1012 var $roles = $('#search_form_event_roles');
+                    1052 $('#search_form_event_roles').on('click', '.search_event_role_add input', addEmptySearchEventRole);
+                    1053 $('#search_form_event_roles').on('click', '.search_event_role_del input', delSearchEventRole);
+                    1057 $('#search_form_event_type').change(function(evt) {
+                    1058 var $roles = $('#search_form_event_roles').empty();
+                    1070 $('#search_form_relation_type').change(function(evt) {
+                    1097 var relType = $('#search_form_relation_type').val();
+                    1116 $('#search_form_note_category').change(function(evt) {
+                    1118 var $type = $('#search_form_note_type');
+                    1132 if ($('#concordancing_on').is(':checked')) {
+                    1133 $('#context_size_div').show("highlight");
+                    1135 $('#context_size_div').hide("highlight");
+                    1138 if ($('#concordancing_on').is(':checked')) {
+                    1139 $('#context_size_div').show("highlight");
+                    1141 $('#context_size_div').hide("highlight");
+                    1147 $('#advanced_search_option_toggle').click(function(evt) {
+                    1150 $('#advanced_search_option_toggle').text("Show advanced");
+                    1153 $('#advanced_search_option_toggle').text("Hide advanced");
+                    1162 var activeTab = $('#search_tabs').tabs('option', 'active');
+                    1171 $('#search_form_text_text').focus().select();
+                    1174 $('#search_form_entity_text').focus().select();
+                    1177 $('#search_form_event_trigger').focus().select();
+                    1180 $('#search_form_relation_type').focus().select();
+                    1183 $('#search_form_note_text').focus().select();
+                    1186 $('#search_form_load_file').focus().select();
+                    1192 $('#search_tabs').tabs({
+                    1195 $('#search_form').find('.radio_group').buttonset();
+                    1206 var searchForm = $('#search_form');
+                    1223 opts.text = $('#search_form_text_text').val();
+                    1230 opts.type = $('#search_form_entity_type').val() || '';
+                    1231 opts.text = $('#search_form_entity_text').val();
+                    1234 opts.type = $('#search_form_event_type').val() || '';
+                    1235 opts.trigger = $('#search_form_event_trigger').val();
+                    1247 opts.type = $('#search_form_relation_type').val() || '';
+                    1252 opts.show_text = $('#search_form_relation_show_arg_text_on').is(':checked');
+                    1253 opts.show_type = $('#search_form_relation_show_arg_type_on').is(':checked');
+                    1256 opts.category = $('#search_form_note_category').val() || '';
+                    1257 opts.type = $('#search_form_note_type').val() || '';
+                    1258 opts.text = $('#search_form_note_text').val() || '';
+                    1277 opts.concordancing = $('#concordancing_on').is(':checked');
+                    1278 opts.context_length = $('#context_length').val();
+                    1282 opts.match_case = $('#match_case_on').is(':checked');
+                    1298 $('#search_form_load_file').change(function(evt) {
+                    1299 var $file = $('#search_form_load_file');
+                    1328 $('#search_form_clear').attr('title', 'Clear the search and resume normal collection browsing');
+                    1333 $('#search_form_event_type').change();
+                    1334 $('#search_form_relation_type').change();
+                    1339 $('#search_button').click(showSearchForm);
+                    1350 $('#clear_search_button').click(clearSearchResults);
+                    1353 $searchButton = $('#search_button');
+                    1356 $clearSearchButton = $('#clear_search_button');
+                    1360 $('#search_button_label').removeClass('ui-corner-all');
+                    1361 $('#search_button_label').addClass('ui-corner-left');
+                    1364 $('#search_button_label').removeClass('ui-corner-left');
+                    1365 $('#search_button_label').addClass('ui-corner-all');
+                    1375 var dataForm = $('#data_form');
+                    1390 $('#document_export').hide();
+                    1391 $('#document_visualization').hide();
+                    1393 $('#document_export').show();
+                    1394 $('#document_visualization').show();
+                    1401 $('#data_button').click(function() {
+                    1405 $('#data_form').find('input[type="checkbox"]').button();
+                    1406 $('#data_form').find('input[type="button"]').button();
+                    1410 $('#stored_file_regenerate').button().hide();
+                    1411 $('#stored_file_regenerate').click(function(evt) {
+                    1412 $('#stored_file_regenerate').hide();
+                    1421 var optionsForm = $('#options_form');
+                    1435 $('#options_button').click(function() {
+                    1439 $('#options_form').find('input[type="checkbox"]').button();
+                    1440 $('#options_form').find('.radio_group').buttonset();
+                    1441 $('#rapid_model').addClass('ui-widget ui-state-default ui-button-text');
+                    1446 var $rapid_mode = $('#rapid_model').html('');
+                    1458 var moreInfoDialog = $('#more_information_dialog');
+                    1472 $('#more_readme_button').click(function() {
+                    1607 $('#save_search').css('display', 'inline-block');
+                    1616 $('#save_search').css('display', 'none');
+                    1636 $('#stored_file_regenerate').hide();
+                    1637 $('#stored_file_spinner').show()
+                    1640 svg: $('#svg').html(),
+                    1657 $('#waiter').dialog('close');
+                    1664 $('#waiter').dialog('open');
+                    1669 $('#stored_file_spinner').hide()
+                    1675 var $downloadStored = $('#download_stored').empty().show();
+                    1698 $('#download_stored').hide();
+                    1700 $('#stored_file_regenerate').show();
+                    1706 var $sourceFiles = $('#source_files').empty();
+                    1727 $('#document_mtime').text("Last modified: " + Util.formatTimeAgo(1000 * mtime)).show();
+                    1730 $('#document_mtime').hide();
+                    1734 $('#source_collection_conf').buttonset();
+                    1751 var $sourceCollection = $('#source_collection').empty();
+                    1755 + '&include_conf=' + ($('#source_collection_conf_on').is(':checked') ? 1 : 0)
+                    1776 $('#document_mtime').hide();
+                    1827 $('#header').
+                    1830 slideToggle($('#pulldown').stop(), true);
+                    1835 slideToggle($('#pulldown').stop(), false);
+                    1873 var width_value = $('#svg_width_value')[0].value;
+                    1887 $('#pulldown').find('input').button();
+                    1888 var headerHeight = $('#mainHeader').height();
+                    1889 $('#svg').css('margin-top', headerHeight + 10);
+                    1890 aboutDialog = $('#about');
+                    1903 $('#mainlogo').click(function() {
+                    1917 var viewspanForm = $('#viewspan_form');
+                    1928 $('#viewspan_highlight_link').show().attr('href', urlHash.getHash());
+                    1930 $('#viewspan_selected').text(span.text);
+                    1936 $('#viewspan_notes').val(span.annotatorNotes || '');
+                    1947 var authForm = $('#auth_form');
+                    1951 var _user = $('#auth_user').val();
+                    1952 var password = $('#auth_pass').val();
+                    1961 $('#auth_user').select().focus();
+                    1964 $('#auth_button').val('Logout ' + user);
+                    1965 $('#auth_user').val('');
+                    1966 $('#auth_pass').val('');
+                    1973 $('#auth_button').click(function(evt) {
+                    1979 $('#auth_button').val('Login');
+                    1990 var tutorialForm = $('#tutorial');
+                    1994 $('#browserwarning').css('display', 'block');
+                    2021 var auth_button = $('#auth_button');
+                    2188 $('#autorefresh_mode').click(function(evt) {
+                    2202 $('#type_collapse_limit').change(function(evt) {
+                    2240 $('#label_abbreviations_on')[0].checked  = Configuration.abbrevsOn;
+                    2241 $('#label_abbreviations_off')[0].checked = !Configuration.abbrevsOn; 
+                    2254 $('#svg_width_value')[0].value = splitSvgWidth[1];
+                    2260 $('#autorefresh_mode')[0].checked = Configuration.autorefreshOn;
+                    2261 $('#autorefresh_mode').button('refresh');
+                    2264 $('#type_collapse_limit')[0].value = Configuration.typeCollapseLimit;
+                    2267 $('#prev').button().click(function() {
+                    2270 $('#next').button().click(function() {
+                    2273 $('#footer').show();
+                    2276 var conf = $('#source_collection_conf_on').is(':checked') ? 1 : 0;
+                    2290 $('#waiter').dialog('close');
