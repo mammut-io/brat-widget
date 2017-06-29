@@ -64,33 +64,33 @@ var URLMonitor = (function($, window, undefined) {
         setArguments(args || null);
       };
 
-      var setCollection = function(coll, doc, args) {
-        var oldColl = that.url_hash.collection;
-        if (oldColl !== coll) {
-          changed = true;
-          that.url_hash.setCollection(coll);
-
-          // keep "blind" down while loading new collection
-          $('#' + base_id + '_waiter').dialog('open');
-
-          dispatcher.post('ajax', [{
-              action: 'getCollectionInformation',
-              collection: coll
-            }, 'collectionLoaded', {
-              collection: coll,
-              keep: true
-            }]);
-          dispatcher.post('collectionChanged', [coll, oldColl]);
-        }
-        setDocument(doc || '', args);
-      }
+      // var setCollection = function(coll, doc, args) {
+      //   var oldColl = that.url_hash.collection;
+      //   if (oldColl !== coll) {
+      //     changed = true;
+      //     that.url_hash.setCollection(coll);
+      //
+      //     // keep "blind" down while loading new collection
+      //     $('#' + base_id + '_waiter').dialog('open');
+      //
+      //     dispatcher.post('ajax', [{
+      //         action: 'getCollectionInformation',
+      //         collection: coll
+      //       }, 'collectionLoaded', {
+      //         collection: coll,
+      //         keep: true
+      //       }]);
+      //     dispatcher.post('collectionChanged', [coll, oldColl]);
+      //   }
+      //   setDocument(doc || '', args);
+      // };
 
       var updateState = function() {
         dispatcher.post('makeAjaxObsolete');
         if (!changed) {
           var new_url_hash = URLHash.parse(window.location.hash);
-          setCollection(new_url_hash.collection, new_url_hash.document,
-              $.extend(new_url_hash.arguments, newIntArgs));
+          // setCollection(new_url_hash.collection, new_url_hash.document,
+          //     $.extend(new_url_hash.arguments, newIntArgs));
           that.url_hash = new_url_hash;
           newIntArgs = {};
         }
@@ -120,7 +120,7 @@ var URLMonitor = (function($, window, undefined) {
           on('forceUpdate', forceUpdate).
           on('setArguments', setArguments).
           on('setDocument', setDocument).
-          on('setCollection', setCollection).
+          // on('setCollection', setCollection).
           on('preventReloadByURL', preventReloadByURL).
           on('allowReloadByURL', allowReloadByURL).
           on('init', init);

@@ -111,7 +111,7 @@ var Ajax = (function($, window, undefined) {
             if (!keep) delete pendingList[id];
           });
         }
-      }
+      };
 
       dispatcher.
           on('isReloadOkay', isReloadOkay).

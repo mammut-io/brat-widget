@@ -22,6 +22,7 @@ var webFontURLs = [
 //brat modules
 var Dispatcher = require('./dispatcher');
 var Visualizer = require('./visualizer');
+var VisualizerUI = require('./visualizer_ui');
 var URLMonitor = require('./url_monitor').URLMonitor;
 var Ajax = require('./ajax');
 var AnnotatorUI = require('./annotator_ui');
@@ -451,7 +452,8 @@ var AnnotatorView = VisualizerView.extend({
                 this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
                 //this.set_ajax_simulator(this.dispatcher);
                 this.ajax = new Ajax(this.el.id, this.dispatcher);
-                this.visualizerUI = new VisualizerUIsimulator(this.el.id, this.dispatcher, this.visualizer.svg);
+                //this.visualizerUI = new VisualizerUIsimulator(this.el.id, this.dispatcher, this.visualizer.svg);
+                this.visualizerUI = new VisualizerUI(this.el.id, this.dispatcher, this.visualizer.svg);
                 this.annotatorUI = new AnnotatorUI(this.el.id, this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm);
                 this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
                 //this.logger = new AnnotationLog(this.dispatcher);

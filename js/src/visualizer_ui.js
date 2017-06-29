@@ -1,5 +1,8 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
+
+var Configuration = require('./configuration');
+
 var VisualizerUI = (function($, window, undefined) {
     var VisualizerUI = function(base_id, dispatcher, svg) {
       var that = this;
@@ -117,7 +120,7 @@ var VisualizerUI = (function($, window, undefined) {
               docScroll = 0;
               showFileBrowser(); // resort
           });
-      }
+      };
 
       /* END collection browser sorting - related */
 
@@ -297,7 +300,7 @@ var VisualizerUI = (function($, window, undefined) {
         if (b[0].toLowerCase() == '<img>') return 1;
         // otherwise stable
         return Util.cmp(a[2],b[2]);
-      }
+      };
 
       var fillNormInfo = function(infoData, infoSeqId) {
         // extend comment popup with normalization data
@@ -362,11 +365,11 @@ var VisualizerUI = (function($, window, undefined) {
         } else {
           console.log('norm info drop point not found!'); //TODO XXX
         }
-      }
+      };
 
       var normCacheGet = function(dbName, dbKey, value) {
         return normInfoCache[dbName+':'+dbKey];
-      }
+      };
       var normCachePut = function(dbName, dbKey, value) {
         // TODO: non-stupid cache max size limit
         if (normInfoCacheSize >= normInfoCacheMaxSize) {
@@ -375,7 +378,7 @@ var VisualizerUI = (function($, window, undefined) {
         }
         normInfoCache[dbName+':'+dbKey] = value;
         normInfoCacheSize++;
-      }
+      };
 
       var displaySpanComment = function(
           evt, target, spanId, spanType, mods, spanText, commentText, 
@@ -532,7 +535,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       /* START form management - related */
 
-      initForm = function(form, opts) {
+      var initForm = function(form, opts) {
         opts = opts || {};
         var formId = form.attr('id');
 
@@ -1766,12 +1769,12 @@ var VisualizerUI = (function($, window, undefined) {
           $cmpLink.button();
         }
           
-        $docName = $('#document_name input').val(coll + doc);
-        var docName = $docName[0];
-        // TODO do this on resize, as well
-        // scroll the document name to the right, so the name is visible
-        // (even if the collection name isn't, fully)
-        docName.scrollLeft = docName.scrollWidth;
+        // $docName = $('#document_name input').val(coll + doc);
+        // var docName = $docName[0];
+        // // TODO do this on resize, as well
+        // // scroll the document name to the right, so the name is visible
+        // // (even if the collection name isn't, fully)
+        // docName.scrollLeft = docName.scrollWidth;
 
         $('#' + base_id + '_document_mtime').hide();
         invalidateSavedSVG();
@@ -2015,30 +2018,30 @@ var VisualizerUI = (function($, window, undefined) {
             width: 760,
             no_cancel: true
           }]);
-        dispatcher.post('ajax', [{
-            action: 'whoami'
-          }, function(response) {
-            var auth_button = $('#' + base_id + '_auth_button');
-            if (response.user) {
-              user = response.user;
-              dispatcher.post('messages', [[['Welcome back, user "' + user + '"', 'comment']]]);
-              auth_button.val('Logout ' + user);
-              dispatcher.post('user', [user]);
-              $('.login').show();
-            } else {
-              user = null;
-              auth_button.val('Login');
-              dispatcher.post('user', [null]);
-              $('.login').hide();
-              // don't show tutorial if there's a specific document (annoyance)
-              if (!doc) {
-                dispatcher.post('showForm', [tutorialForm]);
-                $('#tutorial-ok').focus();
-              }
-            }
-          },
-          { keep: true }
-        ]);
+        // dispatcher.post('ajax', [{
+        //     action: 'whoami'
+        //   }, function(response) {
+        //     var auth_button = $('#' + base_id + '_auth_button');
+        //     if (response.user) {
+        //       user = response.user;
+        //       dispatcher.post('messages', [[['Welcome back, user "' + user + '"', 'comment']]]);
+        //       auth_button.val('Logout ' + user);
+        //       dispatcher.post('user', [user]);
+        //       $('.login').show();
+        //     } else {
+        //       user = null;
+        //       auth_button.val('Login');
+        //       dispatcher.post('user', [null]);
+        //       $('.login').hide();
+        //       // don't show tutorial if there's a specific document (annoyance)
+        //       if (!doc) {
+        //         dispatcher.post('showForm', [tutorialForm]);
+        //         $('#tutorial-ok').focus();
+        //       }
+        //     }
+        //   },
+        //   { keep: true }
+        // ]);
         dispatcher.post('ajax', [{ action: 'loadConf' }, function(response) {
           if (response.config != undefined) {
             // TODO: check for exceptions
@@ -2331,6 +2334,10 @@ var VisualizerUI = (function($, window, undefined) {
           on('screamingHalt', onScreamingHalt).
           on('configurationChanged', configurationChanged).
           on('configurationUpdated', updateConfigurationUI);
+      return {
+        initForm: initForm
+      };
+
     };
 
     return VisualizerUI;
