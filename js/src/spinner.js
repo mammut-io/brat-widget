@@ -8,6 +8,7 @@ var Spinner = (function($, window, undefined) {
       var count = 0;
       var spin = function() {
         if (count === 0) {
+          console.log("Spinner: spin.");
           spinElement.css('display', 'block');
         }
         count++;
@@ -15,6 +16,7 @@ var Spinner = (function($, window, undefined) {
       var unspin = function() {
         count--;
         if (count === 0) {
+          console.log("Spinner: unspin.");
           spinElement.css('display', 'none');
         }
       };

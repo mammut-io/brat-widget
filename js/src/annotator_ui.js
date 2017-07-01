@@ -4,7 +4,7 @@
 require('./lib/jquery-ui.min');
 
 var AnnotatorUI = (function($, window, undefined) {
-    var AnnotatorUI = function(base_id, dispatcher, svg, initForm) {
+    var AnnotatorUI = function(base_id, Configuration, dispatcher, svg, initForm) {
       var that = this;
       var arcDragOrigin = null;
       var arcDragOriginBox = null;

@@ -1,10 +1,8 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
-var Configuration = require('./configuration');
-
 var VisualizerUI = (function($, window, undefined) {
-    var VisualizerUI = function(base_id, dispatcher, svg) {
+    var VisualizerUI = function(base_id, Configuration, dispatcher, svg) {
       var that = this;
 
       var messagePostOutFadeDelay = 1000;
@@ -2046,8 +2044,9 @@ var VisualizerUI = (function($, window, undefined) {
           if (response.config != undefined) {
             // TODO: check for exceptions
             try {
-              Configuration = JSON.parse(response.config);
+              Configuration.assign(JSON.parse(response.config));
             } catch(x) {
+              console.error('Error loading the configuration');
               // XXX Bad config
               Configuration = {};
               dispatcher.post('messages', [[['Corrupted configuration; resetting.', 'error']]]);

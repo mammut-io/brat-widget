@@ -9,8 +9,6 @@ var URLHash = require('./url_monitor').URLHash;
 
 var Util = require('./util');
 
-var Configuration = require('./configuration');
-
 var Visualizer = (function($, window, undefined) {
     var DocumentData = function(text) {
       this.text = text;
@@ -305,7 +303,7 @@ var Visualizer = (function($, window, undefined) {
       });
     };
 
-    var Visualizer = function(base_id, dispatcher, svgId, webFontURLs) {
+    var Visualizer = function(base_id, Configuration, dispatcher, svgId, webFontURLs) {
       var $svgDivArray = (_.isString(svgId) ? $('#' + svgId) : [svgId]);
       if (!$svgDivArray.length) {
         throw Error('Could not find container with id="' + svgId + '"');

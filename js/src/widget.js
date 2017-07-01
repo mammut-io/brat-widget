@@ -20,6 +20,7 @@ var webFontURLs = [
     require('file-loader!./static/fonts/Liberation_Sans-Regular.ttf')
 ];
 //brat modules
+var Configuration = require('./configuration');
 var Dispatcher = require('./dispatcher');
 var Visualizer = require('./visualizer');
 var VisualizerUI = require('./visualizer_ui');
@@ -62,7 +63,8 @@ var VisualizerModel = widgets.DOMWidgetModel.extend({
 var AnnotatorModel = VisualizerModel.extend({
     defaults: _.extend(_.result(this, 'widgets.DOMWidgetModel.prototype.defaults'), {
         _model_name: 'AnnotatorModel',
-        _view_name: 'AnnotatorView'
+        _view_name: 'AnnotatorView',
+        general_configuration: {}
     })
 });
 
@@ -75,7 +77,7 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         if (this.dispatcher === undefined) {
             this.el.id = "brat_" + new Date().getTime().toString();
             var $divSvg = $("<div id='" + this.el.id + "_svg'></div>").appendTo(this.el);
-            this.embed($divSvg, this.model.get('collection'), this.model.get('value'));
+            this.embed($divSvg, this.model);
         }
         this.model.on('change:value', this.value_changed, this);
     },
@@ -84,18 +86,14 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         console.log('Value changed!!!');
     },
 
-    // container: ID or jQuery element
-    // collData: the collection data (in the format of the result of
-    //   http://.../brat/ajax.cgi?action=getCollectionInformation&collection=...
-    // docData: the document data (in the format of the result of
-    //   http://.../brat/ajax.cgi?action=getDocument&collection=...&document=...
-    // returns the embedded visualizer's dispatcher object
-    embed: function (container, collData, docData) {
+    embed: function (container, model) {
+        var collData = model.get('collection');
+        var docData = model.get('value');
         if (this.dispatcher === undefined) {
             this.dispatcher = new Dispatcher();
         }
         if (this.visualizer === undefined) {
-            this.visualizer = new Visualizer(this.el.id, this.dispatcher, container, webFontURLs);
+            this.visualizer = new Visualizer(this.el.id, Configuration, this.dispatcher, container, webFontURLs);
         }
         docData.collection = null;
         this.dispatcher.post('collectionLoaded', [collData]);
@@ -104,346 +102,12 @@ var VisualizerView = widgets.DOMWidgetView.extend({
 });
 
 
-var VisualizerUIsimulator = (function ($, window, undefined) {
-    var VisualizerUIsimulator = function (base_id, dispatcher, svg) {
-        /* START message display - related */
-        var $pulluptrigger = $('#' + base_id + '_pulluptrigger');
-        var showPullupTrigger = function () {
-            $pulluptrigger.show('puff');
-        };
-        var $messageContainer = $('#' + base_id + '_messages');
-        var $messagepullup = $('#' + base_id + '_messagepullup');
-        var pullupTimer = null;
-        var displayMessages = function (msgs) {
-            var initialMessageNum = $messagepullup.children().length;
-
-            if (msgs === false) {
-                console.log('Simulator - Messages: clean all messages.');
-                $messageContainer.children().each(function (msgElNo, msgEl) {
-                    $(msgEl).remove();
-                });
-            } else {
-                $.each(msgs, function (msgNo, msg) {
-                    console.log('Simulator - Messages: ' + msg);
-                    var element;
-                    var timer = null;
-                    try {
-                        element = $('<div class="' + msg[1] + '">' + msg[0] + '</div>');
-                    }
-                    catch (x) {
-                        escaped = msg[0].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        element = $('<div class="error"><b>[ERROR: could not display the following message normally due to malformed XML:]</b><br/>' + escaped + '</div>');
-                    }
-                    var pullupElement = element.clone();
-                    $messageContainer.append(element);
-                    $messagepullup.append(pullupElement.css('display', 'none'));
-                    slideToggle(pullupElement, true, true);
-
-                    var fader = function () {
-                        if ($messagepullup.is(':visible')) {
-                            element.remove();
-                        } else {
-                            element.hide('slow', function () {
-                                element.remove();
-                            });
-                        }
-                    };
-                    var delay = (msg[2] === undefined)
-                        ? messageDefaultFadeDelay
-                        : (msg[2] === -1)
-                            ? null
-                            : (msg[2] * 1000);
-                    if (delay === null) {
-                        var button = $('<input type="button" value="OK"/>');
-                        element.prepend(button);
-                        button.click(function (evt) {
-                            timer = setTimeout(fader, 0);
-                        });
-                    } else {
-                        timer = setTimeout(fader, delay);
-                        element.mouseover(function () {
-                            clearTimeout(timer);
-                            element.show();
-                        }).mouseout(function () {
-                            timer = setTimeout(fader, messagePostOutFadeDelay);
-                        });
-                    }
-                    // setTimeout(fader, messageDefaultFadeDelay);
-                });
-
-                // limited history - delete oldest
-                var $messages = $messagepullup.children();
-                for (var i = 0; i < $messages.length - maxMessages; i++) {
-                    $($messages[i]).remove();
-                }
-            }
-
-            // if there is change in the number of messages, may need to
-            // tweak trigger visibility
-            var messageNum = $messagepullup.children().length;
-            if (messageNum != initialMessageNum) {
-                if (messageNum == 0) {
-                    // all gone; nothing to trigger
-                    $('#' + base_id + '_pulluptrigger').hide('slow');
-                } else if (initialMessageNum == 0) {
-                    // first messages, show trigger at fade
-                    setTimeout(showPullupTrigger, messageDefaultFadeDelay + 250);
-                }
-            }
-        };
-        // hide pullup trigger by default, show on first message
-        $pulluptrigger.hide();
-        $pulluptrigger.mouseenter(function (evt) {
-            $('#' + base_id + '_pulluptrigger').hide('puff');
-            clearTimeout(pullupTimer);
-            slideToggle($messagepullup.stop(), true, true, true);
-        });
-        $messagepullup.mouseleave(function (evt) {
-            setTimeout(showPullupTrigger, 500);
-            clearTimeout(pullupTimer);
-            pullupTimer = setTimeout(function () {
-                slideToggle($messagepullup.stop(), false, true, true);
-            }, 500);
-        });
-        /* END message display - related */
-
-        /* START form management - related */
-        var initForm = function (form, opts) {
-            opts = opts || {};
-            //var formId = form.attr('id');
-
-            // alsoResize is special
-            var alsoResize = opts.alsoResize;
-            delete opts.alsoResize;
-
-            // Always add OK and Cancel
-            var buttons = (opts.buttons || []);
-            if (opts.no_ok) {
-                delete opts.no_ok;
-            } else {
-                buttons.push({
-                    //id: formId + "-ok",
-                    text: "OK",
-                    click: function () {
-                        //form.submit();
-                    }
-                });
-            }
-            if (opts.no_cancel) {
-                delete opts.no_cancel;
-            } else {
-                buttons.push({
-                    //id: formId + "-cancel",
-                    text: "Cancel",
-                    click: function () {
-                        form.dialog('close');
-                    }
-                });
-            }
-            delete opts.buttons;
-
-            opts = $.extend({
-                autoOpen: false,
-                closeOnEscape: true,
-                buttons: buttons,
-                modal: true
-            }, opts);
-
-            //form.dialog(opts);
-            //form.bind('dialogclose', function () {
-            //    if (form == currentForm) {
-            //        currentForm = null;
-            //    }
-            //});
-
-            // HACK: jQuery UI's dialog does not support alsoResize
-            // nor does resizable support a jQuery object of several
-            // elements
-            // See: http://bugs.jqueryui.com/ticket/4666
-            if (alsoResize) {
-                //form.parent().resizable('option', 'alsoResize',
-                //    '#' + form.attr('id') + ', ' + alsoResize);
-            }
-        };
-
-        var unsafeDialogOpen = function ($dialog) {
-            // does not restrict tab key to the dialog
-            // does not set the focus, nor change position
-            // but is much faster than dialog('open') for large dialogs, see
-            // https://github.com/nlplab/brat/issues/934
-
-            var self = $dialog.dialog('instance');
-
-            if (self._isOpen) {
-                return;
-            }
-
-            self._isOpen = true;
-            self.opener = $(self.document[0].activeElement);
-
-            self._size();
-            self._createOverlay();
-            self._moveToTop(null, true);
-
-            if (self.overlay) {
-                self.overlay.css("z-index", self.uiDialog.css("z-index") - 1);
-            }
-            self._show(self.uiDialog, self.options.show);
-            self._trigger('open');
-        };
-
-        var showForm = function (form, unsafe) {
-            currentForm = form;
-            // as suggested in http://stackoverflow.com/questions/2657076/jquery-ui-dialog-fixed-positioning
-            form.parent().css({position: "fixed"});
-            if (unsafe) {
-                unsafeDialogOpen(form);
-            } else {
-                form.dialog('open');
-            }
-            slideToggle($('#pulldown').stop(), false);
-            return form;
-        };
-
-        var hideForm = function () {
-            if (!currentForm) return;
-            // currentForm.fadeOut(function() { currentForm = null; });
-            currentForm.dialog('close');
-            currentForm = null;
-        };
-
-        /* END form management - related */
-
-        dispatcher.on('messages', displayMessages).on('initForm', initForm);
-        return {
-            initForm: initForm
-        };
-    };
-
-    return VisualizerUIsimulator;
-})($, window);
-
-
 var AnnotatorView = VisualizerView.extend({
-        set_ajax_simulator: function (dispatcher) {
-            var PROTOCOL_VERSION = 1;
-            var pending = 0;
-            var count = 0;
-            var pendingList = {};
-
-            // merge data will get merged into the response data
-            // before calling the callback
-            var ajaxCall = function (data, callback, merge, extraOptions) {
-                merge = merge || {};
-                dispatcher.post('spin');
-                pending++;
-                var id = count++;
-
-                // special value: `merge.keep = true` prevents obsolescence
-                pendingList[id] = merge.keep || false;
-                delete merge.keep;
-
-                // If no protocol version is explicitly set, set it to current
-                if (data.toString() == '[object FormData]') {
-                    data.append('protocol', PROTOCOL_VERSION);
-                } else if (data['protocol'] === undefined) {
-                    // TODO: Extract the protocol version somewhere global
-                    data['protocol'] = PROTOCOL_VERSION;
-                }
-
-                options = {
-                    url: 'ajax.cgi',
-                    data: data,
-                    type: 'POST',
-                    success: function (response) {
-                        pending--;
-                        // If no exception is set, verify the server results
-                        if (response.exception == undefined && response.action !== data.action) {
-                            console.error('Action ' + data.action +
-                                ' returned the results of action ' + response.action);
-                            response.exception = true;
-                            dispatcher.post('messages', [[['Protocol error: Action' + data.action + ' returned the results of action ' + response.action + ' maybe the server is unable to run, please run tools/troubleshooting.sh from your installation to diagnose it', 'error', -1]]]);
-                        }
-
-                        // If the request is obsolete, do nothing; if not...
-                        if (pendingList.hasOwnProperty(id)) {
-                            dispatcher.post('messages', [response.messages]);
-                            if (response.exception == 'configurationError'
-                                || response.exception == 'protocolVersionMismatch') {
-                                // this is a no-rescue critical failure.
-                                // Stop *everything*.
-                                pendingList = {};
-                                dispatcher.post('screamingHalt');
-                                // If we had a protocol mismatch, prompt the user for a reload
-                                if (response.exception == 'protocolVersionMismatch') {
-                                    if (confirm('The server is running a different version ' +
-                                            'from brat than your client, possibly due to a ' +
-                                            'server upgrade. Would you like to reload the ' +
-                                            'current page to update your client to the latest ' +
-                                            'version?')) {
-                                        window.location.reload(true);
-                                    } else {
-                                        dispatcher.post('messages', [[['Fatal Error: Protocol ' +
-                                        'version mismatch, please contact the administrator',
-                                            'error', -1]]]);
-                                    }
-                                }
-                                return;
-                            }
-
-                            delete pendingList[id];
-
-                            // if .exception is just Boolean true, do not process
-                            // the callback; if it is anything else, the
-                            // callback is responsible for handling it
-                            if (response.exception == true) {
-                                $('#waiter').dialog('close');
-                            } else if (callback) {
-                                $.extend(response, merge);
-                                dispatcher.post(0, callback, [response]);
-                            }
-                        }
-                        dispatcher.post('unspin');
-                    },
-                    error: function (response, textStatus, errorThrown) {
-                        pending--;
-                        dispatcher.post('unspin');
-                        $('#waiter').dialog('close');
-                        dispatcher.post('messages', [[['Error: Action' + data.action + ' failed on error ' + response.statusText, 'error']]]);
-                        console.error(textStatus + ':', errorThrown, response);
-                    }
-                };
-
-                if (extraOptions) {
-                    $.extend(options, extraOptions);
-                }
-                $.ajax(options);
-                return id;
-            };
-
-            var isReloadOkay = function () {
-                // do not reload while data is pending
-                return pending == 0;
-            };
-
-            var makeObsolete = function (all) {
-                if (all) {
-                    pendingList = {};
-                } else {
-                    $.each(pendingList, function (id, keep) {
-                        if (!keep) delete pendingList[id];
-                    });
-                }
-            };
-
-            dispatcher.on('isReloadOkay', isReloadOkay).on('makeAjaxObsolete', makeObsolete).on('ajax', ajaxCall);
-        },
-
         render: function () {
             AnnotatorView.__super__.render.apply(this);
         },
 
-        embed: function (container, collData, docData) {
+        embed: function (container, model) {
             AnnotatorView.__super__.embed.apply(this, arguments);
             if (this.urlMonitor === undefined) {
                 $(this.get_forms_div_str()).appendTo(this.el);
@@ -451,13 +115,33 @@ var AnnotatorView = VisualizerView.extend({
 
                 this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
                 //this.set_ajax_simulator(this.dispatcher);
-                this.ajax = new Ajax(this.el.id, this.dispatcher);
+                this.ajax = new Ajax(this.el.id, this.dispatcher, this.simulate_ajax, model);
                 //this.visualizerUI = new VisualizerUIsimulator(this.el.id, this.dispatcher, this.visualizer.svg);
-                this.visualizerUI = new VisualizerUI(this.el.id, this.dispatcher, this.visualizer.svg);
-                this.annotatorUI = new AnnotatorUI(this.el.id, this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm);
+                this.visualizerUI = new VisualizerUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg);
+                this.annotatorUI = new AnnotatorUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm);
                 this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
                 //this.logger = new AnnotationLog(this.dispatcher);
                 this.dispatcher.post('init');
+            }
+        },
+
+        simulate_ajax: function(model, options) {
+            var response = 'AJAX SIMULATOR';
+            switch (options.data.action) {
+                case 'loadConf':
+                    console.log(response + ': loading configuration.');
+                    response = {
+                        action: options.data.action,
+                        config: model.get('general_configuration')
+                    };
+                    options.success(response);
+                    break;
+                default:
+                    var textStatus = 'Not supported action';
+                    var errorThrown = textStatus + ' ' + options.data.action;
+                    console.error(response + ': ' + errorThrown);
+                    response = { statusText: textStatus};
+                    options.error(response, textStatus, errorThrown);
             }
         },
 
