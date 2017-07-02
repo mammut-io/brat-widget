@@ -93,9 +93,9 @@ module.exports = [
         externals: ['jupyter-js-widgets'],
         plugins: [
             new webpack.ProvidePlugin({
-                $: "jquery",
-                jQuery: "jquery",
-                "window.jQuery": "jquery"
+                $: "./lib/jquery.min.js",
+                jQuery: "./lib/jquery.min.js",
+                "window.jQuery": "./lib/jquery.min.js"
             })
         ]
     }

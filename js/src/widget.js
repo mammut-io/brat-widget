@@ -1,6 +1,6 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
-var $ = require('jquery');
+var $ = require('./lib/jquery.min');
 
 // brat jquery-theme styles
 require('./static/jquery-theme/jquery-ui.css');
