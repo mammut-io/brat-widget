@@ -156,20 +156,20 @@ var AnnotatorView = VisualizerView.extend({
         },
 
         get_forms_div_str: function () {
-            var strForms = `<div id='{base_id}_forms'><form id="{base_id}_import_form" class="dialog" title="Import">
-      <fieldset id="import_form_docid">
+            var strForms = `<div id="{base_id}_forms"><form id="{base_id}_import_form" class="dialog" title="Import">
+      <fieldset id="{base_id}_import_form_docid">
         <legend>Document ID</legend>
-        <input id="import_docid" class="borderless"/>
+        <input id="{base_id}_import_docid" class="borderless"/>
       </fieldset>
-      <fieldset id="import_form_text">
+      <fieldset id="{base_id}_import_form_text">
         <legend>Document text</legend>
-        <textarea id="import_text" class="borderless"/>
+        <textarea id="{base_id}_import_text" class="borderless"/>
       </fieldset>
     </form>
     <form id="{base_id}_import_coll_form" class="dialog" title="Import collection">
-      <fieldset id="import_coll_form_text">
+      <fieldset id="{base_id}_import_coll_form_text">
         <legend>Collection archive (.zip, .tar.gz)</legend>
-        <input type="file" id="import_coll" class="borderless" accept="application/zip,application/x-gzip" />
+        <input type="file" id="{base_id}_import_coll" class="borderless" accept="application/zip,application/x-gzip" />
       </fieldset>
     </form>
     <!-- Data dialog -->
@@ -178,30 +178,30 @@ var AnnotatorView = VisualizerView.extend({
       <fieldset class="small-buttons">
         <legend>Export</legend>
         <div class="optionRow">
-          <span id="document_export" class="optionLabel">Document data</span>
-          <span id="source_files"/>
+          <span id="{base_id}_document_export" class="optionLabel">Document data</span>
+          <span id="{base_id}_source_files"/>
         </div>
-        <div id="document_visualization" class="optionRow">
+        <div id="{base_id}_document_visualization" class="optionRow">
           <span class="optionLabel">Visualization</span>
-          <span id="stored_file_spinner" class="ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only">
+          <span id="{base_id}_stored_file_spinner" class="ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only">
             <span class="ui-button-text">
               <img style="vertical-align:bottom" height="18"
                    src="` + spinnerGif + `"/>
             </span>
           </span>
-          <span id="stored_file_regenerate" title="Regenerate static visualization of the current document">regenerate</span>
-          <span id="download_stored"/>
+          <span id="{base_id}_stored_file_regenerate" title="Regenerate static visualization of the current document">regenerate</span>
+          <span id="{base_id}_download_stored"/>
         </div>
         <div class="optionRow">
           <span class="optionLabel">Collection data</span>
-          <span id="source_collection" title="Download the entire current collection as a .tar.gz package"/>
+          <span id="{base_id}_source_collection" title="Download the entire current collection as a .tar.gz package"/>
           Conf files:
-          <span id="source_collection_conf">
-            <input type="radio" id="source_collection_conf_off" value="0"
+          <span id="{base_id}_source_collection_conf">
+            <input type="radio" id="{base_id}_source_collection_conf_off" value="0"
                    name="source_collection_conf_radio"/>
             <label for="source_collection_conf_off"
                    title="Do not include the configuration files">off</label>
-            <input type="radio" id="source_collection_conf_on" value="1"
+            <input type="radio" id="{base_id}_source_collection_conf_on" value="1"
                    name="source_collection_conf_radio" checked="checked"/>
             <label for="source_collection_conf_on"
                    title="Do include the configuration files">on</label>
@@ -217,13 +217,13 @@ var AnnotatorView = VisualizerView.extend({
         </div>
       </fieldset>
       <!-- Data dialog automatic annotation section -->
-      <div id="auto_tagging_login_control" class="login">
-        <fieldset id="auto_tagging_fieldset" class="small-buttons">
+      <div id="{base_id}_auto_tagging_login_control" class="login">
+        <fieldset id="{base_id}_auto_tagging_fieldset" class="small-buttons">
           <legend>Automatic annotation</legend>
           <div class="optionRow">Automatically tag current document</div>
-          <div id="tagger_buttons"/>
+          <div id="{base_id}_tagger_buttons"/>
         </fieldset>
-        <fieldset id="no_tagger_message" style="display:none">
+        <fieldset id="{base_id}_no_tagger_message" style="display:none">
           <legend>Automatic annotation</legend>
           <div style="color:gray; font-size:80%; text-align:center; margin:1em">(No tools set up. Please contact server administrator if needed.)</div>
         </fieldset>
@@ -233,14 +233,14 @@ var AnnotatorView = VisualizerView.extend({
         <legend>Import</legend>
         <div class="optionRow">
           <span class="optionLabel">New document</span>
-          <input id="import_button" type="button" class="login ui-button-text" value="Enter text" tabindex="-1" title="Import a new document into the current collection"/>
+          <input id="{base_id}_import_button" type="button" class="login ui-button-text" value="Enter text" tabindex="-1" title="Import a new document into the current collection"/>
         </div>
         <!-- XXX Taken out until such time when serverside is
                  implemented, pending resolution of issues
                  raised in #216
         <div class="optionRow">
           <span class="optionLabel">New collection</span>
-          <input id="import_collection_button" type="button" class="login ui-button-text" value="Upload archive" tabindex="-1" title="Import an entire collection into the current installation"/>
+          <input id="{base_id}_import_collection_button" type="button" class="login ui-button-text" value="Upload archive" tabindex="-1" title="Import an entire collection into the current installation"/>
         </div>
         -->
       </fieldset>
@@ -250,27 +250,27 @@ var AnnotatorView = VisualizerView.extend({
           <legend>Delete</legend>
           <div class="optionRow">
             <span class="optionLabel">Current document</span>
-            <input id="delete_document_button" type="button" class="login ui-button-text" value="Delete document" tabindex="-1" title="Permanently remove the current document and its annotations from the collection."/>
+            <input id="{base_id}_delete_document_button" type="button" class="login ui-button-text" value="Delete document" tabindex="-1" title="Permanently remove the current document and its annotations from the collection."/>
           </div>
           <div class="optionRow">
             <span class="optionLabel">Current collection</span>
-            <input id="delete_collection_button" type="button" class="login ui-button-text" value="Delete collection" tabindex="-1" title="Permanently remove the entire current collection and all documents in it."/>
+            <input id="{base_id}_delete_collection_button" type="button" class="login ui-button-text" value="Delete collection" tabindex="-1" title="Permanently remove the entire current collection and all documents in it."/>
           </div>
         </fieldset>
       </div>
     </form>
     <!-- Options dialog -->
     <form id="{base_id}_options_form" class="dialog" title="Options">
-      <fieldset id="options_form_visual">
+      <fieldset id="{base_id}_options_form_visual">
         <legend>Visual options</legend>
         <div class="optionRow">
           <span class="optionLabel">Abbreviate labels</span>
-          <span id="label_abbreviations" class="radio_group small-buttons">
-            <input type="radio" id="label_abbreviations_off" value="off"
+          <span id="{base_id}_label_abbreviations" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_label_abbreviations_off" value="off"
                    name="label_abbrev_radio"/>
             <label for="label_abbreviations_off"
                    title="Always display full form of labels.">Off</label>
-            <input type="radio" id="label_abbreviations_on" value="on"
+            <input type="radio" id="{base_id}_label_abbreviations_on" value="on"
                    name="label_abbrev_radio" checked="checked"/>
             <label for="label_abbreviations_on"
                    title="Abbreviate annotation labels in limited space.">On</label>
@@ -278,12 +278,12 @@ var AnnotatorView = VisualizerView.extend({
         </div>
         <div class="optionRow">
           <span class="optionLabel">Text background</span>
-          <span id="text_backgrounds" class="radio_group small-buttons">
-            <input type="radio" id="text_backgrounds_blank" value="blank"
+          <span id="{base_id}_text_backgrounds" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_text_backgrounds_blank" value="blank"
                    name="text_background_radio"/>
             <label for="text_backgrounds_blank"
                    title="Blank white text backgrounds.">Blank</label>
-            <input type="radio" id="text_backgrounds_striped" value="striped"
+            <input type="radio" id="{base_id}_text_backgrounds_striped" value="striped"
                    name="text_background_radio" checked="checked"/>
             <label for="text_backgrounds_striped"
                    title="Striped text backgrounds with every second sentence on light gray background.">Striped</label>
@@ -291,7 +291,7 @@ var AnnotatorView = VisualizerView.extend({
         </div>
         <div class="optionRow">
           <span class="optionLabel">Layout density</span>
-          <span id="layout_density" class="radio_group small-buttons">
+          <span id="{base_id}_layout_density" class="radio_group small-buttons">
             <input type="radio" id="layout_density1" value="1"
                    name="layout_radio"/>
             <label for="layout_density1"
@@ -308,23 +308,23 @@ var AnnotatorView = VisualizerView.extend({
         </div>
         <div class="optionRow">
           <span class="optionLabel">Visualization width</span>
-          <input id="svg_width_value" maxlength="3" size="3" value="100"
+          <input id="{base_id}_svg_width_value" maxlength="3" size="3" value="100"
                  style="text-align:right"/>
-          <span id="svg_width_unit" class="radio_group small-buttons">
-            <input type="radio" id="svg_width_unit_percent" value="%"
+          <span id="{base_id}_svg_width_unit" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_svg_width_unit_percent" value="%"
                    name="svg_width_radio" checked="checked"/>
             <label for="svg_width_unit_percent">percent</label>
-            <input type="radio" id="svg_width_unit_pixels" value="px"
+            <input type="radio" id="{base_id}_svg_width_unit_pixels" value="px"
                    name="svg_width_radio"/>
             <label for="svg_width_unit_pixels">pixels</label>
           </span>
         </div>
       </fieldset>
-      <fieldset id="options_form_annotation" class="login">
+      <fieldset id="{base_id}_options_form_annotation" class="login">
         <legend>Annotation options</legend>
         <div class="optionRow">
           <span class="optionLabel">Annotation mode</span>
-          <span id="annotation_speed" class="radio_group small-buttons">
+          <span id="{base_id}_annotation_speed" class="radio_group small-buttons">
             <input type="radio" id="annotation_speed1" value="1"
                    name="annspeed_radio" checked="checked"/>
             <label for="annotation_speed1"
@@ -337,21 +337,21 @@ var AnnotatorView = VisualizerView.extend({
                    name="annspeed_radio"/>
             <label for="annotation_speed3"
                    title="Rapid annotation mode: activate automatic support for speeding up annotation process. Suitable for experienced annotators performing an established task.">Rapid</label>
-            <select id="rapid_model"/>
+            <select id="{base_id}_rapid_model"/>
           </span>
         </div>
         <div class="optionRow">
           <span class="optionLabel">Type Collapse Limit</span>
-          <input id="type_collapse_limit" maxlength="3" size="3" value="30"
+          <input id="{base_id}_type_collapse_limit" maxlength="3" size="3" value="30"
                  style="text-align:right"/>
         </div>
       </fieldset>
-      <fieldset id="options_form_network">
+      <fieldset id="{base_id}_options_form_network">
         <legend>Network options</legend>
         <div class="optionRow">
           <span class="optionLabel">Collaboration</span>
           <span class="small-buttons">
-            <input id="autorefresh_mode" type="checkbox"/>
+            <input id="{base_id}_autorefresh_mode" type="checkbox"/>
             <label for="autorefresh_mode"
                    title="Toggle the autorefresh mode on/off. When autorefresh is on, the system will periodically check with the server for updates to the document you are working on. This is useful when collaborating on annotation but consumes some resources, so you may wish to turn autorefresh off if there are no simultaneous edits.">Autorefresh</label>
           </span>
@@ -361,12 +361,12 @@ var AnnotatorView = VisualizerView.extend({
     <!-- More collection information dialog -->
     <form id="{base_id}_more_information_dialog" class="dialog" title="Collection information">
       <fieldset>
-        <textarea id="more_info_readme" readonly="readonly" class="borderless"/>
+        <textarea id="{base_id}_more_info_readme" readonly="readonly" class="borderless"/>
       </fieldset>
     </form>
     <!-- Search dialog -->
     <form id="{base_id}_search_form" class="dialog" title="Search">
-      <div id="search_tabs">
+      <div id="{base_id}_search_tabs">
         <ul>
           <li><a href="#search_tab_text">Text</a></li>
           <li><a href="#search_tab_entity">Entity</a></li>
@@ -377,58 +377,58 @@ var AnnotatorView = VisualizerView.extend({
           <li><a href="#search_tab_load">Load</a></li>
           -->
         </ul>
-        <div id="search_tab_text">
+        <div id="{base_id}_search_tab_text">
           <table class="fullwidth">
             <tr>
               <td>Text</td>
               <td>
-                <input id="search_form_text_text" class="fullwidth"
+                <input id="{base_id}_search_form_text_text" class="fullwidth"
                     placeholder="Text to match"/>
               </td>
             </tr>
           </table>
         </div>
-        <div id="search_tab_entity">
+        <div id="{base_id}_search_tab_entity">
           <table class="fullwidth">
             <tr>
               <td>Type</td>
               <td>
-                <select id="search_form_entity_type"/>
+                <select id="{base_id}_search_form_entity_type"/>
               </td>
             </tr>
             <tr>
               <td>Text</td>
               <td>
-                <input id="search_form_entity_text" class="fullwidth"
+                <input id="{base_id}_search_form_entity_text" class="fullwidth"
                     placeholder="Text to match (empty=anything)"/>
               </td>
             </tr>
           </table>
         </div>
-        <div id="search_tab_event">
+        <div id="{base_id}_search_tab_event">
           <table class="fullwidth">
             <tr>
               <td>Type</td>
               <td colspan="3">
-                <select id="search_form_event_type"/>
+                <select id="{base_id}_search_form_event_type"/>
               </td>
             </tr>
             <tr>
               <td>Trigger</td>
               <td colspan="3">
-                <input id="search_form_event_trigger" class="fullwidth"
+                <input id="{base_id}_search_form_event_trigger" class="fullwidth"
                     placeholder="Text to match (empty=anything)"/>
               </td>
             </tr>
-            <tbody id="search_form_event_roles"/>
+            <tbody id="{base_id}_search_form_event_roles"/>
           </table>
         </div>
-        <div id="search_tab_relation">
+        <div id="{base_id}_search_tab_relation">
           <table class="fullwidth">
             <tr>
               <td>Type</td>
               <td colspan="2">
-                <select id="search_form_relation_type" class="fullwidth"/>
+                <select id="{base_id}_search_form_relation_type" class="fullwidth"/>
               </td>
             </tr>
             <tr>
@@ -454,14 +454,14 @@ var AnnotatorView = VisualizerView.extend({
           </table>
           <div class="optionRow">
             <span class="optionLabel">Show arg text</span>
-            <span id="search_form_relation_show_arg_text"
+            <span id="{base_id}_search_form_relation_show_arg_text"
                   class="radio_group small-buttons">
-              <input type="radio" id="search_form_relation_show_arg_text_off"
+              <input type="radio" id="{base_id}_search_form_relation_show_arg_text_off"
                      value="off" name="search_form_relation_show_arg_text_radio"
                      checked="checked"/>
               <label for="search_form_relation_show_arg_text_off"
                      title="Don't show texts of relation arguments in search results.">off</label>
-              <input type="radio" id="search_form_relation_show_arg_text_on"
+              <input type="radio" id="{base_id}_search_form_relation_show_arg_text_on"
                      value="on"
                      name="search_form_relation_show_arg_text_radio"/>
               <label for="search_form_relation_show_arg_text_on"
@@ -470,14 +470,14 @@ var AnnotatorView = VisualizerView.extend({
           </div>
           <div class="optionRow">
             <span class="optionLabel">Show arg type</span>
-            <span id="search_form_relation_show_arg_type"
+            <span id="{base_id}_search_form_relation_show_arg_type"
                   class="radio_group small-buttons">
-              <input type="radio" id="search_form_relation_show_arg_type_off"
+              <input type="radio" id="{base_id}_search_form_relation_show_arg_type_off"
                      value="off" name="search_form_relation_show_arg_type_radio"
                      checked="checked"/>
               <label for="search_form_relation_show_arg_type_off"
                      title="Don't show types of relation arguments in search results.">off</label>
-              <input type="radio" id="search_form_relation_show_arg_type_on"
+              <input type="radio" id="{base_id}_search_form_relation_show_arg_type_on"
                      value="on"
                      name="search_form_relation_show_arg_type_radio"/>
               <label for="search_form_relation_show_arg_type_on"
@@ -485,12 +485,12 @@ var AnnotatorView = VisualizerView.extend({
             </span>
           </div>
         </div>
-        <div id="search_tab_note">
+        <div id="{base_id}_search_tab_note">
           <table class="fullwidth">
             <tr>
               <td>Category</td>
               <td>
-                <select id="search_form_note_category" class="fullwidth">
+                <select id="{base_id}_search_form_note_category" class="fullwidth">
                   <option value="">- Any -</option>
                   <option value="entity">Entity</option>
                   <option value="event">Event</option>
@@ -499,28 +499,28 @@ var AnnotatorView = VisualizerView.extend({
                 </select>
               </td>
             </tr>
-            <tr id="search_form_note_type_row">
+            <tr id="{base_id}_search_form_note_type_row">
               <td>Type</td>
               <td>
-                <select id="search_form_note_type" class="fullwidth"/>
+                <select id="{base_id}_search_form_note_type" class="fullwidth"/>
               </td>
             </tr>
             <tr>
               <td>Text</td>
               <td>
-                <input id="search_form_note_text" class="fullwidth"
+                <input id="{base_id}_search_form_note_text" class="fullwidth"
                     placeholder="Text to match (empty=anything)"/>
               </td>
             </tr>
           </table>
         </div>
         <!-- XXX removed per #900
-        <div id="search_tab_load">
+        <div id="{base_id}_search_tab_load">
           <table class="fullwidth">
             <tr>
               <td>File:</td>
               <td>
-                <input type="file" name="file" id="search_form_load_file" class="fullwidth"/>
+                <input type="file" name="file" id="{base_id}_search_form_load_file" class="fullwidth"/>
                 <input type="hidden" name="action" value="searchLoad"/>
               </td>
             </tr>
@@ -528,17 +528,17 @@ var AnnotatorView = VisualizerView.extend({
         </div>
         -->
       </div>
-      <fieldset id="search_options">
+      <fieldset id="{base_id}_search_options">
         <legend>Options</legend>
-        <a href="" id="advanced_search_option_toggle">Show advanced</a>
+        <a href="" id="{base_id}_advanced_search_option_toggle">Show advanced</a>
         <div class="optionRow">
           <span class="optionLabel">Search in current</span>
-          <span id="search_scope" class="radio_group small-buttons">
-            <input type="radio" id="search_scope_doc" value="document"
+          <span id="{base_id}_search_scope" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_search_scope_doc" value="document"
                    name="search_scope_radio" checked="checked"/>
             <label for="search_scope_doc"
                    title="Search in current document only.">document</label>
-            <input type="radio" id="search_scope_coll" value="collection"
+            <input type="radio" id="{base_id}_search_scope_coll" value="collection"
                    name="search_scope_radio"/>
             <label for="search_scope_coll"
                    title="Search in all documents in current collection.">collection</label>
@@ -547,32 +547,32 @@ var AnnotatorView = VisualizerView.extend({
         <div class="advancedOptions">
         <div class="optionRow">
           <span class="optionLabel">Concordancing</span>
-          <span id="concordancing" class="radio_group small-buttons">
-            <input type="radio" id="concordancing_off" value="document"
+          <span id="{base_id}_concordancing" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_concordancing_off" value="document"
                    name="concordancing_radio" checked="checked"/>
             <label for="concordancing_off"
                    title="Display matched search results only.">off</label>
-            <input type="radio" id="concordancing_on" value="collection"
+            <input type="radio" id="{base_id}_concordancing_on" value="collection"
                    name="concordancing_radio"/>
             <label for="concordancing_on"
                    title="In addition to search results, display also the text context of the matches in Key Word In Context (KWIC) format.">on</label>
           </span>
         </div>
-        <div id="context_size_div" class="optionRow">
-          <span class="optionLabel" style="margin-left:1em;">Context length</span> <input id="context_length" maxlength="3" size="3" value="50"/> characters
+        <div id="{base_id}_context_size_div" class="optionRow">
+          <span class="optionLabel" style="margin-left:1em;">Context length</span> <input id="{base_id}_context_length" maxlength="3" size="3" value="50"/> characters
         </div>
         <div class="optionRow">
           <span class="optionLabel">Match text as</span>
-          <span id="text_match" class="radio_group small-buttons">
-            <input type="radio" id="text_match_word" value="word"
+          <span id="{base_id}_text_match" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_text_match_word" value="word"
                    name="text_match_radio" checked="checked"/>
             <label for="text_match_word"
                    title="Match whole words only.">whole word</label>
-            <input type="radio" id="text_match_substr" value="substring"
+            <input type="radio" id="{base_id}_text_match_substr" value="substring"
                    name="text_match_radio"/>
             <label for="text_match_substr"
                    title="Match any substring.">any substring</label>
-            <input type="radio" id="text_match_regex" value="regex"
+            <input type="radio" id="{base_id}_text_match_regex" value="regex"
                    name="text_match_radio"/>
             <label for="text_match_regex"
                    title="Treat given text as regular expression.">regex</label>
@@ -580,12 +580,12 @@ var AnnotatorView = VisualizerView.extend({
         </div>
         <div class="optionRow">
           <span class="optionLabel">Match case</span>
-          <span id="match_case" class="radio_group small-buttons">
-            <input type="radio" id="match_case_off" value="document"
+          <span id="{base_id}_match_case" class="radio_group small-buttons">
+            <input type="radio" id="{base_id}_match_case_off" value="document"
                    name="match_case_radio" checked="checked"/>
             <label for="match_case_off"
                    title="Ignore character case in text search ('abc' matches 'ABC')">off</label>
-            <input type="radio" id="match_case_on" value="collection"
+            <input type="radio" id="{base_id}_match_case_on" value="collection"
                    name="match_case_radio"/>
             <label for="match_case_on"
                    title="Require identical character case in text search ('abc' does not match 'ABC')">on</label>
@@ -596,102 +596,102 @@ var AnnotatorView = VisualizerView.extend({
     </form>
     <!-- Span dialog (view only) -->
     <form id="{base_id}_viewspan_form" class="dialog" title="Span">
-      <fieldset id="viewspan_selected_fset">
+      <fieldset id="{base_id}_viewspan_selected_fset">
         <legend>Text</legend>
-        <a target="brat_linked" id="viewspan_highlight_link" href="#">Link</a>
-        <div id="viewspan_selected"/>
+        <a target="brat_linked" id="{base_id}_viewspan_highlight_link" href="#">Link</a>
+        <div id="{base_id}_viewspan_selected"/>
       </fieldset>
 
-      <fieldset id="viewspan_search_fieldset">
+      <fieldset id="{base_id}_viewspan_search_fieldset">
         <legend>Search</legend>
-        <div id="viewspan_search_links"/>
+        <div id="{base_id}_viewspan_search_links"/>
       </fieldset>
 
       <fieldset>
         <legend>Notes</legend>
-        <input id="viewspan_notes" class="borderless" readonly="readonly"/>
+        <input id="{base_id}_viewspan_notes" class="borderless" readonly="readonly"/>
       </fieldset>
     </form>
     <!-- Span dialog (view+edit) -->
     <form id="{base_id}_span_form" class="dialog" title="Span">
       <!-- Span dialog annotated text -->
-      <fieldset id="span_selected_fset">
+      <fieldset id="{base_id}_span_selected_fset">
         <legend>Text</legend>
-        <a target="brat_linked" id="span_highlight_link" href="#">Link</a>
-        <div id="span_selected"/>
+        <a target="brat_linked" id="{base_id}_span_highlight_link" href="#">Link</a>
+        <div id="{base_id}_span_selected"/>
       </fieldset>
       <!-- Span dialog search links -->
-      <fieldset id="span_search_fieldset">
+      <fieldset id="{base_id}_span_search_fieldset">
         <legend>Search</legend>
-        <div id="span_search_links"/>
+        <div id="{base_id}_span_search_links"/>
       </fieldset>
       <!-- Span dialog type selector -->
       <fieldset>
-        <div id="entity_and_event_wrapper" class="split_wrapper">
-          <div id="span_entity_section" class="wrapper_half_left">
-            <div id="entity_label" class="label-like">Entity type</div>
-            <div id="entity_types" class="scroll_wrapper_upper">
+        <div id="{base_id}_entity_and_event_wrapper" class="split_wrapper">
+          <div id="{base_id}_span_entity_section" class="wrapper_half_left">
+            <div id="{base_id}_entity_label" class="label-like">Entity type</div>
+            <div id="{base_id}_entity_types" class="scroll_wrapper_upper">
               <div class="scroller"/>
             </div>
             <!-- NOTE: the attribute labels must be *outside* of the
                  divs they logically belong to prevent scrollers
                  overflowing them. -->
-            <div id="entity_attribute_label"
+            <div id="{base_id}_entity_attribute_label"
                  class="label-like wrapper_lower_label">Entity attributes</div>
-            <div id="entity_attributes" class="scroll_wrapper_lower">
+            <div id="{base_id}_entity_attributes" class="scroll_wrapper_lower">
               <div class="scroller small-buttons"/>
             </div>
-          </div><div id="span_event_section" class="wrapper_half_right">
-            <div id="event_label" class="label-like">Event type</div>
-            <div id="event_types" class="scroll_wrapper_upper">
+          </div><div id="{base_id}_span_event_section" class="wrapper_half_right">
+            <div id="{base_id}_event_label" class="label-like">Event type</div>
+            <div id="{base_id}_event_types" class="scroll_wrapper_upper">
               <div class="scroller"/>
             </div>
-            <div id="event_attribute_label"
+            <div id="{base_id}_event_attribute_label"
                  class="wrapper_lower_label label-like">Event attributes</div>
-            <div id="event_attributes" class="scroll_wrapper_lower">
+            <div id="{base_id}_event_attributes" class="scroll_wrapper_lower">
               <div class="scroller small-buttons"/>
             </div>
           </div>
         </div>
       </fieldset>
       <!-- Span dialog normalization -->
-      <fieldset id="norm_fieldset">
+      <fieldset id="{base_id}_norm_fieldset">
         <legend>Normalization</legend>
-        <div id="norm_container">
-          <select id="span_norm_db"/>
-          <a id="span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="`+fugueShadowlessMagnifierPng+`" style="vertical-align: middle"/></a>
+        <div id="{base_id}_norm_container">
+          <select id="{base_id}_span_norm_db"/>
+          <a id="{base_id}_span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="`+fugueShadowlessMagnifierPng+`" style="vertical-align: middle"/></a>
           <span class="span_norm_label">ID:</span>
-          <input id="span_norm_id" class="span_norm_id_input"
+          <input id="{base_id}_span_norm_id" class="span_norm_id_input"
                  style="width:20%"/>
           <span class="span_norm_label">Ref:</span>
-          <input id="span_norm_txt" class="span_norm_txt_input"
+          <input id="{base_id}_span_norm_txt" class="span_norm_txt_input"
                  readonly="readonly" style="width:45%"
                  placeholder="Click here to search"/>
-          <a id="span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="`+fugueShadowlessExternalPng+`" style="vertical-align: middle"/></a>
-          <input id="clear_norm_button" type="button"
+          <a id="{base_id}_span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="`+fugueShadowlessExternalPng+`" style="vertical-align: middle"/></a>
+          <input id="{base_id}_clear_norm_button" type="button"
                  value="&#x2715;" title="Clear normalization"/>
         </div>
       </fieldset>
       <!-- Span dialog notes -->
       <fieldset>
         <legend>Notes</legend>
-        <div id="span_notes_container">
-          <input id="span_notes" class="borderless"/>
-          <input id="clear_span_notes_button" type="button"
+        <div id="{base_id}_span_notes_container">
+          <input id="{base_id}_span_notes" class="borderless"/>
+          <input id="{base_id}_clear_span_notes_button" type="button"
                  value="&#x2715;" title="Clear notes"/>
         </div>
       </fieldset>
     </form>
     <!-- Rapid mode span dialog -->
     <form id="{base_id}_rapid_span_form" class="dialog" title="Span type">
-      <fieldset id="rapid_span_selected_fset">
+      <fieldset id="{base_id}_rapid_span_selected_fset">
         <legend>Text</legend>
-        <div id="rapid_span_selected"/>
+        <div id="{base_id}_rapid_span_selected"/>
       </fieldset>
-      <div id="rapid_span_types" class="scroll_fset" style="height:250px">
+      <div id="{base_id}_rapid_span_types" class="scroll_fset" style="height:250px">
         <fieldset>
           <legend>Select type</legend>
-          <div class="scroller" id="rapid_span_types_div">
+          <div class="scroller" id="{base_id}_rapid_span_types_div">
             <!-- filled dynamically -->
           </div>
         </fieldset>
@@ -699,29 +699,29 @@ var AnnotatorView = VisualizerView.extend({
     </form>
     <!-- Arc dialog -->
     <form id="{base_id}_arc_form" class="dialog" title="Arc">
-      <fieldset id="arc_origin_fset">
+      <fieldset id="{base_id}_arc_origin_fset">
         <legend>From</legend>
-        <a target="brat_linked" id="arc_highlight_link" href="#">Link</a>
-        <div id="arc_origin"/>
+        <a target="brat_linked" id="{base_id}_arc_highlight_link" href="#">Link</a>
+        <div id="{base_id}_arc_origin"/>
       </fieldset>
 
-      <fieldset id="arc_target_fset">
+      <fieldset id="{base_id}_arc_target_fset">
         <legend>To</legend>
-        <div id="arc_target"/>
+        <div id="{base_id}_arc_target"/>
       </fieldset>
 
-      <div id="arc_roles" class="scroll_fset">
+      <div id="{base_id}_arc_roles" class="scroll_fset">
         <fieldset>
           <legend>Type</legend>
           <div class="scroller"/>
         </fieldset>
       </div>
 
-      <fieldset id="arc_notes_fieldset">
+      <fieldset id="{base_id}_arc_notes_fieldset">
         <legend>Notes</legend>
-        <div id="arc_notes_container">
-          <input id="arc_notes" class="borderless"/>
-          <input id="clear_arc_notes_button" type="button"
+        <div id="{base_id}_arc_notes_container">
+          <input id="{base_id}_arc_notes" class="borderless"/>
+          <input id="{base_id}_clear_arc_notes_button" type="button"
                   value="&#x2715;" title="Clear notes"/>
         </div>
       </fieldset>
@@ -731,38 +731,38 @@ var AnnotatorView = VisualizerView.extend({
     <form id="{base_id}_auth_form" class="dialog" title="Login">
       <fieldset>
         <legend>Username</legend>
-        <input id="auth_user" placeholder="Username" class="borderless"/>
+        <input id="{base_id}_auth_user" placeholder="Username" class="borderless"/>
       </fieldset>
       <fieldset>
         <legend>Password</legend>
-        <input id="auth_pass" type="password" placeholder="Password" class="borderless"/>
+        <input id="{base_id}_auth_pass" type="password" placeholder="Password" class="borderless"/>
       </fieldset>
     </form>
     <!-- Split span annotation dialog -->
     <form id="{base_id}_split_form" class="dialog" title="Split the Span">
       <fieldset>
         <legend>Split Roles</legend>
-        <div id="split_roles" class="scroll_fset"/>
+        <div id="{base_id}_split_roles" class="scroll_fset"/>
       </fieldset>
     </form>
     <!-- Browser dialog -->
     <form id="{base_id}_collection_browser" class="dialog" title="Open">
       <fieldset>
         <legend>Collection</legend>
-        <input id="collection_input" readonly="readonly" placeholder="Document" class="borderless"/>
+        <input id="{base_id}_collection_input" readonly="readonly" placeholder="Document" class="borderless"/>
       </fieldset>
       <fieldset>
         <legend>Collection Information</legend>
-        <div id="readme_container">
-          <input id="readme" readonly="readonly" class="borderless"/>
-          <input id="more_readme_button" type="button" value="More..." title="Show full collection information text"/>
+        <div id="{base_id}_readme_container">
+          <input id="{base_id}_readme" readonly="readonly" class="borderless"/>
+          <input id="{base_id}_more_readme_button" type="button" value="More..." title="Show full collection information text"/>
         </div>
       </fieldset>
       <fieldset>
         <legend>Document</legend>
-        <input id="document_input" placeholder="Document" class="borderless"/>
+        <input id="{base_id}_document_input" placeholder="Document" class="borderless"/>
       </fieldset>
-      <table id="document_select" class="ui-widget unselectable">
+      <table id="{base_id}_document_select" class="ui-widget unselectable">
         <thead class="ui-widget-header"/>
         <tbody class="ui-widget-content"/>
       </table>
@@ -771,16 +771,16 @@ var AnnotatorView = VisualizerView.extend({
     <form id="{base_id}_norm_search_dialog" class="dialog" title="Search">
       <fieldset>
         <legend>Query</legend>
-        <div id="norm_search_container">
-          <input id="norm_search_query" placeholder="Query string" class="borderless"/>
-          <input id="norm_search_button" type="button" value="Search"/>
+        <div id="{base_id}_norm_search_container">
+          <input id="{base_id}_norm_search_query" placeholder="Query string" class="borderless"/>
+          <input id="{base_id}_norm_search_button" type="button" value="Search"/>
         </div>
       </fieldset>
       <fieldset>
         <legend>ID</legend>
-        <input id="norm_search_id" placeholder="Identifier" class="borderless" readonly="readonly"/>
+        <input id="{base_id}_norm_search_id" placeholder="Identifier" class="borderless" readonly="readonly"/>
       </fieldset>
-      <table id="norm_search_result_select" class="ui-widget unselectable">
+      <table id="{base_id}_norm_search_result_select" class="ui-widget unselectable">
         <thead class="ui-widget-header"/>
         <tbody class="ui-widget-content"/>
       </table>

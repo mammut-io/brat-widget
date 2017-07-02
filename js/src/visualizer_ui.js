@@ -1,6 +1,8 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
+var Util = require('./util');
+
 var VisualizerUI = (function($, window, undefined) {
     var VisualizerUI = function(base_id, Configuration, dispatcher, svg) {
       var that = this;
@@ -655,7 +657,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       var chooseDocument = function(evt) {
         var $element = $(evt.target).closest('tr');
-        $('#document_select tr').removeClass('selected');
+        $('#' + base_id + '_document_select tr').removeClass('selected');
         $('#' + base_id + '_document_input').val($element.attr('data-doc'));
 
         $element.addClass('selected');
@@ -800,7 +802,7 @@ var VisualizerUI = (function($, window, undefined) {
           html.push('<th>' + head[0] + '</th>');
         });
         html.push('</tr>');
-        $('#document_select thead').html(html.join(''));
+        $('#' + base_id + '_document_select thead').html(html.join(''));
 
         html = [];
         // NOTE: we seem to have some excessive sorting going on;
@@ -871,13 +873,13 @@ var VisualizerUI = (function($, window, undefined) {
           html.push('</tr>');
         });
         html = html.join('');
-        tbody = $('#document_select tbody').html(html);
+        tbody = $('#' + base_id + '_document_select tbody').html(html);
         $('#' + base_id + '_document_select')[0].scrollTop = docScroll;
         tbody.find('tr').
             click(chooseDocument).
             dblclick(chooseDocumentAndSubmit);
 
-        $('#document_select thead tr *').each(function(thNo, th) {
+        $('#' + base_id + '_document_select thead tr *').each(function(thNo, th) {
             makeSortChangeFunction(sortOrder, th, thNo);
         });
 
@@ -972,7 +974,7 @@ var VisualizerUI = (function($, window, undefined) {
         addSpanTypesToSelect($('#' + base_id + '_search_form_event_type'), response.event_types);
         addSpanTypesToSelect($('#' + base_id + '_search_form_relation_type'), response.relation_types);
         // nice-looking selects and upload fields
-        $('#search_form select').addClass('ui-widget ui-state-default ui-button-text');
+        $('#' + base_id + '_search_form select').addClass('ui-widget ui-state-default ui-button-text');
         $('#' + base_id + '_search_form_load_file').addClass('ui-widget ui-state-default ui-button-text');
       }
 
@@ -1135,22 +1137,22 @@ var VisualizerUI = (function($, window, undefined) {
       } else {
         $('#' + base_id + '_context_size_div').hide("highlight");
       }
-      $('#concordancing input[type="radio"]').change(function() {
+      $('#' + base_id + '_concordancing input[type="radio"]').change(function() {
         if ($('#' + base_id + '_concordancing_on').is(':checked')) {
           $('#' + base_id + '_context_size_div').show("highlight");
         } else {
           $('#' + base_id + '_context_size_div').hide("highlight");
         }
       });
-      $('#search_options div.advancedOptions').hide("highlight");
+      $('#' + base_id + '_search_options div.advancedOptions').hide("highlight");
       // set up advanced search options; only visible is clicked
       var advancedSearchOptionsVisible = false;
       $('#' + base_id + '_advanced_search_option_toggle').click(function(evt) {
         if (advancedSearchOptionsVisible) {
-          $('#search_options div.advancedOptions').hide("highlight");
+          $('#' + base_id + '_search_options div.advancedOptions').hide("highlight");
           $('#' + base_id + '_advanced_search_option_toggle').text("Show advanced");
         } else {
-          $('#search_options div.advancedOptions').show("highlight");
+          $('#' + base_id + '_search_options div.advancedOptions').show("highlight");
           $('#' + base_id + '_advanced_search_option_toggle').text("Hide advanced");
         }
         advancedSearchOptionsVisible = !advancedSearchOptionsVisible;
@@ -1235,7 +1237,7 @@ var VisualizerUI = (function($, window, undefined) {
             opts.type = $('#' + base_id + '_search_form_event_type').val() || '';
             opts.trigger = $('#' + base_id + '_search_form_event_trigger').val();
             var eargs = [];
-            $('#search_form_event_roles tr').each(function() {
+            $('#' + base_id + '_search_form_event_roles tr').each(function() {
               var earg = {};
               earg.role = $(this).find('.search_event_role select').val() || '';
               earg.type = $(this).find('.search_event_type select').val() || '';
@@ -1264,7 +1266,7 @@ var VisualizerUI = (function($, window, undefined) {
         }
 
         // fill in scope of search ("document" / "collection")
-        var searchScope = $('#search_scope input:checked').val();
+        var searchScope = $('#' + base_id + '_search_scope input:checked').val();
         opts.scope = searchScope;
 
         // adjust specific action to invoke by scope
@@ -1279,7 +1281,7 @@ var VisualizerUI = (function($, window, undefined) {
         opts.context_length = $('#' + base_id + '_context_length').val();
 
         // fill in text match options
-        opts.text_match = $('#text_match input:checked').val()
+        opts.text_match = $('#' + base_id + '_text_match input:checked').val()
         opts.match_case = $('#' + base_id + '_match_case_on').is(':checked');
 
         dispatcher.post('hideForm');
@@ -1625,7 +1627,7 @@ var VisualizerUI = (function($, window, undefined) {
         if (!dontShowFileBrowser) {
           showFileBrowser();
         }
-      }
+      };
 
       var saveSVGTimer = null;
       var saveSVG = function() {
@@ -1647,7 +1649,7 @@ var VisualizerUI = (function($, window, undefined) {
       var onDoneRendering = function(coll, doc, args) {
         if (args && !args.edited) {
           var svgtop = $('svg').offset().top;
-          var $inFocus = $('#svg animate[data-type="focus"]:first').parent();
+          var $inFocus = $('#' + base_id + '_svg animate[data-type="focus"]:first').parent();
           if ($inFocus.length) {
             $('html,body').
                 animate({ scrollTop: $inFocus.offset().top - svgtop - window.innerHeight / 2 }, { duration: 'slow', easing: 'swing'});
@@ -1767,7 +1769,7 @@ var VisualizerUI = (function($, window, undefined) {
           $cmpLink.button();
         }
           
-        // $docName = $('#document_name input').val(coll + doc);
+        // $docName = $('#' + base_id + '_document_name input').val(coll + doc);
         // var docName = $docName[0];
         // // TODO do this on resize, as well
         // // scroll the document name to the right, so the name is visible
@@ -1822,7 +1824,7 @@ var VisualizerUI = (function($, window, undefined) {
             }
           });
         }
-      }
+      };
 
       var menuTimer = null;
       $('#' + base_id + '_header').
@@ -1837,7 +1839,7 @@ var VisualizerUI = (function($, window, undefined) {
           }, 500);
         });
 
-      $('#label_abbreviations input').click(function(evt) {
+      $('#' + base_id + '_label_abbreviations input').click(function(evt) {
         var val = this.value;
         val = val === 'on';
         if (val) {
@@ -1854,14 +1856,14 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post(1, 'resetData');
       });
 
-      $('#text_backgrounds input').click(function(evt) {
+      $('#' + base_id + '_text_backgrounds input').click(function(evt) {
         var val = this.value;
         dispatcher.post('textBackgrounds', [val]);
         // TODO: XXX: see comment above for why this is asynchronous
         dispatcher.post(1, 'resetData');
       });
 
-      $('#layout_density input').click(function(evt) {
+      $('#' + base_id + '_layout_density input').click(function(evt) {
         var val = this.value;
         dispatcher.post('layoutDensity', [val]);
         // TODO: XXX: see comment above for why this is asynchronous
@@ -1869,7 +1871,7 @@ var VisualizerUI = (function($, window, undefined) {
         return false;
       });
 
-      $('#svg_width_unit input').click(function(evt) {
+      $('#' + base_id + '_svg_width_unit input').click(function(evt) {
         var width_unit = this.value;
         var width_value = $('#' + base_id + '_svg_width_value')[0].value;
         var val = width_value+width_unit;
@@ -1879,7 +1881,7 @@ var VisualizerUI = (function($, window, undefined) {
         return false;
       });
 
-      $('#annotation_speed input').click(function(evt) {
+      $('#' + base_id + '_annotation_speed input').click(function(evt) {
         var val = this.value;
         dispatcher.post('annotationSpeed', [val]);
         return false;
@@ -2236,16 +2238,16 @@ var VisualizerUI = (function($, window, undefined) {
         } else {
           $('#annotation_speed2')[0].checked = true;
         }
-        $('#annotation_speed input').button('refresh');
+        $('#' + base_id + '_annotation_speed input').button('refresh');
 
         // Label abbrevs
         $('#' + base_id + '_label_abbreviations_on')[0].checked  = Configuration.abbrevsOn;
         $('#' + base_id + '_label_abbreviations_off')[0].checked = !Configuration.abbrevsOn;
-        $('#label_abbreviations input').button('refresh');
+        $('#' + base_id + '_label_abbreviations input').button('refresh');
 
         // Text backgrounds        
-        $('#text_backgrounds input[value="'+Configuration.textBackgrounds+'"]')[0].checked = true;
-        $('#text_backgrounds input').button('refresh');
+        $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]')[0].checked = true;
+        $('#' + base_id + '_text_backgrounds input').button('refresh');
 
         // SVG width
         var splitSvgWidth = Configuration.svgWidth.match(/^(.*?)(px|\%)$/);
@@ -2254,8 +2256,8 @@ var VisualizerUI = (function($, window, undefined) {
           dispatcher.post('messages', [[['Error parsing SVG width "'+Configuration.svgWidth+'"', 'error', 2]]]);
         } else {
           $('#' + base_id + '_svg_width_value')[0].value = splitSvgWidth[1];
-          $('#svg_width_unit input[value="'+splitSvgWidth[2]+'"]')[0].checked = true;
-          $('#svg_width_unit input').button('refresh');
+          $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]')[0].checked = true;
+          $('#' + base_id + '_svg_width_unit input').button('refresh');
         }
 
         // Autorefresh
@@ -2276,7 +2278,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       $('#source_collection_conf_on, #source_collection_conf_off').change(function() {
         var conf = $('#' + base_id + '_source_collection_conf_on').is(':checked') ? 1 : 0;
-        var $source_collection_link = $('#source_collection a');
+        var $source_collection_link = $('#' + base_id + '_source_collection a');
         var link = $source_collection_link.attr('href').replace(/&include_conf=./, '&include_conf=' + conf);
         $source_collection_link.attr('href', link);
       });

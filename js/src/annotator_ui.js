@@ -681,14 +681,14 @@ var AnnotatorUI = (function($, window, undefined) {
         });
 
         // enable all inputs by default (see setSpanTypeSelectability)
-        $('#span_form input:not([unused])').removeAttr('disabled');
+        $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
 
         // close span types if there's over typeCollapseLimit
-        if ($('#entity_types .item').length > Configuration.typeCollapseLimit) {
-          $('#entity_types .open').removeClass('open');
+        if ($('#' + base_id + '_entity_types .item').length > Configuration.typeCollapseLimit) {
+          $('#' + base_id + '_entity_types .open').removeClass('open');
         }
-        if ($('#event_types .item').length > Configuration.typeCollapseLimit) {
-          $('#event_types .open').removeClass('open');
+        if ($('#' + base_id + '_event_types .item').length > Configuration.typeCollapseLimit) {
+          $('#' + base_id + '_event_types .open').removeClass('open');
         }
 
         var showAllAttributes = false;
@@ -698,7 +698,7 @@ var AnnotatorUI = (function($, window, undefined) {
           if (el.length) {
             el[0].checked = true;
           } else {
-            $('#span_form input:radio:checked').each(function (radioNo, radio) {
+            $('#' + base_id + '_span_form input:radio:checked').each(function (radioNo, radio) {
               radio.checked = false;
             });
           }
@@ -728,7 +728,7 @@ var AnnotatorUI = (function($, window, undefined) {
         } else {
           var offsets = spanOptions.offsets[0];
           var linkHash = new URLHash(coll, doc, { focus: [[offsets[0], offsets[1]]] }).getHash();
-          var firstRadio = $('#span_form input:radio:not([unused]):first')[0];
+          var firstRadio = $('#' + base_id + '_span_form input:radio:not([unused]):first')[0];
           if (firstRadio) {
             firstRadio.checked = true;
           } else {
@@ -833,7 +833,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
         showValidNormalizations = function() {
           // set norm DB selector according to the first selected type
-          var firstSelected = $('#entity_and_event_wrapper input:radio:checked')[0];
+          var firstSelected = $('#' + base_id + '_entity_and_event_wrapper input:radio:checked')[0];
           var selectedType = firstSelected ? firstSelected.value : null;
           showValidNormalizationsFor(selectedType);
         }
@@ -897,7 +897,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }
 
         showValidAttributes = function() {
-          var type = $('#span_form input:radio:checked').val();
+          var type = $('#' + base_id + '_span_form input:radio:checked').val();
           
           showAllAttributes = false;
           
@@ -1031,7 +1031,7 @@ var AnnotatorUI = (function($, window, undefined) {
         // set up click event handlers
         rapidSpanForm.find('#rapid_span_types input:radio').click(rapidSpanFormSubmitRadio);
 
-        var firstRadio = $('#rapid_span_form input:radio:first')[0];
+        var firstRadio = $('#' + base_id + '_rapid_span_form input:radio:first')[0];
         if (firstRadio) {
           firstRadio.checked = true;
         } else {
@@ -1207,7 +1207,7 @@ var AnnotatorUI = (function($, window, undefined) {
       normSearchDialog.submit(normSearchSubmit);
       var chooseNormId = function(evt) {
         var $element = $(evt.target).closest('tr');
-        $('#norm_search_result_select tr').removeClass('selected');
+        $('#' + base_id + '_norm_search_result_select tr').removeClass('selected');
         $element.addClass('selected');
         $('#' + base_id + '_norm_search_query').val($element.attr('data-txt'));
         $('#' + base_id + '_norm_search_id').val($element.attr('data-id'));
@@ -1226,8 +1226,8 @@ var AnnotatorUI = (function($, window, undefined) {
 
         if (response.items.length == 0) {
           // no results
-          $('#norm_search_result_select thead').empty();
-          $('#norm_search_result_select tbody').empty();
+          $('#' + base_id + '_norm_search_result_select thead').empty();
+          $('#' + base_id + '_norm_search_result_select tbody').empty();
           dispatcher.post('messages', [[['No matches to search.', 'comment']]]);
           return false;
         }
@@ -1239,7 +1239,7 @@ var AnnotatorUI = (function($, window, undefined) {
           html.push('<th>' + Util.escapeHTML(head[0]) + '</th>');
         });
         html.push('</tr>');
-        $('#norm_search_result_select thead').html(html.join(''));
+        $('#' + base_id + '_norm_search_result_select thead').html(html.join(''));
 
         html = [];
         var len = response.header.length;
@@ -1259,9 +1259,9 @@ var AnnotatorUI = (function($, window, undefined) {
           }
           html.push('</tr>');
         });
-        $('#norm_search_result_select tbody').html(html.join(''));
+        $('#' + base_id + '_norm_search_result_select tbody').html(html.join(''));
 
-        $('#norm_search_result_select tbody').find('tr').
+        $('#' + base_id + '_norm_search_result_select tbody').find('tr').
             click(chooseNormId).
             dblclick(chooseNormIdAndSubmit);
 
@@ -1293,8 +1293,8 @@ var AnnotatorUI = (function($, window, undefined) {
           $('#' + base_id + '_norm_search_query').val($('#' + base_id + '_span_selected').text());
         }
         // blank the table
-        $('#norm_search_result_select thead').empty();
-        $('#norm_search_result_select tbody').empty();        
+        $('#' + base_id + '_norm_search_result_select thead').empty();
+        $('#' + base_id + '_norm_search_result_select tbody').empty();
         // TODO: support for two (or more) dialogs open at the same time
         // so we don't need to hide this before showing normSearchDialog
         dispatcher.post('hideForm');
@@ -1312,7 +1312,7 @@ var AnnotatorUI = (function($, window, undefined) {
       }
 
       var arcFormSubmit = function(evt, typeRadio) {
-        typeRadio = typeRadio || $('#arc_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_arc_form input:radio:checked');
         var type = typeRadio.val();
         dispatcher.post('hideForm', [arcForm]);
 
@@ -1346,7 +1346,7 @@ var AnnotatorUI = (function($, window, undefined) {
         var mapOfParents = {};
         if (spanTypes[originType]) {
           var arcTypes = spanTypes[originType].arcs;
-          $scroller = $('#arc_roles .scroller').empty();
+          $scroller = $('#' + base_id + '_arc_roles .scroller').empty();
 
           // lay them out into the form
           $.each(arcTypes || [], function(arcTypeNo, arcDesc) {
@@ -1468,7 +1468,7 @@ var AnnotatorUI = (function($, window, undefined) {
         } else {
           // new arc
           $('#' + base_id + '_arc_highlight_link').hide();
-          el = $('#arc_form input:radio:first')[0];
+          el = $('#' + base_id + '_arc_form input:radio:first')[0];
           if (el) {
             el.checked = true;
           }
@@ -2002,12 +2002,12 @@ var AnnotatorUI = (function($, window, undefined) {
         // just assume all attributes are event attributes
         // TODO: support for entity attributes
         // TODO2: the above comment is almost certainly false, check and remove
-        $('#span_form input:not([unused])').removeAttr('disabled');
+        $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
         var $toDisable;
         if (category == "event") {
-          $toDisable = $('#span_form input[category="entity"]');
+          $toDisable = $('#' + base_id + '_span_form input[category="entity"]');
         } else if (category == "entity") {
-          $toDisable = $('#span_form input[category="event"]');
+          $toDisable = $('#' + base_id + '_span_form input[category="event"]');
         } else {
           console.error('Unrecognized attribute category:', category);
           $toDisable = $();
@@ -2018,7 +2018,7 @@ var AnnotatorUI = (function($, window, undefined) {
         // is checked, which would cause error on "OK". In this case,
         // check the first valid choice.
         if ($checkedToDisable.length) {
-          var $toCheck = $('#span_form input[category="' + category + '"][disabled!="disabled"]:first');
+          var $toCheck = $('#' + base_id + '_span_form input[category="' + category + '"][disabled!="disabled"]:first');
           // so weird, attr('checked', 'checked') fails sometimes, so
           // replaced with more "metal" version
           $toCheck[0].checked = true;
@@ -2027,7 +2027,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var onMultiAttrChange = function(evt) {
         if ($(this).val() == '') {
-          $('#span_form input:not([unused])').removeAttr('disabled');
+          $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
         } else {
           var attrCategory = evt.target.getAttribute('category');
           setSpanTypeSelectability(attrCategory);
@@ -2053,16 +2053,16 @@ var AnnotatorUI = (function($, window, undefined) {
         // TODO: check for exceptions in response
 
         // fill in entity and event types
-        var $entityScroller = $('#entity_types div.scroller').empty();
+        var $entityScroller = $('#' + base_id + '_entity_types div.scroller').empty();
         addSpanTypesToDivInner($entityScroller, response.entity_types, 'entity');
-        var $eventScroller = $('#event_types div.scroller').empty();
+        var $eventScroller = $('#' + base_id + '_event_types div.scroller').empty();
         addSpanTypesToDivInner($eventScroller, response.event_types, 'event');
 
         // fill in attributes
-        var $entattrs = $('#entity_attributes div.scroller').empty();
+        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller').empty();
         addAttributeTypesToDiv($entattrs, entityAttributeTypes, 'entity');
 
-        var $eveattrs = $('#event_attributes div.scroller').empty();
+        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller').empty();
         addAttributeTypesToDiv($eveattrs, eventAttributeTypes, 'event');
 
         // fill search options in span dialog
@@ -2267,7 +2267,7 @@ var AnnotatorUI = (function($, window, undefined) {
       // returns attributes that are valid for the selected type in
       // the span dialog
       var spanAttributes = function(typeRadio) {
-        typeRadio = typeRadio || $('#span_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
         var attributes = {};
         var attributeTypes;
         var category = typeRadio.attr('category');
@@ -2376,7 +2376,7 @@ var AnnotatorUI = (function($, window, undefined) {
       var splitForm = $('#' + base_id + '_split_form');
       splitForm.submit(function(evt) {
         var splitRoles = [];
-        $('#split_roles input:checked').each(function() {
+        $('#' + base_id + '_split_roles input:checked').each(function() {
           splitRoles.push($(this).val());
         });
         $.extend(spanOptions, {
@@ -2544,7 +2544,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }]);
 
       var spanFormSubmit = function(evt, typeRadio) {
-        typeRadio = typeRadio || $('#span_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
         var type = typeRadio.val();
         $('#span_form-ok').blur();
 
@@ -2592,7 +2592,7 @@ var AnnotatorUI = (function($, window, undefined) {
       spanForm.submit(spanFormSubmit);
 
       var rapidSpanFormSubmit = function(evt, typeRadio) {
-        typeRadio = typeRadio || $('#rapid_span_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_rapid_span_form input:radio:checked');
         var type = typeRadio.val();
 
         // unfocus all elements to prevent focus being kept after

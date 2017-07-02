@@ -1,0 +1,72 @@
+Targets
+    Occurrences of '\$\('#' \+ base_id \+ '_([a-zA-Z_]+) ' in Project
+Found Occurrences  (60 usages found)
+    Usage in comments  (1 usage found)
+        brat-widget  (1 usage found)
+            js/src  (1 usage found)
+                visualizer_ui.js  (1 usage found)
+                    1770 // $docName = $('#' + base_id + '_document_name input').val(coll + doc);
+    Usage in string constants  (59 usages found)
+        brat-widget  (59 usages found)
+            js/src  (59 usages found)
+                annotator_ui.js  (34 usages found)
+                    684 $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
+                    687 if ($('#' + base_id + '_entity_types .item').length > Configuration.typeCollapseLimit) {
+                    688 $('#' + base_id + '_entity_types .open').removeClass('open');
+                    690 if ($('#' + base_id + '_event_types .item').length > Configuration.typeCollapseLimit) {
+                    691 $('#' + base_id + '_event_types .open').removeClass('open');
+                    701 $('#' + base_id + '_span_form input:radio:checked').each(function (radioNo, radio) {
+                    731 var firstRadio = $('#' + base_id + '_span_form input:radio:not([unused]):first')[0];
+                    836 var firstSelected = $('#' + base_id + '_entity_and_event_wrapper input:radio:checked')[0];
+                    900 var type = $('#' + base_id + '_span_form input:radio:checked').val();
+                    1034 var firstRadio = $('#' + base_id + '_rapid_span_form input:radio:first')[0];
+                    1210 $('#' + base_id + '_norm_search_result_select tr').removeClass('selected');
+                    1229 $('#' + base_id + '_norm_search_result_select thead').empty();
+                    1230 $('#' + base_id + '_norm_search_result_select tbody').empty();
+                    1242 $('#' + base_id + '_norm_search_result_select thead').html(html.join(''));
+                    1262 $('#' + base_id + '_norm_search_result_select tbody').html(html.join(''));
+                    1264 $('#' + base_id + '_norm_search_result_select tbody').find('tr').
+                    1296 $('#' + base_id + '_norm_search_result_select thead').empty();
+                    1297 $('#' + base_id + '_norm_search_result_select tbody').empty();
+                    1315 typeRadio = typeRadio || $('#' + base_id + '_arc_form input:radio:checked');
+                    1349 $scroller = $('#' + base_id + '_arc_roles .scroller').empty();
+                    1471 el = $('#' + base_id + '_arc_form input:radio:first')[0];
+                    2005 $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
+                    2008 $toDisable = $('#' + base_id + '_span_form input[category="entity"]');
+                    2010 $toDisable = $('#' + base_id + '_span_form input[category="event"]');
+                    2021 var $toCheck = $('#' + base_id + '_span_form input[category="' + category + '"][disabled!="disabled"]:first');
+                    2030 $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
+                    2056 var $entityScroller = $('#' + base_id + '_entity_types div.scroller').empty();
+                    2058 var $eventScroller = $('#' + base_id + '_event_types div.scroller').empty();
+                    2062 var $entattrs = $('#' + base_id + '_entity_attributes div.scroller').empty();
+                    2065 var $eveattrs = $('#' + base_id + '_event_attributes div.scroller').empty();
+                    2270 typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
+                    2379 $('#' + base_id + '_split_roles input:checked').each(function() {
+                    2547 typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
+                    2595 typeRadio = typeRadio || $('#' + base_id + '_rapid_span_form input:radio:checked');
+                visualizer_ui.js  (25 usages found)
+                    658 $('#' + base_id + '_document_select tr').removeClass('selected');
+                    803 $('#' + base_id + '_document_select thead').html(html.join(''));
+                    874 tbody = $('#' + base_id + '_document_select tbody').html(html);
+                    880 $('#' + base_id + '_document_select thead tr *').each(function(thNo, th) {
+                    975 $('#' + base_id + '_search_form select').addClass('ui-widget ui-state-default ui-button-text');
+                    1138 $('#' + base_id + '_concordancing input[type="radio"]').change(function() {
+                    1145 $('#' + base_id + '_search_options div.advancedOptions').hide("highlight");
+                    1150 $('#' + base_id + '_search_options div.advancedOptions').hide("highlight");
+                    1153 $('#' + base_id + '_search_options div.advancedOptions').show("highlight");
+                    1238 $('#' + base_id + '_search_form_event_roles tr').each(function() {
+                    1267 var searchScope = $('#' + base_id + '_search_scope input:checked').val();
+                    1282 opts.text_match = $('#' + base_id + '_text_match input:checked').val()
+                    1650 var $inFocus = $('#' + base_id + '_svg animate[data-type="focus"]:first').parent();
+                    1840 $('#' + base_id + '_label_abbreviations input').click(function(evt) {
+                    1857 $('#' + base_id + '_text_backgrounds input').click(function(evt) {
+                    1864 $('#' + base_id + '_layout_density input').click(function(evt) {
+                    1872 $('#' + base_id + '_svg_width_unit input').click(function(evt) {
+                    1882 $('#' + base_id + '_annotation_speed input').click(function(evt) {
+                    2239 $('#' + base_id + '_annotation_speed input').button('refresh');
+                    2244 $('#' + base_id + '_label_abbreviations input').button('refresh');
+                    2247 $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]')[0].checked = true;
+                    2248 $('#' + base_id + '_text_backgrounds input').button('refresh');
+                    2257 $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]')[0].checked = true;
+                    2258 $('#' + base_id + '_svg_width_unit input').button('refresh');
+                    2279 var $source_collection_link = $('#' + base_id + '_source_collection a');

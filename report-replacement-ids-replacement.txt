@@ -1,0 +1,172 @@
+Targets
+    Occurrences of 'id="\{base_id\}_([a-zA-Z_]+)"' in Project
+Found Occurrences  (165 usages found)
+    Usage in string constants  (165 usages found)
+        brat-widget  (165 usages found)
+            js/src  (165 usages found)
+                widget.js  (165 usages found)
+                    159 var strForms = `<div id="{base_id}_forms"><form id="{base_id}_import_form" class="dialog" title="Import">
+                    160       <fieldset id="{base_id}_import_form_docid">
+                    162         <input id="{base_id}_import_docid" class="borderless"/>
+                    164       <fieldset id="{base_id}_import_form_text">
+                    166         <textarea id="{base_id}_import_text" class="borderless"/>
+                    169     <form id="{base_id}_import_coll_form" class="dialog" title="Import collection">
+                    170       <fieldset id="{base_id}_import_coll_form_text">
+                    172         <input type="file" id="{base_id}_import_coll" class="borderless" accept="application/zip,application/x-gzip" />
+                    176     <form id="{base_id}_data_form" class="dialog" title="Data">
+                    181           <span id="{base_id}_document_export" class="optionLabel">Document data</span>
+                    182           <span id="{base_id}_source_files"/>
+                    184         <div id="{base_id}_document_visualization" class="optionRow">
+                    186           <span id="{base_id}_stored_file_spinner" class="ui-button ui-widget ui-corner-all ui-state-default ui-button-text-only">
+                    192           <span id="{base_id}_stored_file_regenerate" title="Regenerate static visualization of the current document">regenerate</span>
+                    193           <span id="{base_id}_download_stored"/>
+                    197           <span id="{base_id}_source_collection" title="Download the entire current collection as a .tar.gz package"/>
+                    199           <span id="{base_id}_source_collection_conf">
+                    200             <input type="radio" id="{base_id}_source_collection_conf_off" value="0"
+                    204             <input type="radio" id="{base_id}_source_collection_conf_on" value="1"
+                    220       <div id="{base_id}_auto_tagging_login_control" class="login">
+                    221         <fieldset id="{base_id}_auto_tagging_fieldset" class="small-buttons">
+                    224           <div id="{base_id}_tagger_buttons"/>
+                    226         <fieldset id="{base_id}_no_tagger_message" style="display:none">
+                    236           <input id="{base_id}_import_button" type="button" class="login ui-button-text" value="Enter text" tabindex="-1" title="Import a new document into the current collection"/>
+                    243  id="{base_id}_import_collection_button" 
+                    253  id="{base_id}_delete_document_button" 
+                    257  id="{base_id}_delete_collection_button" 
+                    263     <form id="{base_id}_options_form" class="dialog" title="Options">
+                    264       <fieldset id="{base_id}_options_form_visual">
+                    268           <span id="{base_id}_label_abbreviations" class="radio_group small-buttons">
+                    269             <input type="radio" id="{base_id}_label_abbreviations_off" value="off"
+                    273             <input type="radio" id="{base_id}_label_abbreviations_on" value="on"
+                    281           <span id="{base_id}_text_backgrounds" class="radio_group small-buttons">
+                    282             <input type="radio" id="{base_id}_text_backgrounds_blank" value="blank"
+                    286             <input type="radio" id="{base_id}_text_backgrounds_striped" value="striped"
+                    294           <span id="{base_id}_layout_density" class="radio_group small-buttons">
+                    311           <input id="{base_id}_svg_width_value" maxlength="3" size="3" value="100"
+                    313           <span id="{base_id}_svg_width_unit" class="radio_group small-buttons">
+                    314             <input type="radio" id="{base_id}_svg_width_unit_percent" value="%"
+                    317             <input type="radio" id="{base_id}_svg_width_unit_pixels" value="px"
+                    323       <fieldset id="{base_id}_options_form_annotation" class="login">
+                    327           <span id="{base_id}_annotation_speed" class="radio_group small-buttons">
+                    340             <select id="{base_id}_rapid_model"/>
+                    345           <input id="{base_id}_type_collapse_limit" maxlength="3" size="3" value="30"
+                    349       <fieldset id="{base_id}_options_form_network">
+                    354             <input id="{base_id}_autorefresh_mode" type="checkbox"/>
+                    362     <form id="{base_id}_more_information_dialog" class="dialog" title="Collection information">
+                    364         <textarea id="{base_id}_more_info_readme" readonly="readonly" class="borderless"/>
+                    368     <form id="{base_id}_search_form" class="dialog" title="Search">
+                    369       <div id="{base_id}_search_tabs">
+                    380         <div id="{base_id}_search_tab_text">
+                    385                 <input id="{base_id}_search_form_text_text" class="fullwidth"
+                    391         <div id="{base_id}_search_tab_entity">
+                    396                 <select id="{base_id}_search_form_entity_type"/>
+                    402                 <input id="{base_id}_search_form_entity_text" class="fullwidth"
+                    408         <div id="{base_id}_search_tab_event">
+                    413                 <select id="{base_id}_search_form_event_type"/>
+                    419                 <input id="{base_id}_search_form_event_trigger" class="fullwidth"
+                    423             <tbody id="{base_id}_search_form_event_roles"/>
+                    426         <div id="{base_id}_search_tab_relation">
+                    431                 <select id="{base_id}_search_form_relation_type" class="fullwidth"/>
+                    457             <span id="{base_id}_search_form_relation_show_arg_text"
+                    459               <input type="radio" id="{base_id}_search_form_relation_show_arg_text_off"
+                    464               <input type="radio" id="{base_id}_search_form_relation_show_arg_text_on"
+                    473             <span id="{base_id}_search_form_relation_show_arg_type"
+                    475               <input type="radio" id="{base_id}_search_form_relation_show_arg_type_off"
+                    480               <input type="radio" id="{base_id}_search_form_relation_show_arg_type_on"
+                    488         <div id="{base_id}_search_tab_note">
+                    493                 <select id="{base_id}_search_form_note_category" class="fullwidth">
+                    502             <tr id="{base_id}_search_form_note_type_row">
+                    505                 <select id="{base_id}_search_form_note_type" class="fullwidth"/>
+                    511                 <input id="{base_id}_search_form_note_text" class="fullwidth"
+                    518         <div id="{base_id}_search_tab_load">
+                    523                 <input type="file" name="file" id="{base_id}_search_form_load_file" class="fullwidth"/>
+                    531       <fieldset id="{base_id}_search_options">
+                    533         <a href="" id="{base_id}_advanced_search_option_toggle">Show advanced</a>
+                    536           <span id="{base_id}_search_scope" class="radio_group small-buttons">
+                    537             <input type="radio" id="{base_id}_search_scope_doc" value="document"
+                    541             <input type="radio" id="{base_id}_search_scope_coll" value="collection"
+                    550           <span id="{base_id}_concordancing" class="radio_group small-buttons">
+                    551             <input type="radio" id="{base_id}_concordancing_off" value="document"
+                    555             <input type="radio" id="{base_id}_concordancing_on" value="collection"
+                    561         <div id="{base_id}_context_size_div" class="optionRow">
+                    562           <span class="optionLabel" style="margin-left:1em;">Context length</span> <input id="{base_id}_context_length" maxlength="3" size="3" value="50"/> characters
+                    566           <span id="{base_id}_text_match" class="radio_group small-buttons">
+                    567             <input type="radio" id="{base_id}_text_match_word" value="word"
+                    571             <input type="radio" id="{base_id}_text_match_substr" value="substring"
+                    575             <input type="radio" id="{base_id}_text_match_regex" value="regex"
+                    583           <span id="{base_id}_match_case" class="radio_group small-buttons">
+                    584             <input type="radio" id="{base_id}_match_case_off" value="document"
+                    588             <input type="radio" id="{base_id}_match_case_on" value="collection"
+                    598     <form id="{base_id}_viewspan_form" class="dialog" title="Span">
+                    599       <fieldset id="{base_id}_viewspan_selected_fset">
+                    601         <a target="brat_linked" id="{base_id}_viewspan_highlight_link" href="#">Link</a>
+                    602         <div id="{base_id}_viewspan_selected"/>
+                    605       <fieldset id="{base_id}_viewspan_search_fieldset">
+                    607         <div id="{base_id}_viewspan_search_links"/>
+                    612         <input id="{base_id}_viewspan_notes" class="borderless" readonly="readonly"/>
+                    616     <form id="{base_id}_span_form" class="dialog" title="Span">
+                    618       <fieldset id="{base_id}_span_selected_fset">
+                    620         <a target="brat_linked" id="{base_id}_span_highlight_link" href="#">Link</a>
+                    621         <div id="{base_id}_span_selected"/>
+                    624       <fieldset id="{base_id}_span_search_fieldset">
+                    626         <div id="{base_id}_span_search_links"/>
+                    630         <div id="{base_id}_entity_and_event_wrapper" class="split_wrapper">
+                    631           <div id="{base_id}_span_entity_section" class="wrapper_half_left">
+                    632             <div id="{base_id}_entity_label" class="label-like">Entity type</div>
+                    633             <div id="{base_id}_entity_types" class="scroll_wrapper_upper">
+                    639             <div id="{base_id}_entity_attribute_label"
+                    641             <div id="{base_id}_entity_attributes" class="scroll_wrapper_lower">
+                    644           </div><div id="{base_id}_span_event_section" class="wrapper_half_right">
+                    645             <div id="{base_id}_event_label" class="label-like">Event type</div>
+                    646             <div id="{base_id}_event_types" class="scroll_wrapper_upper">
+                    649             <div id="{base_id}_event_attribute_label"
+                    651             <div id="{base_id}_event_attributes" class="scroll_wrapper_lower">
+                    658       <fieldset id="{base_id}_norm_fieldset">
+                    660         <div id="{base_id}_norm_container">
+                    661           <select id="{base_id}_span_norm_db"/>
+                    662           <a id="{base_id}_span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="`+fugueShadowlessMagnifierPng+`" style="vertical-align: middle"/></a>
+                    664           <input id="{base_id}_span_norm_id" class="span_norm_id_input"
+                    667           <input id="{base_id}_span_norm_txt" class="span_norm_txt_input"
+                    670           <a id="{base_id}_span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="`+fugueShadowlessExternalPng+`" style="vertical-align: middle"/></a>
+                    671           <input id="{base_id}_clear_norm_button" type="button"
+                    678         <div id="{base_id}_span_notes_container">
+                    679           <input id="{base_id}_span_notes" class="borderless"/>
+                    680           <input id="{base_id}_clear_span_notes_button" type="button"
+                    686     <form id="{base_id}_rapid_span_form" class="dialog" title="Span type">
+                    687       <fieldset id="{base_id}_rapid_span_selected_fset">
+                    689         <div id="{base_id}_rapid_span_selected"/>
+                    691       <div id="{base_id}_rapid_span_types" class="scroll_fset" style="height:250px">
+                    694           <div class="scroller" id="{base_id}_rapid_span_types_div">
+                    701     <form id="{base_id}_arc_form" class="dialog" title="Arc">
+                    702       <fieldset id="{base_id}_arc_origin_fset">
+                    704         <a target="brat_linked" id="{base_id}_arc_highlight_link" href="#">Link</a>
+                    705         <div id="{base_id}_arc_origin"/>
+                    708       <fieldset id="{base_id}_arc_target_fset">
+                    710         <div id="{base_id}_arc_target"/>
+                    713       <div id="{base_id}_arc_roles" class="scroll_fset">
+                    720       <fieldset id="{base_id}_arc_notes_fieldset">
+                    722         <div id="{base_id}_arc_notes_container">
+                    723           <input id="{base_id}_arc_notes" class="borderless"/>
+                    724           <input id="{base_id}_clear_arc_notes_button" type="button"
+                    731     <form id="{base_id}_auth_form" class="dialog" title="Login">
+                    734         <input id="{base_id}_auth_user" placeholder="Username" class="borderless"/>
+                    738         <input id="{base_id}_auth_pass" type="password" placeholder="Password" class="borderless"/>
+                    742     <form id="{base_id}_split_form" class="dialog" title="Split the Span">
+                    745         <div id="{base_id}_split_roles" class="scroll_fset"/>
+                    749     <form id="{base_id}_collection_browser" class="dialog" title="Open">
+                    752         <input id="{base_id}_collection_input" readonly="readonly" placeholder="Document" class="borderless"/>
+                    756         <div id="{base_id}_readme_container">
+                    757           <input id="{base_id}_readme" readonly="readonly" class="borderless"/>
+                    758           <input id="{base_id}_more_readme_button" type="button" value="More..." title="Show full collection information text"/>
+                    763         <input id="{base_id}_document_input" placeholder="Document" class="borderless"/>
+                    765       <table id="{base_id}_document_select" class="ui-widget unselectable">
+                    771     <form id="{base_id}_norm_search_dialog" class="dialog" title="Search">
+                    774         <div id="{base_id}_norm_search_container">
+                    775           <input id="{base_id}_norm_search_query" placeholder="Query string" class="borderless"/>
+                    776           <input id="{base_id}_norm_search_button" type="button" value="Search"/>
+                    781         <input id="{base_id}_norm_search_id" placeholder="Identifier" class="borderless" readonly="readonly"/>
+                    783       <table id="{base_id}_norm_search_result_select" class="ui-widget unselectable">
+                    794     <img id="{base_id}_spinner" src="`+spinnerGif+`"/>
+                    795     <div id="{base_id}_messagepullup" class="messages" style="display: none"/>
+                    796     <div id="{base_id}_messages" class="messages"/>
+                    797     <div id="{base_id}_pulluptrigger"/>
+                    798     <div id="{base_id}_waiter" class="dialog" title="Please wait">

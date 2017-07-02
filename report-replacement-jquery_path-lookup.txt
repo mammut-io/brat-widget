@@ -1,0 +1,61 @@
+Targets
+    Occurrences of '\$\('#([a-zA-Z_ \.:-\[\]]+)'\)' in Project
+Found Occurrences  (49 usages found)
+    Usage in comments  (1 usage found)
+        brat-widget  (1 usage found)
+            js/src  (1 usage found)
+                visualizer_ui.js  (1 usage found)
+                    1770 // $docName = $('#document_name input').val(coll + doc);
+    Usage in string constants  (48 usages found)
+        brat-widget  (48 usages found)
+            js/src  (48 usages found)
+                annotator_ui.js  (27 usages found)
+                    687 if ($('#entity_types .item').length > Configuration.typeCollapseLimit) {
+                    688 $('#entity_types .open').removeClass('open');
+                    690 if ($('#event_types .item').length > Configuration.typeCollapseLimit) {
+                    691 $('#event_types .open').removeClass('open');
+                    701 $('#span_form input:radio:checked').each(function (radioNo, radio) {
+                    836 var firstSelected = $('#entity_and_event_wrapper input:radio:checked')[0];
+                    900 var type = $('#span_form input:radio:checked').val();
+                    1034 var firstRadio = $('#rapid_span_form input:radio:first')[0];
+                    1210 $('#norm_search_result_select tr').removeClass('selected');
+                    1229 $('#norm_search_result_select thead').empty();
+                    1230 $('#norm_search_result_select tbody').empty();
+                    1242 $('#norm_search_result_select thead').html(html.join(''));
+                    1262 $('#norm_search_result_select tbody').html(html.join(''));
+                    1264 $('#norm_search_result_select tbody').find('tr').
+                    1296 $('#norm_search_result_select thead').empty();
+                    1297 $('#norm_search_result_select tbody').empty();        
+                    1315 typeRadio = typeRadio || $('#arc_form input:radio:checked');
+                    1349 $scroller = $('#arc_roles .scroller').empty();
+                    1471 el = $('#arc_form input:radio:first')[0];
+                    2056 var $entityScroller = $('#entity_types div.scroller').empty();
+                    2058 var $eventScroller = $('#event_types div.scroller').empty();
+                    2062 var $entattrs = $('#entity_attributes div.scroller').empty();
+                    2065 var $eveattrs = $('#event_attributes div.scroller').empty();
+                    2270 typeRadio = typeRadio || $('#span_form input:radio:checked');
+                    2379 $('#split_roles input:checked').each(function() {
+                    2547 typeRadio = typeRadio || $('#span_form input:radio:checked');
+                    2595 typeRadio = typeRadio || $('#rapid_span_form input:radio:checked');
+                visualizer_ui.js  (21 usages found)
+                    658 $('#document_select tr').removeClass('selected');
+                    803 $('#document_select thead').html(html.join(''));
+                    874 tbody = $('#document_select tbody').html(html);
+                    975 $('#search_form select').addClass('ui-widget ui-state-default ui-button-text');
+                    1125 $('#search_form_note_type_row:visible').hide('highlight');
+                    1145 $('#search_options div.advancedOptions').hide("highlight");
+                    1150 $('#search_options div.advancedOptions').hide("highlight");
+                    1153 $('#search_options div.advancedOptions').show("highlight");
+                    1238 $('#search_form_event_roles tr').each(function() {
+                    1267 var searchScope = $('#search_scope input:checked').val();
+                    1282 opts.text_match = $('#text_match input:checked').val()
+                    1840 $('#label_abbreviations input').click(function(evt) {
+                    1857 $('#text_backgrounds input').click(function(evt) {
+                    1864 $('#layout_density input').click(function(evt) {
+                    1872 $('#svg_width_unit input').click(function(evt) {
+                    1882 $('#annotation_speed input').click(function(evt) {
+                    2239 $('#annotation_speed input').button('refresh');
+                    2244 $('#label_abbreviations input').button('refresh');
+                    2248 $('#text_backgrounds input').button('refresh');
+                    2258 $('#svg_width_unit input').button('refresh');
+                    2279 var $source_collection_link = $('#source_collection a');
