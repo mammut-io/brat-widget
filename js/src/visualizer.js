@@ -1157,10 +1157,10 @@ var Visualizer = (function($, window, undefined) {
         var commentName = (coll + '/' + doc).replace('--', '-\\-');
         $svg.append('<!-- document: ' + commentName + ' -->');
         var defs = svg.defs();
-        var $blurFilter = $('<filter id="Gaussian_Blur"><feGaussianBlur in="SourceGraphic" stdDeviation="2" /></filter>');
+        var $blurFilter = $('<filter id="' + base_id + '_Gaussian_Blur"><feGaussianBlur in="SourceGraphic" stdDeviation="2" /></filter>');
         svg.add(defs, $blurFilter);
         return defs;
-      }
+      };
 
       var getTextMeasurements = function(textsHash, options, callback) {
         // make some text elements, find out the dimensions
@@ -1351,7 +1351,7 @@ var Visualizer = (function($, window, undefined) {
           svg.polyline(arrow, [[0, 0], [width, height / 2], [0, height], [width / 12, height / 2]]);
         }
         return arrowId;
-      }
+      };
 
       var createStyleMap = function(styles) {
           /* Given a list of [ID, attrib, value] lists, return dict of
@@ -1576,7 +1576,7 @@ Util.profileStart('chunks');
               }
             }
             return floorNo;
-          }
+          };
           var ceiling = carpet + height;
           var ceilingNo = makeNewFloorIfNeeded(ceiling);
           var carpetNo = makeNewFloorIfNeeded(carpet);
@@ -1702,7 +1702,7 @@ Util.profileStart('chunks');
                   bx - markedSpanSize, by - markedSpanSize,
                   bw + 2 * markedSpanSize, bh + 2 * markedSpanSize, {
 
-                  // filter: 'url(#Gaussian_Blur)',
+                  // filter: 'url(#' + base_id + '_Gaussian_Blur)',
                   'class': "shadow_EditHighlight",
                   rx: markedSpanSize,
                   ry: markedSpanSize,
@@ -1729,7 +1729,7 @@ Util.profileStart('chunks');
                   bx - rectShadowSize, by - rectShadowSize,
                   bw + 2 * rectShadowSize, bh + 2 * rectShadowSize, {
                   'class': 'shadow_' + span.shadowClass,
-                  filter: 'url(#Gaussian_Blur)',
+                  filter: 'url(#' + base_id + '_Gaussian_Blur)',
                   rx: rectShadowRounding,
                   ry: rectShadowRounding,
               });
@@ -2145,7 +2145,7 @@ Util.profileStart('arcsPrep');
           });
         svg.polyline(arrowhead, [[0, 0], [5, 2.5], [0, 5], [0.2, 2.5]]);
         var arcDragArc = svg.path(svg.createPath(), {
-          markerEnd: 'url(#drag_arrow)',
+          markerEnd: 'url(#' + base_id + '_drag_arrow)',
           'class': 'drag_stroke',
           fill: 'none',
           visibility: 'hidden',
@@ -2423,12 +2423,12 @@ Util.profileStart('arcs');
                 width: width,
                 y: -height - sizes.arcs.height / 2,
                 height: sizes.arcs.height,
-              }
+              };
               if (arc.marked) {
                 var markedRect = svg.rect(shadowGroup,
                     textBox.x - markedArcSize, textBox.y - markedArcSize,
                     textBox.width + 2 * markedArcSize, textBox.height + 2 * markedArcSize, {
-                      // filter: 'url(#Gaussian_Blur)',
+                      // filter: 'url(#' + base_id + '_Gaussian_Blur)',
                       'class': "shadow_EditHighlight",
                       rx: markedArcSize,
                       ry: markedArcSize,
@@ -2450,7 +2450,7 @@ Util.profileStart('arcs');
                     textBox.width  + 2 * arcLabelShadowSize,
                     textBox.height + 2 * arcLabelShadowSize, {
                       'class': 'shadow_' + arc.shadowClass,
-                      filter: 'url(#Gaussian_Blur)',
+                      filter: 'url(#' + base_id + '_Gaussian_Blur)',
                       rx: arcLabelShadowRounding,
                       ry: arcLabelShadowRounding,
                 });
@@ -2753,7 +2753,7 @@ Util.profileStart('rows');
           y += sizes.texts.height;
           row.textY = y - rowPadding;
           if (row.sentence) {
-            var sentence_hash = new URLHash(coll, doc, { focus: [[ 'sent', row.sentence ]] } );
+            var sentence_hash = new URLHash(base_id, { focus: [[ 'sent', row.sentence ]] } );
             var link = svg.link(sentNumGroup, sentence_hash.getHash());
 
             // Render sentence number as a link
@@ -2777,7 +2777,7 @@ Util.profileStart('rows');
                   box.width + 2 * rectShadowSize, box.height + 2 * rectShadowSize, {
 
                   'class': 'shadow_' + sentComment.type,
-                  filter: 'url(#Gaussian_Blur)',
+                  filter: 'url(#' + base_id + '_Gaussian_Blur)',
                   rx: rectShadowRounding,
                   ry: rectShadowRounding,
                   'data-sent': row.sentence,
@@ -2814,16 +2814,16 @@ Util.profileStart('chunkFinish');
         var currentChunk;
         var lrChunkComp = function(a,b) {
           var ac = currentChunk.fragments[a];
-          var bc = currentChunk.fragments[b]
+          var bc = currentChunk.fragments[b];
           var startDiff = Util.cmp(ac.from, bc.from);
           return startDiff != 0 ? startDiff : Util.cmp(bc.to-bc.from, ac.to-ac.from);
-        }
+        };
         var rlChunkComp = function(a,b) {
           var ac = currentChunk.fragments[a];
-          var bc = currentChunk.fragments[b]
+          var bc = currentChunk.fragments[b];
           var endDiff = Util.cmp(bc.to, ac.to);
           return endDiff != 0 ? endDiff : Util.cmp(bc.to-bc.from, ac.to-ac.from);
-        }
+        };
 
         var sentenceText = null;
         $.each(data.chunks, function(chunkNo, chunk) {
@@ -3092,7 +3092,7 @@ Util.profileClear();
 Util.profileStart('before render');
 
             renderData(requestedData);
-          } else if (doc.length) {
+          } else if (doc && doc.length) {
 
 Util.profileClear();
 Util.profileStart('before render');
@@ -3274,12 +3274,12 @@ Util.profileStart('before render');
         // TODO: this is a slightly weird place to tweak the configuration
         Configuration.abbrevsOn = _abbrevsOn;
         dispatcher.post('configurationChanged');
-      }
+      };
 
       var setTextBackgrounds = function(_textBackgrounds) {
         Configuration.textBackgrounds = _textBackgrounds;
         dispatcher.post('configurationChanged');
-      }
+      };
 
       var setLayoutDensity = function(_density) {
         //dispatcher.post('messages', [[['Setting layout density ' + _density, 'comment']]]);
@@ -3308,7 +3308,7 @@ Util.profileStart('before render');
           Configuration.visual.arcStartHeight = 19;
         }
         dispatcher.post('configurationChanged');
-      }
+      };
 
       var setSvgWidth = function(_width) {
         $svgDiv.width(_width);
@@ -3316,7 +3316,7 @@ Util.profileStart('before render');
           Configuration.svgWidth = _width;
           dispatcher.post('configurationChanged');
         }
-      }
+      };
 
       $svgDiv = $($svgDiv).hide();
 
@@ -3387,7 +3387,7 @@ Util.profileStart('before render');
             }
           }
         });
-      }
+      };
 
       var loadAttributeTypes = function(response_types) {
         var processed = {};
@@ -3406,7 +3406,7 @@ Util.profileStart('before render');
           });
         });
         return processed;
-      }
+      };
 
       var loadRelationTypes = function(relation_types) {
         $.each(relation_types, function(relTypeNo, relType) {
@@ -3418,7 +3418,7 @@ Util.profileStart('before render');
             }
           }
         });
-      }
+      };
 
       var collectionLoaded = function(response) {
         if (!response.exception) {

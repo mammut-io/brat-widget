@@ -18,7 +18,7 @@ var URLMonitor = (function($, window, undefined) {
       var setFavicon = function() {
         var link = $('link[type="image/x-icon"]').remove().attr("href");
         $('<link href="'+ link +'" rel="shortcut icon" type="image/x-icon" />').appendTo('head');
-      }
+      };
 
       var updateURL = function() {
         var new_hash = that.url_hash.getHash();
@@ -106,15 +106,15 @@ var URLMonitor = (function($, window, undefined) {
 
       var preventReloadByURL = function() {
         reloadData = false;
-      }
+      };
       var allowReloadByURL = function() {
         reloadData = true;
-      }
+      };
 
       var init = function() {
         $(window).bind('hashchange', updateState);
         forceUpdate();
-      }
+      };
 
       dispatcher.
           on('forceUpdate', forceUpdate).
@@ -130,13 +130,12 @@ var URLMonitor = (function($, window, undefined) {
 })(jQuery, window);
 
 var URLHash = (function($, window, undefined) {
-    var URLHash = function(collection, _document, _arguments) {
+    var URLHash = function(base_id, _arguments) {
       var that = this;
-      that.collection = collection;
-      that.document = _document || '';
+      that.base_id = base_id;
       that.arguments = _arguments || {};
       that.calcArgs();
-    }
+    };
 
     URLHash.prototype = {
       calcArgs: function() {
@@ -163,18 +162,13 @@ var URLHash = (function($, window, undefined) {
         return this;
       },
 
-      setDocument: function(_document) {
-        this.document = _document;
-        return this;
-      },
-
-      setCollection: function(collection) {
-        this.collection = collection;
+      setBaseId: function(base_id) {
+        this.base_id = base_id;
         return this;
       },
 
       getHash: function() {
-        var url_hash = this.collection + this.document;
+        var url_hash = this.base_id;
 
         var url_args = Util.param(this.extArguments);
 
@@ -187,7 +181,7 @@ var URLHash = (function($, window, undefined) {
         }
 
         return url_hash;
-      },
+      }
     };
 
     // arguments that do not appear in the URL
@@ -233,7 +227,7 @@ var URLHash = (function($, window, undefined) {
     };
 
     return URLHash;
-})(jQuery, window)
+})(jQuery, window);
 
 module.exports = {
   URLMonitor: URLMonitor,

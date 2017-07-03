@@ -60,6 +60,7 @@ var loadedModules = [
     require('./lib/jquery.svg.min.js'),
     require('./lib/webfont.js'),
     require('./lib/jquery-ui.min.js'),
+    require('./lib/jquery-ui.combobox.js'),
     //brat code
     require('./ajax.js'),
     require('./annotation_log.js'),

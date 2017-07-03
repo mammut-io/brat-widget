@@ -2,9 +2,12 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
 require('./lib/jquery-ui.min');
+var Util = require('./util');
+require('./lib/jquery-ui.combobox.js');
+
 
 var AnnotatorUI = (function($, window, undefined) {
-    var AnnotatorUI = function(base_id, Configuration, dispatcher, svg, initForm) {
+    var AnnotatorUI = function(base_id, Configuration, dispatcher, svg, initForm, dialogs) {
       var that = this;
       var arcDragOrigin = null;
       var arcDragOriginBox = null;
@@ -80,7 +83,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }
         var m = s.match(/^(.*?)(\d*)$/);
         return m[1]; // always matches
-      }
+      };
 
       var showForm = function() {
         inForm = true;
@@ -134,7 +137,7 @@ var AnnotatorUI = (function($, window, undefined) {
         if (Configuration.rapidModeOn && rapidAnnotationDialogVisible && 
             "0".charCodeAt() <= code && code <= "9".charCodeAt()) {
           var idx = String.fromCharCode(code);
-          var $input = $('#rapid_span_'+idx);
+          var $input = $('#' + base_id + '_rapid_span_'+idx);
           if ($input.length) {
             $input.click();
           }
@@ -677,7 +680,7 @@ var AnnotatorUI = (function($, window, undefined) {
         $('#' + base_id + '_span_selected').text(spanText);
         var encodedText = encodeURIComponent(spanText);       
         $.each(searchConfig, function(searchNo, search) {
-          $('#span_'+search[0]).attr('href', search[1].replace('%s', encodedText));
+          $('#' + base_id + '_span_'+search[0]).attr('href', search[1].replace('%s', encodedText));
         });
 
         // enable all inputs by default (see setSpanTypeSelectability)
@@ -694,7 +697,7 @@ var AnnotatorUI = (function($, window, undefined) {
         var showAllAttributes = false;
         if (span) {
           var linkHash = new URLHash(coll, doc, { focus: [[span.id]] }).getHash();
-          var el = $('#span_' + span.type);
+          var el = $('#' + base_id + '_span_' + span.type);
           if (el.length) {
             el[0].checked = true;
           } else {
@@ -704,7 +707,7 @@ var AnnotatorUI = (function($, window, undefined) {
           }
 
           // open the span type
-          $('#span_' + span.type).parents('.collapsible').each(function() {
+          $('#' + base_id + '_span_' + span.type).parents('.collapsible').each(function() {
             toggleCollapsible($(this).parent().prev(), true);
           });
 
@@ -742,23 +745,23 @@ var AnnotatorUI = (function($, window, undefined) {
         }
         $('#' + base_id + '_span_highlight_link').attr('href', linkHash);
         if (span && !reselectedSpan) {
-          $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').show();
+          $('#' + base_id + '_span_form_reselect, #' + base_id + '_span_form_delete, #' + base_id + '_span_form_add_fragment').show();
           keymap[$.ui.keyCode.DELETE] = 'span_form_delete';
           keymap[$.ui.keyCode.INSERT] = 'span_form_reselect';
           keymap['S-' + $.ui.keyCode.ENTER] = 'span_form_add_fragment';
           $('#' + base_id + '_span_notes').val(span.annotatorNotes || '');
         } else {
-          $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').hide();
+          $('#' + base_id + '_span_form_reselect, #' + base_id + '_span_form_delete, #' + base_id + '_span_form_add_fragment').hide();
           keymap[$.ui.keyCode.DELETE] = null;
           keymap[$.ui.keyCode.INSERT] = null;
           keymap['S-' + $.ui.keyCode.ENTER] = null;
         }
         if (span && !reselectedSpan && span.offsets.length > 1) {
-          $('#span_form_reselect_fragment, #span_form_delete_fragment').show();
+          $('#' + base_id + '_span_form_reselect_fragment, #' + base_id + '_span_form_delete_fragment').show();
           keymap['S-' + $.ui.keyCode.DELETE] = 'span_form_delete_fragment';
           keymap['S-' + $.ui.keyCode.INSERT] = 'span_form_reselect_fragment';
         } else {
-          $('#span_form_reselect_fragment, #span_form_delete_fragment').hide();
+          $('#' + base_id + '_span_form_reselect_fragment, #' + base_id + '_span_form_delete_fragment').hide();
           keymap['S-' + $.ui.keyCode.DELETE] = null;
           keymap['S-' + $.ui.keyCode.INSERT] = null;
         }
@@ -943,7 +946,7 @@ var AnnotatorUI = (function($, window, undefined) {
           submitReselect();
         } else {
           dispatcher.post('showForm', [spanForm, true]);
-          $('#span_form-ok').focus();
+          $('#' + base_id + '_span_form-ok').focus();
           adjustToCursor(evt, spanForm.parent());
         }
       };
@@ -1020,8 +1023,8 @@ var AnnotatorUI = (function($, window, undefined) {
         // fill in some space and the special "Other" option, with key "0" (zero)
         $spanTypeDiv.append($('<div class="item_content">&#160;</div>')); // non-breaking space
         var $numlabel = $('<span class="accesskey">0</span><span>:</span>');        
-        var $input = $('<input type="radio" name="rapid_span_type" id="rapid_span_0" value=""/>');
-        var $label = $('<label class="span_type_label" for="rapid_span_0" style="background-color:lightgray">Other...</label>');
+        var $input = $('<input type="radio" name="rapid_span_type" id="' + base_id + '_rapid_span_0" value=""/>');
+        var $label = $('<label class="span_type_label" for="' + base_id + '_rapid_span_0" style="background-color:lightgray">Other...</label>');
         var $content = $('<div class="item_content"/>').
           append($numlabel).
           append($input).
@@ -1029,7 +1032,7 @@ var AnnotatorUI = (function($, window, undefined) {
         $spanTypeDiv.append($content);
 
         // set up click event handlers
-        rapidSpanForm.find('#rapid_span_types input:radio').click(rapidSpanFormSubmitRadio);
+        rapidSpanForm.find('#' + base_id + '_rapid_span_types input:radio').click(rapidSpanFormSubmitRadio);
 
         var firstRadio = $('#' + base_id + '_rapid_span_form input:radio:first')[0];
         if (firstRadio) {
@@ -1041,7 +1044,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }
         dispatcher.post('showForm', [rapidSpanForm]);
         rapidAnnotationDialogVisible = true;
-        $('#rapid_span_form-ok').focus();
+        $('#' + base_id + '_rapid_span_form-ok').focus();
         // TODO: avoid using global for stored click event
 //         adjustToCursor(lastRapidAnnotationEvent, rapidSpanForm.parent(),
 //                        true, true);
@@ -1055,19 +1058,19 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var clearArcNotes = function(evt) {
         $('#' + base_id + '_arc_notes').val('');
-      }
+      };
       $('#' + base_id + '_clear_arc_notes_button').button();
       $('#' + base_id + '_clear_arc_notes_button').click(clearArcNotes);
 
       var clearSpanNotes = function(evt) {
         $('#' + base_id + '_span_notes').val('');
-      }
+      };
       $('#' + base_id + '_clear_span_notes_button').button();
       $('#' + base_id + '_clear_span_notes_button').click(clearSpanNotes);
 
       var clearSpanNorm = function(evt) {
         clearNormalizationUI();
-      }
+      };
       $('#' + base_id + '_clear_norm_button').button();
       $('#' + base_id + '_clear_norm_button').click(clearSpanNorm);
 
@@ -1091,14 +1094,14 @@ var AnnotatorUI = (function($, window, undefined) {
           updateNormalizationRefLink();
         }
         $('#' + base_id + '_span_norm_txt').val(response.value);
-      }
+      };
 
       // on any change to the normalization DB, clear everything and
       // update link
       var spanNormDbUpdate = function(evt) {
         clearNormalizationUI();
         updateNormalizationDbLink();
-      }
+      };
       $('#' + base_id + '_span_norm_db').change(spanNormDbUpdate);
 
       // on any change to the normalization ID, update the text of the
@@ -1119,7 +1122,7 @@ var AnnotatorUI = (function($, window, undefined) {
           }
           oldSpanNormIdValue = key;
         }
-      }
+      };
       // see http://stackoverflow.com/questions/1948332/detect-all-changes-to-a-input-type-text-immediately-using-jquery
       $('#' + base_id + '_span_norm_id').bind('propertychange keyup input paste', spanNormIdUpdate);
       // nice-looking select for normalization
@@ -1130,7 +1133,7 @@ var AnnotatorUI = (function($, window, undefined) {
           width: 800,
           width: 600,
           resizable: true,
-          alsoResize: '#norm_search_result_select',
+          alsoResize: '#' + base_id + '_norm_search_result_select',
           open: function(evt) {
             keymap = {};
           },
@@ -1198,10 +1201,10 @@ var AnnotatorUI = (function($, window, undefined) {
           performNormSearch();
         }
         return false;
-      }
+      };
       var normSearchSubmittable = false;
       var setNormSearchSubmit = function(enable) {
-        $('#norm_search_dialog-ok').button(enable ? 'enable' : 'disable');
+        $('#' + base_id + '_norm_search_dialog-ok').button(enable ? 'enable' : 'disable');
         normSearchSubmittable = enable;
       };
       normSearchDialog.submit(normSearchSubmit);
@@ -1212,11 +1215,11 @@ var AnnotatorUI = (function($, window, undefined) {
         $('#' + base_id + '_norm_search_query').val($element.attr('data-txt'));
         $('#' + base_id + '_norm_search_id').val($element.attr('data-id'));
         setNormSearchSubmit(true);
-      }
+      };
       var chooseNormIdAndSubmit = function(evt) {
         chooseNormId(evt);
         normSearchSubmit(evt);
-      }
+      };
       var setSpanNormSearchResults = function(response) {
         if (response.exception) {
           // TODO: better response to failure
@@ -1266,7 +1269,7 @@ var AnnotatorUI = (function($, window, undefined) {
             dblclick(chooseNormIdAndSubmit);
 
         // TODO: sorting on click on header (see showFileBrowser())
-      }
+      };
       var performNormSearch = function() {
         var val = $('#' + base_id + '_norm_search_query').val();
         var db = $('#' + base_id + '_span_norm_db').val();
@@ -1275,7 +1278,7 @@ var AnnotatorUI = (function($, window, undefined) {
                         database: db,
                         name: val,
                         collection: coll}, 'normSearchResult']);
-      }
+      };
       $('#' + base_id + '_norm_search_button').click(performNormSearch);
       $('#' + base_id + '_norm_search_query').focus(function() {
         setNormSearchSubmit(false);
@@ -1302,14 +1305,14 @@ var AnnotatorUI = (function($, window, undefined) {
         setNormSearchSubmit(false);
         dispatcher.post('showForm', [normSearchDialog]);
         $('#' + base_id + '_norm_search_query').focus().select();
-      }
+      };
       $('#' + base_id + '_span_norm_txt').click(showNormSearchDialog);
       $('#' + base_id + '_norm_search_button').button();
 
       var arcFormSubmitRadio = function(evt) {
         // TODO: check for confirm_mode?
         arcFormSubmit(evt, $(evt.target));
-      }
+      };
 
       var arcFormSubmit = function(evt, typeRadio) {
         typeRadio = typeRadio || $('#' + base_id + '_arc_form input:radio:checked');
@@ -1364,8 +1367,8 @@ var AnnotatorUI = (function($, window, undefined) {
 
               var displayName = ((arcDesc.labels && arcDesc.labels[0]) || 
                                  arcTypeName);
-              var $input = $('<input id="arc_' + arcTypeName + '" type="radio" name="arc_type" value="' + arcTypeName + '"/>');
-              var $label = $('<label class="arc_type_label" for="arc_' + arcTypeName + '"/>').text(displayName);
+              var $input = $('<input id="' + base_id + '_arc_' + arcTypeName + '" type="radio" name="arc_type" value="' + arcTypeName + '"/>');
+              var $label = $('<label class="arc_type_label" for="' + base_id + '_arc_' + arcTypeName + '"/>').text(displayName);
               var $collapsible = $('<div class="collapsible"/>');
               var $content = $('<div class="item_content"/>').
                 append($input).
@@ -1387,7 +1390,7 @@ var AnnotatorUI = (function($, window, undefined) {
               mapOf$containers[arcTypeName] = $collapsible;
               mapOf$items[arcTypeName] = $div
               if (arcDesc.hotkey) {
-                keymap[arcDesc.hotkey] = '#arc_' + arcTypeName;
+                keymap[arcDesc.hotkey] = '#' + base_id + '_arc_' + arcTypeName;
                 var name = $label.html();
                 var replace = true;
                 name = name.replace(new RegExp("(&[^;]*?)?(" + arcDesc.hotkey + ")", 'gi'),
@@ -1418,7 +1421,7 @@ var AnnotatorUI = (function($, window, undefined) {
           if (arcId) {
             // let the user delete or whatever, even on bad config
             // (note that what's shown to the user is w/o possible num suffix)
-            var $checkbox = $('<input id="arc_' + arcType + '" type="hidden" name="arc_type" value="' + noNumArcType + '"/>');
+            var $checkbox = $('<input id="' + base_id + '_arc_' + arcType + '" type="hidden" name="arc_type" value="' + noNumArcType + '"/>');
             $scroller.append($checkbox);
           } else {
             // can't make a new arc
@@ -1438,18 +1441,18 @@ var AnnotatorUI = (function($, window, undefined) {
           var focus = arcId instanceof Array ? arcId : [arcId];
           var hash = new URLHash(coll, doc, { focus: [focus] }).getHash();
           $('#' + base_id + '_arc_highlight_link').attr('href', hash).show(); // TODO incorrect
-          var el = $('#arc_' + arcType)[0];
+          var el = $('#' + base_id + '_arc_' + arcType)[0];
           if (el) {
             el.checked = true;
           } else {
               // try w/o numeric suffix
-              el = $('#arc_' + noNumArcType)[0];
+              el = $('#' + base_id + '_arc_' + noNumArcType)[0];
               if (el) {
                   el.checked = true;
               }
           }
 
-          $('#arc_form_reselect, #arc_form_delete').show();
+          $('#' + base_id + '_arc_form_reselect, #' + base_id + '_arc_form_delete').show();
           keymap[$.ui.keyCode.DELETE] = 'arc_form_delete';
           keymap[$.ui.keyCode.INSERT] = 'arc_form_reselect';
 
@@ -1473,7 +1476,7 @@ var AnnotatorUI = (function($, window, undefined) {
             el.checked = true;
           }
 
-          $('#arc_form_reselect, #arc_form_delete, #arc_form_reverse').hide();
+          $('#' + base_id + '_arc_form_reselect, #' + base_id + '_arc_form_delete, #' + base_id + '_arc_form_reverse').hide();
 
           arcForm.dialog('option', { title: 'New Annotation' });
         }
@@ -1485,7 +1488,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }
 
         if (!Configuration.confirmModeOn) {
-          arcForm.find('#arc_roles input:radio').click(arcFormSubmitRadio);
+          arcForm.find('#' + base_id + '_arc_roles input:radio').click(arcFormSubmitRadio);
         }
 
         var arcAnnotatorNotes;
@@ -1514,7 +1517,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }
 
         dispatcher.post('showForm', [arcForm]);
-        $('#arc_form-ok').focus();
+        $('#' + base_id + '_arc_form-ok').focus();
         adjustToCursor(evt, arcForm.parent());
       };
       
@@ -1561,7 +1564,7 @@ var AnnotatorUI = (function($, window, undefined) {
               text: 'Reselect',
               click: reselectArc
             }],
-          alsoResize: '#arc_roles',
+          alsoResize: '#' + base_id + '_arc_roles',
           close: function(evt) {
             keymap = null;
           }
@@ -1865,22 +1868,22 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var collapseHandler = function(evt) {
         toggleCollapsible($(evt.target));
-      }
-      $('#arc_roles, #span_roles').on('click', '.collapser', collapseHandler);
+      };
+      $('#' + base_id + '_arc_roles, #' + base_id + '_span_roles').on('click', '.collapser', collapseHandler);
 
       var spanFormSubmitRadio = function(evt) {
         if (Configuration.confirmModeOn) {
           showValidAttributes();
           showValidNormalizations();
-          $('#span_form-ok').focus();
+          $('#' + base_id + '_span_form-ok').focus();
         } else {
           spanFormSubmit(evt, $(evt.target));
         }
-      }
+      };
 
       var rapidSpanFormSubmitRadio = function(evt) {
         rapidSpanFormSubmit(evt, $(evt.target));
-      }
+      };
 
       var rememberData = function(_data) {
         if (_data && !_data.exception) {
@@ -1991,7 +1994,7 @@ var AnnotatorUI = (function($, window, undefined) {
             $select.change(onMultiAttrChange);
           }
         });
-      }
+      };
 
       var setSpanTypeSelectability = function(category) {
         // TODO: this implementation is incomplete: we should ideally
@@ -2023,7 +2026,7 @@ var AnnotatorUI = (function($, window, undefined) {
           // replaced with more "metal" version
           $toCheck[0].checked = true;
         }
-      }
+      };
 
       var onMultiAttrChange = function(evt) {
         if ($(this).val() == '') {
@@ -2037,7 +2040,7 @@ var AnnotatorUI = (function($, window, undefined) {
             $(evt.target).removeClass('ui-state-active');
           }
         }
-      }
+      };
 
       var onBooleanAttrChange = function(evt) {
         if (evt.type == 'change') { // ignore the click event on the UI element
@@ -2078,8 +2081,8 @@ var AnnotatorUI = (function($, window, undefined) {
               $searchlinks2.append(',\n')
             }
             firstLink=false;
-            $searchlinks.append('<a target="_blank" id="span_'+search[0]+'" href="#">'+search[0]+'</a>');
-            $searchlinks2.append('<a target="_blank" id="viewspan_'+search[0]+'" href="#">'+search[0]+'</a>');
+            $searchlinks.append('<a target="_blank" id="' + base_id + '_span_'+search[0]+'" href="#">'+search[0]+'</a>');
+            $searchlinks2.append('<a target="_blank" id="' + base_id + '_viewspan_'+search[0]+'" href="#">'+search[0]+'</a>');
             linkFilled=true;
           });
         }
@@ -2091,8 +2094,8 @@ var AnnotatorUI = (function($, window, undefined) {
           $('#' + base_id + '_viewspan_search_fieldset').hide();
         }
 
-        spanForm.find('#entity_types input:radio').click(spanFormSubmitRadio);
-        spanForm.find('#event_types input:radio').click(spanFormSubmitRadio);
+        spanForm.find('#' + base_id + '_entity_types input:radio').click(spanFormSubmitRadio);
+        spanForm.find('#' + base_id + '_event_types input:radio').click(spanFormSubmitRadio);
       };
 
       var tagCurrentDocument = function(taggerId) {
@@ -2119,7 +2122,7 @@ var AnnotatorUI = (function($, window, undefined) {
           }
           var $row = $('<div class="optionRow"/>');
           var $label = $('<span class="optionLabel">'+Util.escapeHTML(taggerName)+'</span>');
-          var $button = $('<input id="tag_'+Util.escapeHTML(taggerId)+'_button" type="button" value="'+Util.escapeHTML(taggerModel)+'" tabindex="-1" title="Automatically tag the current document."/>');
+          var $button = $('<input id="' + base_id + '_tag_'+Util.escapeHTML(taggerId)+'_button" type="button" value="'+Util.escapeHTML(taggerModel)+'" tabindex="-1" title="Automatically tag the current document."/>');
           $row.append($label).append($button);
           $taggerButtons.append($row);
           $button.click(function(evt) {
@@ -2136,7 +2139,7 @@ var AnnotatorUI = (function($, window, undefined) {
           $('#' + base_id + '_auto_tagging_fieldset').show();
           $('#' + base_id + '_no_tagger_message').hide();
         }
-      }
+      };
 
       // recursively traverses type hierarchy (entity_types or
       // event_types) and stores normalizations in normDbsByType.
@@ -2183,12 +2186,12 @@ var AnnotatorUI = (function($, window, undefined) {
         } else {
           $('#' + base_id + '_norm_fieldset').show();
         }
-      }
+      };
 
       // hides the reference link in the normalization UI
       var hideNormalizationRefLink = function() {
         $('#' + base_id + '_span_norm_ref_link').hide();
-      }
+      };
 
       // updates the reference link in the normalization UI according
       // to the current value of the normalization DB and ID.
@@ -2216,7 +2219,7 @@ var AnnotatorUI = (function($, window, undefined) {
             $normLink.show();
           }
         }
-      }
+      };
 
       // updates the DB search link in the normalization UI according
       // to the current value of the normalization DB.
@@ -2234,10 +2237,10 @@ var AnnotatorUI = (function($, window, undefined) {
           $dbLink.attr('href', link);
           $dbLink.show();
         }
-      }
+      };
 
       // resets user-settable normalization-related UI elements to a
-      // blank state (does not blank #span_norm_db <select>).
+      // blank state (does not blank #' + base_id + '_span_norm_db <select>).
       var clearNormalizationUI = function() {
         var $normId = $('#' + base_id + '_span_norm_id');
         var $normText = $('#' + base_id + '_span_norm_txt');
@@ -2246,7 +2249,7 @@ var AnnotatorUI = (function($, window, undefined) {
         $normId.removeClass('valid_value').removeClass('invalid_value');
         $normText.val('');
         updateNormalizationRefLink();
-      }
+      };
 
       // returns the normalizations currently filled in the span
       // dialog, or empty list if there are none
@@ -2262,7 +2265,7 @@ var AnnotatorUI = (function($, window, undefined) {
           normalizations.push([normDb, normId, normText]);
         }
         return normalizations;
-      }
+      };
 
       // returns attributes that are valid for the selected type in
       // the span dialog
@@ -2287,7 +2290,7 @@ var AnnotatorUI = (function($, window, undefined) {
           }
         });
         return attributes;
-      }
+      };
 
       var spanAndAttributeTypesLoaded = function(_spanTypes, 
                                                  _entityAttributeTypes,
@@ -2323,7 +2326,7 @@ var AnnotatorUI = (function($, window, undefined) {
             reselectedSpan = null;
           }
           svgElement.removeClass('reselect');
-          $('#' + base_id + '_waiter').dialog('close');
+          dialogs.$waiterDialog.dialog('close');
         } else {
           if (response.edited == undefined) {
             console.warn('Warning: server response to edit has', response.edited, 'value for "edited"');
@@ -2362,7 +2365,7 @@ var AnnotatorUI = (function($, window, undefined) {
         spanOptions.offsets = JSON.stringify(spanOptions.offsets);
         dispatcher.post('ajax', [spanOptions, 'edited']);
         dispatcher.post('hideForm');
-        $('#' + base_id + '_waiter').dialog('open');
+        dialogs.$waiterDialog.dialog('open');
       };
 
       var reselectSpan = function() {
@@ -2394,7 +2397,7 @@ var AnnotatorUI = (function($, window, undefined) {
           alsoResize: '.scroll_fset',
           width: 400,
           open: function() {
-            $('#split_form-ok').focus();
+            $('#' + base_id + '_split_form-ok').focus();
           }
         }]);
       var splitSpan = function() {
@@ -2402,14 +2405,14 @@ var AnnotatorUI = (function($, window, undefined) {
         var $roles = $('#' + base_id + '_split_roles').empty();
         var numRoles = repeatingArcTypes.length;
         var roles = $.each(repeatingArcTypes, function() {
-          var $role = $('<input id="split_on_' + Util.escapeQuotes(this) +
+          var $role = $('<input id="' + base_id + '_split_on_' + Util.escapeQuotes(this) +
             '" type="checkbox" name="' + Util.escapeQuotes(this) +
             '" value="' + Util.escapeQuotes(this) + '"/>');
           if (numRoles == 1) {
             // a single role will be selected automatically
             $role.click();
           }
-          var $label = $('<label for="split_on_' + Util.escapeQuotes(this) +
+          var $label = $('<label for="' + base_id + '_split_on_' + Util.escapeQuotes(this) +
             '">' + Util.escapeQuotes(this) + '</label>');
           $roles.append($role).append($label);
         });
@@ -2451,7 +2454,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
         dispatcher.post('ajax', [spanOptions, 'edited']);
         dispatcher.post('hideForm');
-        $('#' + base_id + '_waiter').dialog('open');
+        dialogs.$waiterDialog.dialog('open');
       };
 
       var spanChangeLock = function(evt) {
@@ -2468,7 +2471,7 @@ var AnnotatorUI = (function($, window, undefined) {
       });
 
       dispatcher.post('initForm', [spanForm, {
-          alsoResize: '#entity_and_event_wrapper',
+          alsoResize: '#' + base_id + '_entity_and_event_wrapper',
           width: 760,
           buttons: [{
               id: 'span_form_add_fragment',
@@ -2497,10 +2500,10 @@ var AnnotatorUI = (function($, window, undefined) {
             }
           ],
           create: function(evt) {
-            var $ok = $('#span_form-ok').wrap('<span id="span_form_lock_bset"/>');
+            var $ok = $('#' + base_id + '_span_form-ok').wrap('<span id="' + base_id + '_span_form_lock_bset"/>');
             var $span = $ok.parent();
-            var $lock = $('<input id="span_form_lock" type="checkbox"/>').insertBefore($ok);
-            $('<label for="span_form_lock"/>').text("Lock type").insertBefore($ok);
+            var $lock = $('<input id="' + base_id + '_span_form_lock" type="checkbox"/>').insertBefore($ok);
+            $('<label for="' + base_id + '_span_form_lock"/>').text("Lock type").insertBefore($ok);
             $lock.button({
               id: 'span_form_lock',
               text: false,
@@ -2536,7 +2539,7 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       dispatcher.post('initForm', [rapidSpanForm, {
-          alsoResize: '#rapid_span_types',
+          alsoResize: '#' + base_id + '_rapid_span_types',
           width: 400,             
           close: function(evt) {
             keymap = null;
@@ -2546,7 +2549,7 @@ var AnnotatorUI = (function($, window, undefined) {
       var spanFormSubmit = function(evt, typeRadio) {
         typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
         var type = typeRadio.val();
-        $('#span_form-ok').blur();
+        $('#' + base_id + '_span_form-ok').blur();
 
         var locked = $('#' + base_id + '_span_form_lock').is(':checked');
         if (locked && !lockOptions) {
@@ -2580,7 +2583,7 @@ var AnnotatorUI = (function($, window, undefined) {
         // hiding them
         spanForm.parent().find('*').blur();
 
-        $('#' + base_id + '_waiter').dialog('open');
+        dialogs.$waiterDialog.dialog('open');
         dispatcher.post('ajax', [spanOptions, 'edited']);
         return false;
       };
@@ -2620,7 +2623,7 @@ var AnnotatorUI = (function($, window, undefined) {
             'document': doc,
             type: type,
           });
-          $('#' + base_id + '_waiter').dialog('open');
+          dialogs.$waiterDialog.dialog('open');
           rapidSpanOptions.offsets = JSON.stringify(rapidSpanOptions.offsets);
           dispatcher.post('ajax', [rapidSpanOptions, 'edited']);
         }
@@ -2656,7 +2659,7 @@ var AnnotatorUI = (function($, window, undefined) {
       importForm.submit(importFormSubmit);
       dispatcher.post('initForm', [importForm, {
           width: 500,
-          alsoResize: '#import_text',
+          alsoResize: '#' + base_id + '_import_text',
           open: function(evt) {
             keymap = {};
           },
@@ -2709,7 +2712,7 @@ var AnnotatorUI = (function($, window, undefined) {
           action: 'deleteDocument',
           collection: coll,
           'document': doc
-        }
+        };
         dispatcher.post('ajax', [delOptions, 'docDeleted']);
       });
 
@@ -2742,7 +2745,7 @@ var AnnotatorUI = (function($, window, undefined) {
               'collection': collection,
               'document': dok,
               'token': token
-            }
+            };
             dispatcher.post('ajax', [options, 'edited']);
           } else {
             dispatcher.post('messages', [[['No action to be undone', 'error']]]);
@@ -2755,9 +2758,9 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var preventDefault = function(evt) {
         evt.preventDefault();
-      }
+      };
 
-      var $waiter = $('#' + base_id + '_waiter');
+      var $waiter = dialogs.$waiterDialog;
       $waiter.dialog({
         closeOnEscape: false,
         buttons: {},
@@ -2778,7 +2781,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var userReceived = function(_user) {
         that.user = _user;
-      }
+      };
 
       var setAnnotationSpeed = function(speed) {
         if (speed == 1) {
@@ -2796,7 +2799,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var onNewSourceData = function(_sourceData) {
         sourceData = _sourceData;
-      }
+      };
 
       var init = function() {
         dispatcher.post('annotationIsAvailable');

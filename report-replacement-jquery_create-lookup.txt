@@ -1,0 +1,30 @@
+Targets
+    Occurrences of '(id|for)="([a-zA-Z_0-9\-]+)' in brat-copy
+Found Occurrences  (17 usages found)
+    Usage in comments  (1 usage found)
+        brat-widget  (1 usage found)
+            js/src  (1 usage found)
+                visualizer_ui.js  (1 usage found)
+                    709       // $('<a href="ajax.cgi?action=downloadSearchFile" id="save_search">Save</a>').
+    Usage in string constants  (16 usages found)
+        brat-widget  (16 usages found)
+            js/src  (16 usages found)
+                annotator_ui.js  (13 usages found)
+                    1023 var $input = $('<input type="radio" name="rapid_span_type" id="rapid_span_0" value=""/>');
+                    1024 var $label = $('<label class="span_type_label" for="rapid_span_0" style="background-color:lightgray">Other...</label>');
+                    1367 var $input = $('<input id="arc_' + arcTypeName + '" type="radio" name="arc_type" value="' + arcTypeName + '"/>');
+                    1368 var $label = $('<label class="arc_type_label" for="arc_' + arcTypeName + '"/>').text(displayName);
+                    1421 var $checkbox = $('<input id="arc_' + arcType + '" type="hidden" name="arc_type" value="' + noNumArcType + '"/>');
+                    2081 $searchlinks.append('<a target="_blank" id="span_'+search[0]+'" href="#">'+search[0]+'</a>');
+                    2082 $searchlinks2.append('<a target="_blank" id="viewspan_'+search[0]+'" href="#">'+search[0]+'</a>');
+                    2122 id="tag_
+                    2405 var $role = $('<input id="split_on_' + Util.escapeQuotes(this) +
+                    2412 var $label = $('<label for="split_on_' + Util.escapeQuotes(this) +
+                    2500 var $ok = $('#' + base_id + '_span_form-ok').wrap('<span id="span_form_lock_bset"/>');
+                    2502 var $lock = $('<input id="span_form_lock" type="checkbox"/>').insertBefore($ok);
+                    2503 $('<label for="span_form_lock"/>').text("Lock type").insertBefore($ok);
+                visualizer.js  (1 usage found)
+                    1160 var $blurFilter = $('<filter id="Gaussian_Blur"><feGaussianBlur in="SourceGraphic" stdDeviation="2" /></filter>');
+                visualizer_ui.js  (2 usages found)
+                    436 comment += ('<br/><div id="norm_info_drop_point_'+
+                    1696 var $downloadLink = $('<a id="download_'+stored.name+'"' +

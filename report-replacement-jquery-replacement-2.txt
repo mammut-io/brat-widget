@@ -1,0 +1,354 @@
+Targets
+    Occurrences of '\$\('#' \+ base_id \+ '_([a-zA-Z_0-9\-]+)'\)' in brat-copy
+Found Occurrences  (339 usages found)
+    Usage in comments  (125 usages found)
+        brat-widget  (125 usages found)
+            js/src  (125 usages found)
+                url_monitor.js  (1 usage found)
+                    74 //     $('#' + base_id + '_waiter').dialog('open');
+                visualizer.js  (2 usages found)
+                    1148 //$('#' + base_id + '_document_ctime').text("Created: " + Annotator.formatTime(1000 * data.ctime)).css("display", "inline");
+                    1151 //$('#' + base_id + '_document_ctime').css("display", "none");
+                visualizer_ui.js  (122 usages found)
+                    670         $('#' + base_id + '_document_input').val($element.attr('data-doc'));
+                    682       var fileBrowser = $('#' + base_id + '_collection_browser');
+                    690                 $('#' + base_id + '_no_document_message').hide();
+                    691                 $('#' + base_id + '_loading_message').show();
+                    693                 $('#' + base_id + '_loading_message').hide();
+                    694                 $('#' + base_id + '_no_document_message').show();
+                    716       $('#' + base_id + '_document_input').keyup(docInputHandler);
+                    720         var input = $('#' + base_id + '_document_input').
+                    730             $('#' + base_id + '_document_input').focus().select();
+                    751           $('#' + base_id + '_document_input').focus().select();
+                    753         docScroll = $('#' + base_id + '_document_select')[0].scrollTop;
+                    886         $('#' + base_id + '_document_select')[0].scrollTop = docScroll;
+                    895         $('#' + base_id + '_collection_input').val(selectorData.collection);
+                    896         $('#' + base_id + '_document_input').val(doc);
+                    898         $('#' + base_id + '_readme').val(selectorData.description || '');
+                    904           $('#' + base_id + '_more_readme_button').button(); // TODO: more reasonable place
+                    905           $('#' + base_id + '_more_readme_button').show();
+                    908           $('#' + base_id + '_readme').val(split_readme_text[0]);
+                    909           $('#' + base_id + '_more_info_readme').text(selectorData.description);
+                    912           $('#' + base_id + '_more_readme_button').hide();
+                    913           $('#' + base_id + '_more_info_readme').text('');
+                    916         selectElementInTable($('#' + base_id + '_document_select'), doc, args.matchfocus);
+                    918           $('#' + base_id + '_document_input').focus().select();
+                    921       $('#' + base_id + '_collection_browser_button').click(function(evt) {
+                    982         addSpanTypesToSelect($('#' + base_id + '_search_form_entity_type'), response.entity_types);
+                    983         addSpanTypesToSelect($('#' + base_id + '_search_form_event_type'), response.event_types);
+                    984         addSpanTypesToSelect($('#' + base_id + '_search_form_relation_type'), response.relation_types);
+                    987         $('#' + base_id + '_search_form_load_file').addClass('ui-widget ui-state-default ui-button-text');
+                    996         var origin = $('#' + base_id + '_search_form_event_type').val();
+                    1020       $('#' + base_id + '_search_form_event_roles').on('change', '.search_event_role select', searchEventRoleChanged);
+                    1024         var $roles = $('#' + base_id + '_search_form_event_roles');
+                    1064       $('#' + base_id + '_search_form_event_roles').on('click', '.search_event_role_add input', addEmptySearchEventRole);
+                    1065       $('#' + base_id + '_search_form_event_roles').on('click', '.search_event_role_del input', delSearchEventRole);
+                    1069       $('#' + base_id + '_search_form_event_type').change(function(evt) {
+                    1070         var $roles = $('#' + base_id + '_search_form_event_roles').empty();
+                    1082       $('#' + base_id + '_search_form_relation_type').change(function(evt) {
+                    1084         var $arg1 = $('#' + base_id + '_search_form_relation_arg1_type').
+                    1086         var $arg2 = $('#' + base_id + '_search_form_relation_arg2_type').empty();
+                    1099         $('#' + base_id + '_search_form_relation_arg1_type').change();
+                    1106       $('#' + base_id + '_search_form_relation_arg1_type').change(function(evt) {
+                    1107         var $arg2 = $('#' + base_id + '_search_form_relation_arg2_type').
+                    1109         var relType = $('#' + base_id + '_search_form_relation_type').val();
+                    1128       $('#' + base_id + '_search_form_note_category').change(function(evt) {
+                    1130         var $type = $('#' + base_id + '_search_form_note_type');
+                    1144       if ($('#' + base_id + '_concordancing_on').is(':checked')) {
+                    1145         $('#' + base_id + '_context_size_div').show("highlight");
+                    1147         $('#' + base_id + '_context_size_div').hide("highlight");
+                    1150         if ($('#' + base_id + '_concordancing_on').is(':checked')) {
+                    1151           $('#' + base_id + '_context_size_div').show("highlight");
+                    1153           $('#' + base_id + '_context_size_div').hide("highlight");
+                    1159       $('#' + base_id + '_advanced_search_option_toggle').click(function(evt) {
+                    1162           $('#' + base_id + '_advanced_search_option_toggle').text("Show advanced");
+                    1165           $('#' + base_id + '_advanced_search_option_toggle').text("Hide advanced");
+                    1174         var activeTab = $('#' + base_id + '_search_tabs').tabs('option', 'active');
+                    1183             $('#' + base_id + '_search_form_text_text').focus().select();
+                    1186             $('#' + base_id + '_search_form_entity_text').focus().select();
+                    1189             $('#' + base_id + '_search_form_event_trigger').focus().select();
+                    1192             $('#' + base_id + '_search_form_relation_type').focus().select();
+                    1195             $('#' + base_id + '_search_form_note_text').focus().select();
+                    1198             $('#' + base_id + '_search_form_load_file').focus().select();
+                    1204       $('#' + base_id + '_search_tabs').tabs({
+                    1207       $('#' + base_id + '_search_form').find('.radio_group').buttonset();
+                    1218       var searchForm = $('#' + base_id + '_search_form');
+                    1235             opts.text = $('#' + base_id + '_search_form_text_text').val();
+                    1242             opts.type = $('#' + base_id + '_search_form_entity_type').val() || '';
+                    1243             opts.text = $('#' + base_id + '_search_form_entity_text').val();
+                    1246             opts.type = $('#' + base_id + '_search_form_event_type').val() || '';
+                    1247             opts.trigger = $('#' + base_id + '_search_form_event_trigger').val();
+                    1259             opts.type = $('#' + base_id + '_search_form_relation_type').val() || '';
+                    1260             opts.arg1 = $('#' + base_id + '_search_form_relation_arg1_text').val();
+                    1261             opts.arg1type = $('#' + base_id + '_search_form_relation_arg1_type').val() || '';
+                    1262             opts.arg2 = $('#' + base_id + '_search_form_relation_arg2_text').val();
+                    1263             opts.arg2type = $('#' + base_id + '_search_form_relation_arg2_type').val() || '';
+                    1264             opts.show_text = $('#' + base_id + '_search_form_relation_show_arg_text_on').is(':checked');
+                    1265             opts.show_type = $('#' + base_id + '_search_form_relation_show_arg_type_on').is(':checked');
+                    1268             opts.category = $('#' + base_id + '_search_form_note_category').val() || '';
+                    1269             opts.type = $('#' + base_id + '_search_form_note_type').val() || '';
+                    1270             opts.text = $('#' + base_id + '_search_form_note_text').val() || '';
+                    1289         opts.concordancing = $('#' + base_id + '_concordancing_on').is(':checked');
+                    1290         opts.context_length = $('#' + base_id + '_context_length').val();
+                    1294         opts.match_case = $('#' + base_id + '_match_case_on').is(':checked');
+                    1310       $('#' + base_id + '_search_form_load_file').change(function(evt) {
+                    1311         var $file = $('#' + base_id + '_search_form_load_file');
+                    1340       $('#' + base_id + '_search_form_clear').attr('title', 'Clear the search and resume normal collection browsing');
+                    1345         $('#' + base_id + '_search_form_event_type').change();
+                    1346         $('#' + base_id + '_search_form_relation_type').change();
+                    1351       $('#' + base_id + '_search_button').click(showSearchForm);
+                    1362       $('#' + base_id + '_clear_search_button').click(clearSearchResults);
+                    1365         $searchButton = $('#' + base_id + '_search_button');
+                    1368         $clearSearchButton = $('#' + base_id + '_clear_search_button');
+                    1372             $('#' + base_id + '_search_button_label').removeClass('ui-corner-all');
+                    1373             $('#' + base_id + '_search_button_label').addClass('ui-corner-left');
+                    1376             $('#' + base_id + '_search_button_label').removeClass('ui-corner-left');
+                    1377             $('#' + base_id + '_search_button_label').addClass('ui-corner-all');
+                    1387       var dataForm = $('#' + base_id + '_data_form');
+                    1402               $('#' + base_id + '_document_export').hide();
+                    1403               $('#' + base_id + '_document_visualization').hide();
+                    1405               $('#' + base_id + '_document_export').show();
+                    1406               $('#' + base_id + '_document_visualization').show();
+                    1413       $('#' + base_id + '_data_button').click(function() {
+                    1422       $('#' + base_id + '_stored_file_regenerate').button().hide();
+                    1423       $('#' + base_id + '_stored_file_regenerate').click(function(evt) {
+                    1424         $('#' + base_id + '_stored_file_regenerate').hide();
+                    1470       var moreInfoDialog = $('#' + base_id + '_more_information_dialog');
+                    1484       $('#' + base_id + '_more_readme_button').click(function() {
+                    1628           $('#' + base_id + '_save_search').css('display', 'none');
+                    1738 //$('#' + base_id + '_document_ctime').text("Created: " + Annotator.formatTime(1000 * sourceData.ctime)).css("display", "inline");
+                    1741 //$('#' + base_id + '_document_ctime').css("display", "none");
+                    1902 // aboutDialog = $('#' + base_id + '_about');
+                    1915 // $('#' + base_id + '_mainlogo').click(function() {
+                    1962 // var authForm = $('#' + base_id + '_auth_form');
+                    1966 //   var _user = $('#' + base_id + '_auth_user').val();
+                    1967 //   var password = $('#' + base_id + '_auth_pass').val();
+                    1976 //           $('#' + base_id + '_auth_user').select().focus();
+                    1979 //           $('#' + base_id + '_auth_button').val('Logout ' + user);
+                    1980 //           $('#' + base_id + '_auth_user').val('');
+                    1981 //           $('#' + base_id + '_auth_pass').val('');
+                    1988 // $('#' + base_id + '_auth_button').click(function(evt) {
+                    1994 //       $('#' + base_id + '_auth_button').val('Login');
+                    2005 // var tutorialForm = $('#' + base_id + '_tutorial');
+                    2036 //     var auth_button = $('#' + base_id + '_auth_button');
+                    2051 //         $('#' + base_id + '_tutorial-ok').focus();
+    Usage in string constants  (214 usages found)
+        brat-widget  (214 usages found)
+            js/src  (214 usages found)
+                annotator_ui.js  (147 usages found)
+                    221 $('#' + base_id + '_arc_origin').text(Util.spanDisplayForm(spanTypes, originSpan.type) + ' ("' + originSpan.text + '")');
+                    222 $('#' + base_id + '_arc_target').text(Util.spanDisplayForm(spanTypes, targetSpan.type) + ' ("' + targetSpan.text + '")');
+                    641 if ($('#' + base_id + '_event_types').find('input').length == 0) {
+                    643 } else if ($('#' + base_id + '_entity_types').find('input').length == 0) {
+                    651 $('#' + base_id + '_span_event_section').hide()
+                    652 $('#' + base_id + '_span_entity_section').show().
+                    656 $('#' + base_id + '_span_entity_section').hide()
+                    657 $('#' + base_id + '_span_event_section').show().
+                    662 $('#' + base_id + '_span_entity_section').show().
+                    665 $('#' + base_id + '_span_event_section').show().
+                    672 $('#' + base_id + '_del_span_button').show();
+                    674 $('#' + base_id + '_del_span_button').hide();
+                    677 $('#' + base_id + '_span_selected').text(spanText);
+                    724 $('#' + base_id + '_span_form_split').show();
+                    726 $('#' + base_id + '_span_form_split').hide();
+                    739 $('#' + base_id + '_span_form_split').hide();
+                    740 $('#' + base_id + '_span_notes').val('');
+                    743 $('#' + base_id + '_span_highlight_link').attr('href', linkHash);
+                    749 $('#' + base_id + '_span_notes').val(span.annotatorNotes || '');
+                    830 $('#' + base_id + '_span_norm_db').val(firstDb);
+                    846 var $normDb = $('#' + base_id + '_span_norm_db');
+                    847 var $normId = $('#' + base_id + '_span_norm_id');
+                    848 var $normText = $('#' + base_id + '_span_norm_txt');
+                    910 $('#' + base_id + '_event_attributes').show();
+                    911 $('#' + base_id + '_event_attribute_label').show();
+                    912 $('#' + base_id + '_event_types').
+                    916 $('#' + base_id + '_event_attributes').hide();
+                    917 $('#' + base_id + '_event_attribute_label').hide();
+                    918 $('#' + base_id + '_event_types').
+                    923 $('#' + base_id + '_entity_attributes').show();
+                    924 $('#' + base_id + '_entity_attribute_label').show();
+                    925 $('#' + base_id + '_entity_types').
+                    929 $('#' + base_id + '_entity_attributes').hide();
+                    930 $('#' + base_id + '_entity_attribute_label').hide();
+                    931 $('#' + base_id + '_entity_types').
+                    946 $('#' + base_id + '_span_form-ok').focus();
+                    960 $('#' + base_id + '_rapid_span_selected').text(text);
+                    963 var $spanTypeDiv = $('#' + base_id + '_rapid_span_types_div');
+                    1044 $('#' + base_id + '_rapid_span_form-ok').focus();
+                    1057 $('#' + base_id + '_arc_notes').val('');
+                    1059 $('#' + base_id + '_clear_arc_notes_button').button();
+                    1060 $('#' + base_id + '_clear_arc_notes_button').click(clearArcNotes);
+                    1063 $('#' + base_id + '_span_notes').val('');
+                    1065 $('#' + base_id + '_clear_span_notes_button').button();
+                    1066 $('#' + base_id + '_clear_span_notes_button').click(clearSpanNotes);
+                    1071 $('#' + base_id + '_clear_norm_button').button();
+                    1072 $('#' + base_id + '_clear_norm_button').click(clearSpanNorm);
+                    1082 var $idinput = $('#' + base_id + '_span_norm_id');
+                    1093 $('#' + base_id + '_span_norm_txt').val(response.value);
+                    1102 $('#' + base_id + '_span_norm_db').change(spanNormDbUpdate);
+                    1108 var db = $('#' + base_id + '_span_norm_db').val();
+                    1124 $('#' + base_id + '_span_norm_id').bind('propertychange keyup input paste', spanNormIdUpdate);
+                    1126 $('#' + base_id + '_span_norm_db').addClass('ui-widget ui-state-default ui-button-text');
+                    1128 var normSearchDialog = $('#' + base_id + '_norm_search_dialog');
+                    1143 $('#' + base_id + '_norm_search_query').autocomplete({
+                    1168 $('#' + base_id + '_span_norm_id').val(selectedId);
+                    1171 $('#' + base_id + '_span_norm_txt').val(selectedTxt);
+                    1193 var selectedId = $('#' + base_id + '_norm_search_id').val();
+                    1194 var selectedTxt = $('#' + base_id + '_norm_search_query').val();
+                    1204 $('#' + base_id + '_norm_search_dialog-ok').button(enable ? 'enable' : 'disable');
+                    1212 $('#' + base_id + '_norm_search_query').val($element.attr('data-txt'));
+                    1213 $('#' + base_id + '_norm_search_id').val($element.attr('data-id'));
+                    1271 var val = $('#' + base_id + '_norm_search_query').val();
+                    1272 var db = $('#' + base_id + '_span_norm_db').val();
+                    1279 $('#' + base_id + '_norm_search_button').click(performNormSearch);
+                    1280 $('#' + base_id + '_norm_search_query').focus(function() {
+                    1287 if (!$('#' + base_id + '_span_norm_id').val().match(/^\s*$/) &&
+                    1288 !$('#' + base_id + '_span_norm_txt').val().match(/^\s*$/)) {
+                    1289 $('#' + base_id + '_norm_search_id').val($('#' + base_id + '_span_norm_id').val());
+                    1290 $('#' + base_id + '_norm_search_query').val($('#' + base_id + '_span_norm_txt').val());
+                    1292 $('#' + base_id + '_norm_search_id').val('');
+                    1293 $('#' + base_id + '_norm_search_query').val($('#' + base_id + '_span_selected').text());
+                    1301 $('#' + base_id + '_norm_search_button').val('Search ' + $('#' + base_id + '_span_norm_db').val());
+                    1304 $('#' + base_id + '_norm_search_query').focus().select();
+                    1306 $('#' + base_id + '_span_norm_txt').click(showNormSearchDialog);
+                    1307 $('#' + base_id + '_norm_search_button').button();
+                    1320 arcOptions.comment = $('#' + base_id + '_arc_notes').val();
+                    1440 $('#' + base_id + '_arc_highlight_link').attr('href', hash).show(); // TODO incorrect
+                    1470 $('#' + base_id + '_arc_highlight_link').hide();
+                    1481 $('#' + base_id + '_arc_form_reverse').show();
+                    1484 $('#' + base_id + '_arc_form_reverse').hide();
+                    1500 $('#' + base_id + '_arc_notes').val(arcAnnotatorNotes);
+                    1502 $('#' + base_id + '_arc_notes').val('');
+                    1508 $('#' + base_id + '_arc_notes').attr('disabled', 'disabled');
+                    1510 $('#' + base_id + '_arc_notes_fieldset').attr('disabled', 'disabled');
+                    1512 $('#' + base_id + '_arc_notes').removeAttr('disabled')
+                    1513 $('#' + base_id + '_arc_notes_fieldset').removeAttr('disabled')
+                    1517 $('#' + base_id + '_arc_form-ok').focus();
+                    1548 var arcForm = $('#' + base_id + '_arc_form');
+                    1571 $('#' + base_id + '_arc_form_reselect').attr('title', 'Re-select the annotation this connects into.');
+                    1572 $('#' + base_id + '_arc_form_delete').attr('title', 'Delete this annotation.');
+                    1768 model: $('#' + base_id + '_rapid_model').val(),
+                    1813 $('#' + base_id + '_arc_origin').text(Util.spanDisplayForm(spanTypes, originSpan.type)+' ("'+originSpan.text+'")');
+                    1814 $('#' + base_id + '_arc_target').text(Util.spanDisplayForm(spanTypes, targetSpan.type)+' ("'+targetSpan.text+'")');
+                    1875 $('#' + base_id + '_span_form-ok').focus();
+                    2070 var $searchlinks  = $('#' + base_id + '_span_search_links').empty();
+                    2071 var $searchlinks2 = $('#' + base_id + '_viewspan_search_links').empty();
+                    2087 $('#' + base_id + '_span_search_fieldset').show();
+                    2088 $('#' + base_id + '_viewspan_search_fieldset').show();
+                    2090 $('#' + base_id + '_span_search_fieldset').hide();
+                    2091 $('#' + base_id + '_viewspan_search_fieldset').hide();
+                    2110 $taggerButtons = $('#' + base_id + '_tagger_buttons').empty();
+                    2133 $('#' + base_id + '_auto_tagging_fieldset').hide();
+                    2134 $('#' + base_id + '_no_tagger_message').show();
+                    2136 $('#' + base_id + '_auto_tagging_fieldset').show();
+                    2137 $('#' + base_id + '_no_tagger_message').hide();
+                    2160 var $norm_select = $('#' + base_id + '_span_norm_db');
+                    2182 $('#' + base_id + '_norm_fieldset').hide();
+                    2184 $('#' + base_id + '_norm_fieldset').show();
+                    2190 $('#' + base_id + '_span_norm_ref_link').hide();
+                    2196 var $normId = $('#' + base_id + '_span_norm_id');
+                    2197 var $normLink = $('#' + base_id + '_span_norm_ref_link');
+                    2199 var $normDb = $('#' + base_id + '_span_norm_db');
+                    2224 var $dbLink = $('#' + base_id + '_span_norm_db_link');
+                    2225 var $normDb = $('#' + base_id + '_span_norm_db');
+                    2242 var $normId = $('#' + base_id + '_span_norm_id');
+                    2243 var $normText = $('#' + base_id + '_span_norm_txt');
+                    2257 var normDb = $('#' + base_id + '_span_norm_db').val();
+                    2258 var normId = $('#' + base_id + '_span_norm_id').val();
+                    2259 var normText = $('#' + base_id + '_span_norm_txt').val();
+                    2350 var spanForm = $('#' + base_id + '_span_form');
+                    2351 var rapidSpanForm = $('#' + base_id + '_rapid_span_form');
+                    2376 var splitForm = $('#' + base_id + '_split_form');
+                    2397 $('#' + base_id + '_split_form-ok').focus();
+                    2402 var $roles = $('#' + base_id + '_split_roles').empty();
+                    2463 $('#' + base_id + '_unlock_type_button').toggle(locked);
+                    2466 $('#' + base_id + '_unlock_type_button').button().hide().click(function(evt) {
+                    2500 var $ok = $('#' + base_id + '_span_form-ok').wrap('<span id="span_form_lock_bset"/>');
+                    2528 $('#' + base_id + '_span_form_reselect').attr('title', 'Re-select the text span that this annotation marks.');
+                    2529 $('#' + base_id + '_span_form_delete').attr('title', 'Delete this annotation.');
+                    2530 $('#' + base_id + '_span_form_split').attr('title', 'Split this annotation into multiple similar annotations, distributing its arguments.');
+                    2533 $('#' + base_id + '_span_form_lock').prop('checked', val).button('refresh');
+                    2534 $('#' + base_id + '_unlock_type_button').toggle(val);
+                    2549 $('#' + base_id + '_span_form-ok').blur();
+                    2551 var locked = $('#' + base_id + '_span_form_lock').is(':checked');
+                    2564 comment: $('#' + base_id + '_span_notes').val()
+                    2587 $('#' + base_id + '_span_notes').focus(function () {
+                    2613 $('#' + base_id + '_rapid_span_selected').text());
+                    2631 var importForm = $('#' + base_id + '_import_form');
+                    2633 var _docid = $('#' + base_id + '_import_docid').val();
+                    2634 var _doctext = $('#' + base_id + '_import_text').val();
+                    2664 $('#' + base_id + '_import_button').click(function() {
+                    2670 var importCollForm = $('#' + base_id + '_import_coll_form');
+                    2691 $('#' + base_id + '_import_collection_button').click(function() {
+                    2700 $('#' + base_id + '_delete_document_button').click(function() {
+                    2716 $('#' + base_id + '_delete_collection_button').click(function() {
+                    2733 $('#' + base_id + '_undo_button').click(function() {
+                visualizer.js  (2 usages found)
+                    1149 $('#' + base_id + '_document_mtime').text("Last modified: " + Util.formatTimeAgo(1000 * data.mtime)).css("display", "inline");
+                    1152 $('#' + base_id + '_document_mtime').css("display", "none");
+                visualizer_ui.js  (65 usages found)
+                    56 var $waiterDialog = $('#' + base_id + '_waiter').dialog({
+                    64 $('#' + base_id + '_no_svg_wrapper').css('display', 'table');
+                    66 $('#' + base_id + '_no_svg_wrapper').hide();
+                    70 $('#' + base_id + '_no_svg_wrapper').hide(0);
+                    71 $('#' + base_id + '_source_files').show();
+                    77 $('#' + base_id + '_no_svg_wrapper').fadeIn(500);
+                    79 $('#' + base_id + '_source_files').hide();
+                    140 $('#' + base_id + '_pulluptrigger').show('puff');
+                    143 var $messageContainer = $('#' + base_id + '_messages');
+                    144 var $messagepullup = $('#' + base_id + '_messagepullup');
+                    214 $('#' + base_id + '_pulluptrigger').hide('slow');
+                    223 $('#' + base_id + '_pulluptrigger').hide();
+                    224 $('#' + base_id + '_pulluptrigger').
+                    226 $('#' + base_id + '_pulluptrigger').hide('puff');
+                    230 $('#' + base_id + '_messagepullup').
+                    274 var commentPopup = $('#' + base_id + '_commentpopup');
+                    634 slideToggle($('#' + base_id + '_pulldown').stop(), false);
+                    1433 var optionsForm = $('#' + base_id + '_options_form');
+                    1447 $('#' + base_id + '_options_button').click(function() {
+                    1453 $('#' + base_id + '_rapid_model').addClass('ui-widget ui-state-default ui-button-text');
+                    1456 $('#' + base_id + '_annotation_speed3').button(disambiguators.length ? 'enable': 'disable');
+                    1458 var $rapid_mode = $('#' + base_id + '_rapid_model').html('');
+                    1619 $('#' + base_id + '_save_search').css('display', 'inline-block');
+                    1648 $('#' + base_id + '_stored_file_regenerate').hide();
+                    1649 $('#' + base_id + '_stored_file_spinner').show()
+                    1652 svg: $('#' + base_id + '_svg').html(),
+                    1681 $('#' + base_id + '_stored_file_spinner').hide()
+                    1687 var $downloadStored = $('#' + base_id + '_download_stored').empty().show();
+                    1710 $('#' + base_id + '_download_stored').hide();
+                    1712 $('#' + base_id + '_stored_file_regenerate').show();
+                    1718 var $sourceFiles = $('#' + base_id + '_source_files').empty();
+                    1739 $('#' + base_id + '_document_mtime').text("Last modified: " + Util.formatTimeAgo(1000 * mtime)).show();
+                    1742 $('#' + base_id + '_document_mtime').hide();
+                    1746 $('#' + base_id + '_source_collection_conf').buttonset();
+                    1763 var $sourceCollection = $('#' + base_id + '_source_collection').empty();
+                    1767 + '&include_conf=' + ($('#' + base_id + '_source_collection_conf_on').is(':checked') ? 1 : 0)
+                    1773 $cmpButton = $('#' + base_id + '_side-by-side_cmp').empty();
+                    1788 $('#' + base_id + '_document_mtime').hide();
+                    1839 $('#' + base_id + '_header').
+                    1842 slideToggle($('#' + base_id + '_pulldown').stop(), true);
+                    1847 slideToggle($('#' + base_id + '_pulldown').stop(), false);
+                    1885 var width_value = $('#' + base_id + '_svg_width_value')[0].value;
+                    1899 $('#' + base_id + '_pulldown').find('input').button();
+                    1900 var headerHeight = $('#' + base_id + '_mainHeader').height();
+                    1901 $('#' + base_id + '_svg').css('margin-top', headerHeight + 10);
+                    1929 var viewspanForm = $('#' + base_id + '_viewspan_form').dialog({
+                    1943 $('#' + base_id + '_viewspan_highlight_link').show().attr('href', urlHash.getHash());
+                    1945 $('#' + base_id + '_viewspan_selected').text(span.text);
+                    1951 $('#' + base_id + '_viewspan_notes').val(span.annotatorNotes || '');
+                    2009 $('#' + base_id + '_browserwarning').css('display', 'block');
+                    2204 $('#' + base_id + '_autorefresh_mode').click(function(evt) {
+                    2218 $('#' + base_id + '_type_collapse_limit').change(function(evt) {
+                    2247 $('#' + base_id + '_annotation_speed1')[0].checked = true;
+                    2249 $('#' + base_id + '_annotation_speed3')[0].checked = true;
+                    2251 $('#' + base_id + '_annotation_speed2')[0].checked = true;
+                    2256 $('#' + base_id + '_label_abbreviations_on')[0].checked  = Configuration.abbrevsOn;
+                    2257 $('#' + base_id + '_label_abbreviations_off')[0].checked = !Configuration.abbrevsOn;
+                    2270 $('#' + base_id + '_svg_width_value')[0].value = splitSvgWidth[1];
+                    2276 $('#' + base_id + '_autorefresh_mode')[0].checked = Configuration.autorefreshOn;
+                    2277 $('#' + base_id + '_autorefresh_mode').button().button('refresh');
+                    2280 $('#' + base_id + '_type_collapse_limit')[0].value = Configuration.typeCollapseLimit;
+                    2283 $('#' + base_id + '_prev').button().click(function() {
+                    2286 $('#' + base_id + '_next').button().click(function() {
+                    2289 $('#' + base_id + '_footer').show();
+                    2292 var conf = $('#' + base_id + '_source_collection_conf_on').is(':checked') ? 1 : 0;

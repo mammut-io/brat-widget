@@ -1,0 +1,35 @@
+Targets
+    Occurrences of 'for="([a-zA-Z_0-9\-]+)"' in Project
+Found Occurrences  (28 usages found)
+    Usage in string constants  (28 usages found)
+        brat-widget  (28 usages found)
+            js/src  (28 usages found)
+                widget.js  (28 usages found)
+                    207             <label for="source_collection_conf_off"
+                    211             <label for="source_collection_conf_on"
+                    276             <label for="label_abbreviations_off"
+                    280             <label for="label_abbreviations_on"
+                    289             <label for="text_backgrounds_blank"
+                    293             <label for="text_backgrounds_striped"
+                    302             <label for="layout_density1"
+                    306             <label for="layout_density2"
+                    310             <label for="layout_density3"
+                    321             <label for="svg_width_unit_percent">percent</label>
+                    324             <label for="svg_width_unit_pixels">pixels</label>
+                    335             <label for="annotation_speed1"
+                    339             <label for="annotation_speed2"
+                    343             <label for="annotation_speed3"
+                    360             <label for="autorefresh_mode"
+                    467               <label for="search_form_relation_show_arg_text_off"
+                    472               <label for="search_form_relation_show_arg_text_on"
+                    483               <label for="search_form_relation_show_arg_type_off"
+                    488               <label for="search_form_relation_show_arg_type_on"
+                    544             <label for="search_scope_doc"
+                    548             <label for="search_scope_coll"
+                    558             <label for="concordancing_off"
+                    562             <label for="concordancing_on"
+                    574             <label for="text_match_word"
+                    578             <label for="text_match_substr"
+                    582             <label for="text_match_regex"
+                    591             <label for="match_case_off"
+                    595             <label for="match_case_on"

@@ -59,3 +59,74 @@ Found Occurrences  (49 usages found)
                     2248 $('#text_backgrounds input').button('refresh');
                     2258 $('#svg_width_unit input').button('refresh');
                     2279 var $source_collection_link = $('#source_collection a');
+
+Targets
+    Occurrences of '#([a-zA-Z_\.:-\[\]\(\)0-9\-]+)' in brat-copy
+Found Occurrences  (55 usages found)
+    Usage in comments  (11 usages found)
+        brat-widget  (11 usages found)
+            js/src  (11 usages found)
+                annotator_ui.js  (1 usage found)
+                    2240 // blank state (does not blank #span_norm_db <select>).
+                visualizer.js  (2 usages found)
+                    1705 // filter: 'url(#Gaussian_Blur)',
+                    2431 // filter: 'url(#Gaussian_Blur)',
+                visualizer_ui.js  (8 usages found)
+                    684           alsoResize: '#document_select',
+                    714         selectElementInTable('#document_select', $(this).val());
+                    754         fileBrowser.find('#document_select tbody').empty();
+                    1132           $type.html($('#search_form_' + category + '_type').html()).val('');
+                    1133           $('#search_form_note_type_row:not(:visible)').show('highlight');
+                    1136           $('#search_form_note_type_row:visible').hide('highlight');
+                    1334           // alsoResize: '#search_tabs',
+                    1482           alsoResize: '#more_info_readme',
+    Usage in string constants  (44 usages found)
+        brat-widget  (44 usages found)
+            js/src  (44 usages found)
+                annotator_ui.js  (33 usages found)
+                    137 var $input = $('#rapid_span_'+idx);
+                    680 $('#span_'+search[0]).attr('href', search[1].replace('%s', encodedText));
+                    697 var el = $('#span_' + span.type);
+                    707 $('#span_' + span.type).parents('.collapsible').each(function() {
+                    745 $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').show();
+                    745 $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').show();
+                    745 $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').show();
+                    751 $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').hide();
+                    751 $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').hide();
+                    751 $('#span_form_reselect, #span_form_delete, #span_form_add_fragment').hide();
+                    757 $('#span_form_reselect_fragment, #span_form_delete_fragment').show();
+                    757 $('#span_form_reselect_fragment, #span_form_delete_fragment').show();
+                    761 $('#span_form_reselect_fragment, #span_form_delete_fragment').hide();
+                    761 $('#span_form_reselect_fragment, #span_form_delete_fragment').hide();
+                    1032 rapidSpanForm.find('#rapid_span_types input:radio').click(rapidSpanFormSubmitRadio);
+                    1133 alsoResize: '#norm_search_result_select',
+                    1390 keymap[arcDesc.hotkey] = '#arc_' + arcTypeName;
+                    1441 var el = $('#arc_' + arcType)[0];
+                    1446 el = $('#arc_' + noNumArcType)[0];
+                    1452 $('#arc_form_reselect, #arc_form_delete').show();
+                    1452 $('#arc_form_reselect, #arc_form_delete').show();
+                    1476 $('#arc_form_reselect, #arc_form_delete, #arc_form_reverse').hide();
+                    1476 $('#arc_form_reselect, #arc_form_delete, #arc_form_reverse').hide();
+                    1476 $('#arc_form_reselect, #arc_form_delete, #arc_form_reverse').hide();
+                    1488 arcForm.find('#arc_roles input:radio').click(arcFormSubmitRadio);
+                    1564 alsoResize: '#arc_roles',
+                    1869 $('#arc_roles, #span_roles').on('click', '.collapser', collapseHandler);
+                    1869 $('#arc_roles, #span_roles').on('click', '.collapser', collapseHandler);
+                    2094 spanForm.find('#entity_types input:radio').click(spanFormSubmitRadio);
+                    2095 spanForm.find('#event_types input:radio').click(spanFormSubmitRadio);
+                    2471 alsoResize: '#entity_and_event_wrapper',
+                    2539 alsoResize: '#rapid_span_types',
+                    2659 alsoResize: '#import_text',
+                visualizer.js  (4 usages found)
+                    1732 filter: 'url(#Gaussian_Blur)',
+                    2148 markerEnd: 'url(#drag_arrow)',
+                    2453 filter: 'url(#Gaussian_Blur)',
+                    2780 filter: 'url(#Gaussian_Blur)',
+                visualizer_ui.js  (7 usages found)
+                    371 var drop=$('#norm_info_drop_point_'+infoSeqId);
+                    1948 $('#viewspan_'+search[0]).attr('href', search[1].replace('%s', encodedText));
+                    2291 $('#source_collection_conf_on, #source_collection_conf_off').change(function() {
+                    2291 $('#source_collection_conf_on, #source_collection_conf_off').change(function() {
+                    2307 $('#pulldown, #navbuttons, #spinner').remove();
+                    2307 $('#pulldown, #navbuttons, #spinner').remove();
+                    2307 $('#pulldown, #navbuttons, #spinner').remove();

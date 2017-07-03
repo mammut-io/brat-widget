@@ -170,3 +170,14 @@ Found Occurrences  (165 usages found)
                     796     <div id="{base_id}_messages" class="messages"/>
                     797     <div id="{base_id}_pulluptrigger"/>
                     798     <div id="{base_id}_waiter" class="dialog" title="Please wait">
+                    221           <span id="side-by-side_cmp" title="Enter side-by-side comparison mode"/>
+                    300             <input type="radio" id="layout_density1" value="1"
+                    304             <input type="radio" id="layout_density2" value="2"
+                    308             <input type="radio" id="layout_density3" value="3"
+                    333             <input type="radio" id="annotation_speed1" value="1"
+                    337             <input type="radio" id="annotation_speed2" value="2"
+                    341             <input type="radio" id="annotation_speed3" value="3"
+                    442                 <select id="search_form_relation_arg1_type" class="fullwidth"/>
+                    445                 <input id="search_form_relation_arg1_text" class="fullwidth"
+                    452                <select id="search_form_relation_arg2_type" class="fullwidth"/>
+                    455                 <input id="search_form_relation_arg2_text" class="fullwidth"

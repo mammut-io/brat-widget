@@ -13,13 +13,13 @@ var Util = (function(window, undefined) {
 
     var cmp = function(a,b) {
       return a < b ? -1 : a > b ? 1 : 0;
-    }
+    };
 
     var cmpArrayOnFirstElement = function(a,b) {
       a = a[0];
       b = b[0];
       return a < b ? -1 : a > b ? 1 : 0;
-    }
+    };
 
     var unitAgo = function(n, unit) {
       if (n == 1) return "" + n + " " + unit + " ago";
@@ -49,7 +49,7 @@ var Util = (function(window, undefined) {
         result += ' ' + thenDate.getFullYear();
       }
       return result;
-    }
+    };
 
     var realBBox = function(span) {
       var box = span.rect.getBBox();
@@ -58,34 +58,34 @@ var Util = (function(window, undefined) {
       box.x += chunkTranslation.x + rowTranslation.x;
       box.y += chunkTranslation.y + rowTranslation.y;
       return box;
-    }
+    };
 
     var escapeHTML = function(str) {
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
+    };
 
     var escapeHTMLandQuotes = function(str) {
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');
-    }
+    };
 
     var escapeHTMLwithNewlines = function(str) {
       return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br/>');
-    }
+    };
 
     var escapeQuotes = function(str) {
       // we only use double quotes for HTML attributes
       return str.replace(/\"/g,'&quot;');
-    }
+    };
 
     var getSpanLabels = function(spanTypes, spanType) {
       var type = spanTypes[spanType];
       return type && type.labels || [];
-    }
+    };
 
     var spanDisplayForm = function(spanTypes, spanType) {
       var labels = getSpanLabels(spanTypes, spanType);
       return labels[0] || spanType;
-    }
+    };
 
     var getArcLabels = function(spanTypes, spanType, arcType, relationTypesHash) {
       var type = spanTypes[spanType];
@@ -108,12 +108,12 @@ var Util = (function(window, undefined) {
         arcDesc = $.extend({}, relationTypesHash[arcType] || relationTypesHash[noNumArcType]);
       }
       return arcDesc && arcDesc.labels || [];
-    }
+    };
 
     var arcDisplayForm = function(spanTypes, spanType, arcType, relationTypesHash) {
       var labels = getArcLabels(spanTypes, spanType, arcType, relationTypesHash);
       return labels[0] || arcType;
-    }
+    };
 
     // TODO: switching to use of $.param(), this function should
     // be deprecated and removed.
@@ -123,7 +123,7 @@ var Util = (function(window, undefined) {
         a.push(key+"="+encodeURIComponent(value));
       });
       return a.join("&");
-    }
+    };
 
     // color name RGB list, converted from
     // http://www.w3schools.com/html/html_colornames.asp
@@ -314,7 +314,7 @@ var Util = (function(window, undefined) {
       
       // Otherwise, we're most likely dealing with a named color
       return colors[$.trim(color).toLowerCase()];
-    }
+    };
 
     var rgbToStr = function(rgb) {
       // TODO: there has to be a better way, even in JS
@@ -326,7 +326,7 @@ var Util = (function(window, undefined) {
       g = g.length < 2 ? '0' + g : g;
       b = b.length < 2 ? '0' + b : b;        
       return ('#'+r+g+b);
-    }
+    };
     
     // Functions rgbToHsl and hslToRgb originally from 
     // http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
@@ -353,7 +353,7 @@ var Util = (function(window, undefined) {
       }
       
       return [h, s, l];
-    }
+    };
 
     var hue2rgb = function(p, q, t) {
       if (t < 0) t += 1;
@@ -362,7 +362,7 @@ var Util = (function(window, undefined) {
       if (t < 1/2) return q;
       if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
       return p;
-    }
+    };
 
     var hslToRgb = function(hsl) {
       var h = hsl[0], s = hsl[1], l = hsl[2];
@@ -380,7 +380,7 @@ var Util = (function(window, undefined) {
       }
       
       return [r * 255, g * 255, b * 255];
-    }
+    };
 
     var adjustLightnessCache = {};
 
@@ -409,7 +409,7 @@ var Util = (function(window, undefined) {
         }
       }
       return adjustLightnessCache[colorstr][adjust];
-    }
+    };
 
     // Partially stolen from: http://documentcloud.github.com/underscore/
     // MIT-License

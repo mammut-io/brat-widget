@@ -2,9 +2,11 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
 var Util = require('./util');
+var Ajax = require('./ajax');
+var URLHash = require('./url_monitor').URLHash;
 
 var VisualizerUI = (function($, window, undefined) {
-    var VisualizerUI = function(base_id, Configuration, dispatcher, svg) {
+    var VisualizerUI = function(base_id, Configuration, dispatcher, svg, model, simulate_ajax) {
       var that = this;
 
       var messagePostOutFadeDelay = 1000;
@@ -51,6 +53,13 @@ var VisualizerUI = (function($, window, undefined) {
 
       var noSvgTimer = null;
 
+      var $waiterDialog = $('#' + base_id + '_waiter').dialog({
+          appendTo: "#" + base_id + "_forms"
+      });
+
+      var ajax = new Ajax(base_id, dispatcher, simulate_ajax, model, $waiterDialog);
+
+
       // this is necessary for centering
       $('#' + base_id + '_no_svg_wrapper').css('display', 'table');
       // on initial load, hide the "no SVG" message
@@ -60,7 +69,7 @@ var VisualizerUI = (function($, window, undefined) {
         clearTimeout(noSvgTimer);
         $('#' + base_id + '_no_svg_wrapper').hide(0);
         $('#' + base_id + '_source_files').show();
-      }
+      };
 
       var showNoDocMessage = function() {
         clearTimeout(noSvgTimer);
@@ -68,11 +77,11 @@ var VisualizerUI = (function($, window, undefined) {
           $('#' + base_id + '_no_svg_wrapper').fadeIn(500);
         }, 2000);
         $('#' + base_id + '_source_files').hide();
-      }
+      };
       
       /* END "no svg" message - related */
 
-      /* START collection browser sorting - related */
+      /* START collection browser sorting - related
 
       var lastGoodCollection = '/';
       var sortOrder = [2, 1]; // column (0..), sort order (1, -1)
@@ -122,7 +131,7 @@ var VisualizerUI = (function($, window, undefined) {
           });
       };
 
-      /* END collection browser sorting - related */
+       END collection browser sorting - related */
 
 
       /* START message display - related */
@@ -262,11 +271,12 @@ var VisualizerUI = (function($, window, undefined) {
         element.css({ top: y, left: x });
       };
 
-      var commentPopup = $('#' + base_id + '_commentpopup');
+      var commentPopupPath = '#' + base_id + '_commentpopup';
       var commentDisplayed = false;
 
       var displayCommentTimer = null;
       var displayComment = function(evt, target, comment, commentText, commentType, immediately) {
+        var commentPopup = $(commentPopupPath);
         var idtype;
         if (commentType) {
           // label comment by type, with special case for default note type
@@ -359,7 +369,7 @@ var VisualizerUI = (function($, window, undefined) {
             }
           }
         }
-        var drop=$('#norm_info_drop_point_'+infoSeqId);
+        var drop=$('#' + base_id + '_norm_info_drop_point_'+infoSeqId);
         if (drop) {
           drop.html(norminfo);
         } else {
@@ -424,7 +434,7 @@ var VisualizerUI = (function($, window, undefined) {
             // DB available, add drop-off point to HTML and store
             // query parameters
             commentPopupNormInfoSeqId++;
-            comment += ('<br/><div id="norm_info_drop_point_'+
+            comment += ('<br/><div id="' + base_id + '_norm_info_drop_point_'+
                         commentPopupNormInfoSeqId+'"/>');
             normsToQuery.push([dbName, dbKey, commentPopupNormInfoSeqId]);
           } else {
@@ -470,6 +480,7 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var onDocChanged = function() {
+        var commentPopup = $(commentPopupPath);
         commentPopup.hide();
         commentDisplayed = false;
       };
@@ -518,6 +529,7 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var hideComment = function() {
+        var commentPopup = $(commentPopupPath);
         clearTimeout(displayCommentTimer);
         if (commentDisplayed) {
           commentPopup.stop(true, true).fadeOut(function() { commentDisplayed = false; });
@@ -525,6 +537,7 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var onMouseMove = function(evt) {
+        var commentPopup = $(commentPopupPath);
         if (commentDisplayed) {
           adjustToCursor(evt, commentPopup, 10, true, true);
         }
@@ -636,7 +649,7 @@ var VisualizerUI = (function($, window, undefined) {
       /* END form management - related */
 
 
-      /* START collection browser - related */
+      /* START collection browser - related
 
       var selectElementInTable = function(table, docname, mf) {
         table = $(table);
@@ -653,7 +666,7 @@ var VisualizerUI = (function($, window, undefined) {
         }
         matchFocus = $element && $element.attr('data-mf');
         matches = $element && $element.attr('data-match');
-      }
+      };
 
       var chooseDocument = function(evt) {
         var $element = $(evt.target).closest('tr');
@@ -663,16 +676,16 @@ var VisualizerUI = (function($, window, undefined) {
         $element.addClass('selected');
         matchFocus = $element.attr('data-mf');
         matches = $element.attr('data-match');
-      }
+      };
 
       var chooseDocumentAndSubmit = function(evt) {
         chooseDocument(evt);
         fileBrowserSubmit(evt);
-      }
+      };
 
       var fileBrowser = $('#' + base_id + '_collection_browser');
       initForm(fileBrowser, {
-          alsoResize: '#document_select',
+          alsoResize: '#' + base_id + '_document_select',
           close: function(evt) {
             if (!doc) {
               // no document; set and show the relevant message, and
@@ -683,7 +696,7 @@ var VisualizerUI = (function($, window, undefined) {
               } else {
                 $('#' + base_id + '_loading_message').hide();
                 $('#' + base_id + '_no_document_message').show();
-                $('#' + base_id + '_waiter').dialog('close');
+                $waiterDialog.dialog('close');
               }
               showNoDocMessage();
             } else if (!fileBrowserClosedWithSubmit && !searchActive) {
@@ -693,16 +706,16 @@ var VisualizerUI = (function($, window, undefined) {
           width: 500
       });
 
-      /* XXX removed per #900
+      // XXX removed per #900
       // insert the Save link
-      var $fileBrowserButtonset = fileBrowser.
-          parent().find('.ui-dialog-buttonpane .ui-dialog-buttonset').prepend(' ');
-      $('<a href="ajax.cgi?action=downloadSearchFile" id="save_search">Save</a>').
-          prependTo($fileBrowserButtonset).button().css('display', 'none');
-      */
+      // var $fileBrowserButtonset = fileBrowser.
+      //     parent().find('.ui-dialog-buttonpane .ui-dialog-buttonset').prepend(' ');
+      // $('<a href="ajax.cgi?action=downloadSearchFile" id="' + base_id + '_save_search">Save</a>').
+      //     prependTo($fileBrowserButtonset).button().css('display', 'none');
+      //
 
       var docInputHandler = function(evt) {
-        selectElementInTable('#document_select', $(this).val());
+        selectElementInTable('#' + base_id + '_document_select', $(this).val());
       };
       $('#' + base_id + '_document_input').keyup(docInputHandler);
 
@@ -742,7 +755,7 @@ var VisualizerUI = (function($, window, undefined) {
           $('#' + base_id + '_document_input').focus().select();
         }
         docScroll = $('#' + base_id + '_document_select')[0].scrollTop;
-        fileBrowser.find('#document_select tbody').empty();
+        fileBrowser.find('#' + base_id + '_document_select tbody').empty();
 
         if (coll != _coll || doc != _doc ||
             !Util.isEqual(Util.paramArray(args.matchfocus), (matchFocus || []))) {
@@ -784,10 +797,10 @@ var VisualizerUI = (function($, window, undefined) {
         // no point in showing this while the browser is shown
         hideNoDocMessage();
 
-        if (currentForm == tutorialForm) {
-          fileBrowserWaiting = true;
-          return;
-        }
+        // if (currentForm == tutorialForm) {
+        //   fileBrowserWaiting = true;
+        //   return;
+        // }
         fileBrowserWaiting = false;
 
         // hide "no document" message when file browser shown
@@ -895,7 +908,7 @@ var VisualizerUI = (function($, window, undefined) {
           $('#' + base_id + '_more_readme_button').button(); // TODO: more reasonable place
           $('#' + base_id + '_more_readme_button').show();
           // only display text up to the first newline in the short info
-          var split_readme_text = selectorData.description.match(/^[^\n]*/);
+          var split_readme_text = selectorData.description.match(/^[^\n]CHANGE_FOR_ASTERISK/);
           $('#' + base_id + '_readme').val(split_readme_text[0]);
           $('#' + base_id + '_more_info_readme').text(selectorData.description);
         } else {
@@ -932,10 +945,10 @@ var VisualizerUI = (function($, window, undefined) {
         return pos;
       }
 
-      /* END collection browser - related */
+       END collection browser - related */
 
 
-      /* START search - related */
+      /* START search - related
 
       var addSpanTypesToSelect = function($select, types, included) {
         if (!included) included = {};
@@ -967,7 +980,7 @@ var VisualizerUI = (function($, window, undefined) {
           var serverDb = norm[3];
           normServerDbByNormDbName[normName] = serverDb;
         });
-      }
+      };
 
       var setupSearchTypes = function(response) {
         addSpanTypesToSelect($('#' + base_id + '_search_form_entity_type'), response.entity_types);
@@ -976,7 +989,7 @@ var VisualizerUI = (function($, window, undefined) {
         // nice-looking selects and upload fields
         $('#' + base_id + '_search_form select').addClass('ui-widget ui-state-default ui-button-text');
         $('#' + base_id + '_search_form_load_file').addClass('ui-widget ui-state-default ui-button-text');
-      }
+      };
 
       // when event role changes, event types do as well
       var searchEventRoles = [];
@@ -1050,7 +1063,7 @@ var VisualizerUI = (function($, window, undefined) {
       var delSearchEventRole = function(evt) {
         $row = $(this).closest('tr');
         $row.remove();
-      }
+      };
 
       $('#' + base_id + '_search_form_event_roles').on('click', '.search_event_role_add input', addEmptySearchEventRole);
       $('#' + base_id + '_search_form_event_roles').on('click', '.search_event_role_del input', delSearchEventRole);
@@ -1072,9 +1085,9 @@ var VisualizerUI = (function($, window, undefined) {
       // when relation changes, change choices of arg1 type
       $('#' + base_id + '_search_form_relation_type').change(function(evt) {
         var relTypeType = $(this).val();
-        var $arg1 = $('#search_form_relation_arg1_type').
+        var $arg1 = $('#' + base_id + '_search_form_relation_arg1_type').
             html('<option value="">- Any -</option>');
-        var $arg2 = $('#search_form_relation_arg2_type').empty();
+        var $arg2 = $('#' + base_id + '_search_form_relation_arg2_type').empty();
         $.each(spanTypes,
           function(spanTypeType, spanType) {
           if (spanType.arcs) {
@@ -1087,15 +1100,15 @@ var VisualizerUI = (function($, window, undefined) {
             });
           }
         });
-        $('#search_form_relation_arg1_type').change();
+        $('#' + base_id + '_search_form_relation_arg1_type').change();
         // style the selects
         $arg1.addClass('ui-widget ui-state-default ui-button-text');
         $arg2.addClass('ui-widget ui-state-default ui-button-text');
       });
 
       // when arg1 type changes, change choices of arg2 type
-      $('#search_form_relation_arg1_type').change(function(evt) {
-        var $arg2 = $('#search_form_relation_arg2_type').
+      $('#' + base_id + '_search_form_relation_arg1_type').change(function(evt) {
+        var $arg2 = $('#' + base_id + '_search_form_relation_arg2_type').
             html('<option value="">- Any -</option>');
         var relType = $('#' + base_id + '_search_form_relation_type').val();
         var arg1Type = spanTypes[$(this).val()];
@@ -1120,11 +1133,11 @@ var VisualizerUI = (function($, window, undefined) {
         var category = $(this).val();
         var $type = $('#' + base_id + '_search_form_note_type');
         if ($.inArray(category, ['entity', 'event', 'relation']) != -1) {
-          $type.html($('#search_form_' + category + '_type').html()).val('');
-          $('#search_form_note_type_row:not(:visible)').show('highlight');
+          $type.html($('#' + base_id + '_search_form_' + category + '_type').html()).val('');
+          $('#' + base_id + '_search_form_note_type_row:not(:visible)').show('highlight');
         } else {
           $type.html('');
-          $('#search_form_note_type_row:visible').hide('highlight');
+          $('#' + base_id + '_search_form_note_type_row:visible').hide('highlight');
         }
       });
 
@@ -1165,7 +1178,7 @@ var VisualizerUI = (function($, window, undefined) {
         var activeTab = $('#' + base_id + '_search_tabs').tabs('option', 'active');
         return ['searchText', 'searchEntity', 'searchEvent',
             'searchRelation', 'searchNote', 'searchLoad'][activeTab];
-      }
+      };
 
       var onSearchTabSelect = function() {
         var action = activeSearchTab();
@@ -1248,10 +1261,10 @@ var VisualizerUI = (function($, window, undefined) {
             break;
           case 'searchRelation':
             opts.type = $('#' + base_id + '_search_form_relation_type').val() || '';
-            opts.arg1 = $('#search_form_relation_arg1_text').val();
-            opts.arg1type = $('#search_form_relation_arg1_type').val() || '';
-            opts.arg2 = $('#search_form_relation_arg2_text').val();
-            opts.arg2type = $('#search_form_relation_arg2_type').val() || '';
+            opts.arg1 = $('#' + base_id + '_search_form_relation_arg1_text').val();
+            opts.arg1type = $('#' + base_id + '_search_form_relation_arg1_type').val() || '';
+            opts.arg2 = $('#' + base_id + '_search_form_relation_arg2_text').val();
+            opts.arg2type = $('#' + base_id + '_search_form_relation_arg2_type').val() || '';
             opts.show_text = $('#' + base_id + '_search_form_relation_show_arg_text_on').is(':checked');
             opts.show_type = $('#' + base_id + '_search_form_relation_show_arg_type_on').is(':checked');
             break;
@@ -1322,7 +1335,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       initForm(searchForm, {
           width: 500,
-          // alsoResize: '#search_tabs',
+          // alsoResize: '#' + base_id + '_search_tabs',
           resizable: false,
           open: function(evt) {
             keymap = {};
@@ -1337,7 +1350,7 @@ var VisualizerUI = (function($, window, undefined) {
         $('#' + base_id + '_search_form_relation_type').change();
         dispatcher.post('showForm', [searchForm]);
         onSearchTabSelect();
-      }
+      };
 
       $('#' + base_id + '_search_button').click(showSearchForm);
 
@@ -1348,7 +1361,7 @@ var VisualizerUI = (function($, window, undefined) {
         // trigger an unnecessary round-trip to the server, though,
         // so there should be a better way ...
         dispatcher.post('setArguments', [{}, true]);
-      }
+      };
 
       $('#' + base_id + '_clear_search_button').click(clearSearchResults);
 
@@ -1368,12 +1381,12 @@ var VisualizerUI = (function($, window, undefined) {
             $('#' + base_id + '_search_button_label').addClass('ui-corner-all');
             $clearSearchButton.hide();
         }
-      }
+      };
 
-      /* END search - related */
+       END search - related */
 
 
-      /* START data dialog - related */
+      /* START data dialog - related
 
       var dataForm = $('#' + base_id + '_data_form');
       var dataFormSubmit = function(evt) {
@@ -1405,8 +1418,8 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post('showForm', [dataForm]);
       });
       // make nice-looking buttons for checkboxes and buttons
-      $('#' + base_id + '_data_form').find('input[type="checkbox"]').button();
-      $('#' + base_id + '_data_form').find('input[type="button"]').button();
+      dataForm.find('input[type="checkbox"]').button();
+      dataForm.find('input[type="button"]').button();
 
       // resize invalidates stored visualization (SVG etc.); add a
       // button to regen
@@ -1416,7 +1429,7 @@ var VisualizerUI = (function($, window, undefined) {
         saveSVG();
       });
 
-      /* END data dialog - related */
+       END data dialog - related */
 
 
       /* START options dialog - related */
@@ -1439,12 +1452,12 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post('showForm', [optionsForm]);
       });
       // make nice-looking buttons for checkboxes and radios
-      $('#' + base_id + '_options_form').find('input[type="checkbox"]').button();
-      $('#' + base_id + '_options_form').find('.radio_group').buttonset();
+      optionsForm.find('input[type="checkbox"]').button();
+      optionsForm.find('.radio_group').buttonset();
       $('#' + base_id + '_rapid_model').addClass('ui-widget ui-state-default ui-button-text');
 
       var fillDisambiguatorOptions = function(disambiguators) {
-        $('#annotation_speed3').button(disambiguators.length ? 'enable': 'disable');
+        $('#' + base_id + '_annotation_speed3').button(disambiguators.length ? 'enable': 'disable');
         //XXX: We need to disable rapid in the conf too if it is not available
         var $rapid_mode = $('#' + base_id + '_rapid_model').html('');
         $.each(disambiguators, function(modelNo, model) {
@@ -1456,7 +1469,7 @@ var VisualizerUI = (function($, window, undefined) {
       /* END options dialog - related */
 
 
-      /* START "more collection information" dialog - related */
+      /* START "more collection information" dialog - related
 
       var moreInfoDialog = $('#' + base_id + '_more_information_dialog');
       var moreInfoDialogSubmit = function(evt) {
@@ -1470,13 +1483,13 @@ var VisualizerUI = (function($, window, undefined) {
           open: function(evt) {
             keymap = {};
           },
-          alsoResize: '#more_info_readme',
+          alsoResize: '#' + base_id + '_more_info_readme',
       });
       $('#' + base_id + '_more_readme_button').click(function() {
         dispatcher.post('showForm', [moreInfoDialog]);
       });
 
-      /* END "more collection information" dialog - related */
+       END "more collection information" dialog - related */
 
 
       var onKeyDown = function(evt) {
@@ -1511,28 +1524,28 @@ var VisualizerUI = (function($, window, undefined) {
         }
 
         if (code === $.ui.keyCode.TAB) {
-          showFileBrowser();
+          // showFileBrowser();
           return false;
         } else if (code == $.ui.keyCode.LEFT) {
-          return moveInFileBrowser(-1);
+          return false;//return moveInFileBrowser(-1);
         } else if (code === $.ui.keyCode.RIGHT) {
-          return moveInFileBrowser(+1);
+          return false;//return moveInFileBrowser(+1);
         } else if (evt.shiftKey && code === $.ui.keyCode.UP) {
-          autoPaging(true);
+          return false;//autoPaging(true);
         } else if (evt.shiftKey && code === $.ui.keyCode.DOWN) {
-          autoPaging(false);
+          return false;//autoPaging(false);
         } else if ((Util.isMac ? evt.metaKey : evt.ctrlKey) && code == 'F'.charCodeAt(0)) {
           evt.preventDefault();
-          showSearchForm();
+          return false;//showSearchForm();
         } else if (searchActive && (Util.isMac ? evt.metaKey : evt.ctrlKey) && code == 'G'.charCodeAt(0)) {
           evt.preventDefault();
-          return moveInFileBrowser(+1);
+          return false;//return moveInFileBrowser(+1);
         } else if (searchActive && (Util.isMac ? evt.metaKey : evt.ctrlKey) && code == 'K'.charCodeAt(0)) {
           evt.preventDefault();
-          clearSearchResults();
+          return false;//clearSearchResults();
         }
       };
-
+/*
       var moveInFileBrowser = function(dir) {
         var pos = currentSelectorPosition();
         var newPos = pos + dir;
@@ -1545,9 +1558,9 @@ var VisualizerUI = (function($, window, undefined) {
         }
         return false;
       };
-     
+*/
       /* Automatically proceed from document to document */ 
-      var autoPagingTimeout = null;
+/*      var autoPagingTimeout = null;
       var autoPaging = function(on) {
           clearTimeout(autoPagingTimeout);
           if (on) {
@@ -1556,7 +1569,7 @@ var VisualizerUI = (function($, window, undefined) {
             }, 2000);
           }
       };
-
+*/
       var resizeFunction = function(evt) {
         dispatcher.post('renderData');
       };
@@ -1584,14 +1597,14 @@ var VisualizerUI = (function($, window, undefined) {
           fillDisambiguatorOptions(response.disambiguator_config);
           selectorData = response;
           documentListing = response; // 'backup'
-          searchConfig = response.search_config;
-          selectorData.items.sort(docSortFunction);
-          setupSearchTypes(response);
+          // searchConfig = response.search_config;
+          // selectorData.items.sort(docSortFunction);
+          // setupSearchTypes(response);
           // scroller at the top
           docScroll = 0;
         }
       };
-
+/*
       var searchResultsReceived = function(response) {
         if (response.exception) {
             ; // TODO: reasonable reaction
@@ -1628,7 +1641,7 @@ var VisualizerUI = (function($, window, undefined) {
           showFileBrowser();
         }
       };
-
+*/
       var saveSVGTimer = null;
       var saveSVG = function() {
         if (currentDocumentSVGsaved) {
@@ -1657,16 +1670,16 @@ var VisualizerUI = (function($, window, undefined) {
         }
         dispatcher.post('allowReloadByURL');
         if (!currentForm) {
-          $('#' + base_id + '_waiter').dialog('close');
+          $waiterDialog.dialog('close');
         }
-      }
+      };
 
       var onStartedRendering = function() {
         hideForm();
         if (!currentForm) {
-          $('#' + base_id + '_waiter').dialog('open');
+          $waiterDialog.dialog('open');
         }
-      }
+      };
 
       var savedSVGreceived = function(response) {
         $('#' + base_id + '_stored_file_spinner').hide()
@@ -1684,7 +1697,7 @@ var VisualizerUI = (function($, window, undefined) {
             // TODO: Extract the protocol version into somewhere global
             'protocol': 1
           };
-          var $downloadLink = $('<a id="download_'+stored.name+'"' +
+          var $downloadLink = $('<a id="' + base_id + '_download_'+stored.name+'"' +
                                 ' target="'+stored.name+'"' +
                                 '>'+stored.name+'</a>');
           $downloadLink.attr('href', 'ajax.cgi?' + $.param(params));
@@ -1761,7 +1774,7 @@ var VisualizerUI = (function($, window, undefined) {
           $sourceCollection.append($collectionDownloadLink);
           $collectionDownloadLink.button();
 
-          $cmpButton = $('#side-by-side_cmp').empty();
+          $cmpButton = $('#' + base_id + '_side-by-side_cmp').empty();
           var $cmpLink = $('<a target="_blank"/>')
             .text('Comparison mode')
             .attr('href', 'diff.xhtml#?diff=' + encodeURIComponent(coll));
@@ -1890,22 +1903,22 @@ var VisualizerUI = (function($, window, undefined) {
       $('#' + base_id + '_pulldown').find('input').button();
       var headerHeight = $('#' + base_id + '_mainHeader').height();
       $('#' + base_id + '_svg').css('margin-top', headerHeight + 10);
-      aboutDialog = $('#' + base_id + '_about');
-      aboutDialog.dialog({
-            autoOpen: false,
-            closeOnEscape: true,
-            resizable: false,
-            modal: true,
-            open: function() {
-                aboutDialog.find('*').blur();
-              },
-            beforeClose: function() {
-                currentForm = null;
-              }
-          });
-      $('#' + base_id + '_mainlogo').click(function() {
-        showForm(aboutDialog);
-      });
+      // aboutDialog = $('#' + base_id + '_about');
+      // aboutDialog.dialog({
+      //       autoOpen: false,
+      //       closeOnEscape: true,
+      //       resizable: false,
+      //       modal: true,
+      //       open: function() {
+      //           aboutDialog.find('*').blur();
+      //         },
+      //       beforeClose: function() {
+      //           currentForm = null;
+      //         }
+      //     });
+      // $('#' + base_id + '_mainlogo').click(function() {
+      //   showForm(aboutDialog);
+      // });
 
       // TODO: copy from annotator_ui; DRY it up
       var adjustFormToCursor = function(evt, element) {
@@ -1917,7 +1930,9 @@ var VisualizerUI = (function($, window, undefined) {
         var x = Math.min(evt.clientX, screenWidth - elementWidth);
         element.css({ top: y, left: x });
       };
-      var viewspanForm = $('#' + base_id + '_viewspan_form');
+      var viewspanForm = $('#' + base_id + '_viewspan_form').dialog({
+          appendTo: "#" + base_id + "_forms"
+      });
       var onDblClick = function(evt) {
         if (user && annotationAvailable) return;
         var target = $(evt.target);
@@ -1926,19 +1941,20 @@ var VisualizerUI = (function($, window, undefined) {
           window.getSelection().removeAllRanges();
           var span = data.spans[id];
 
-          var urlHash = URLHash.parse(window.location.hash);
-          urlHash.setArgument('focus', [[span.id]]);
+          //var urlHash = URLHash.parse(window.location.hash);
+          //urlHash.setArgument('focus', [[span.id]]);
+          var urlHash = new URLHash(base_id, { focus: [[ span.id ]] });
           $('#' + base_id + '_viewspan_highlight_link').show().attr('href', urlHash.getHash());
 
           $('#' + base_id + '_viewspan_selected').text(span.text);
           var encodedText = encodeURIComponent(span.text);
           $.each(searchConfig, function(searchNo, search) {
-            $('#viewspan_'+search[0]).attr('href', search[1].replace('%s', encodedText));
+            $('#' + base_id + '_viewspan_'+search[0]).attr('href', search[1].replace('%s', encodedText));
           });
           // annotator comments
           $('#' + base_id + '_viewspan_notes').val(span.annotatorNotes || '');
           dispatcher.post('showForm', [viewspanForm]);
-          $('#viewspan_form-ok').focus();
+          $('#' + base_id + 'viewspan_form-ok').focus();
           adjustFormToCursor(evt, viewspanForm.parent());
         }
       };
@@ -1947,71 +1963,71 @@ var VisualizerUI = (function($, window, undefined) {
         return false;
       });
 
-      var authForm = $('#' + base_id + '_auth_form');
-      initForm(authForm, { resizable: false });
-      var authFormSubmit = function(evt) {
-        dispatcher.post('hideForm');
-        var _user = $('#' + base_id + '_auth_user').val();
-        var password = $('#' + base_id + '_auth_pass').val();
-        dispatcher.post('ajax', [{
-            action: 'login',
-            user: _user,
-            password: password,
-          },
-          function(response) {
-              if (response.exception) {
-                dispatcher.post('showForm', [authForm]);
-                $('#' + base_id + '_auth_user').select().focus();
-              } else {
-                user = _user;
-                $('#' + base_id + '_auth_button').val('Logout ' + user);
-                $('#' + base_id + '_auth_user').val('');
-                $('#' + base_id + '_auth_pass').val('');
-                $('.login').show();
-                dispatcher.post('user', [user]);
-              }
-          }]);
-        return false;
-      };
-      $('#' + base_id + '_auth_button').click(function(evt) {
-        if (user) {
-          dispatcher.post('ajax', [{
-            action: 'logout'
-          }, function(response) {
-            user = null;
-            $('#' + base_id + '_auth_button').val('Login');
-            $('.login').hide();
-            dispatcher.post('user', [null]);
-          }]);
-        } else {
-          dispatcher.post('showForm', [authForm]);
-        }
-      });
-      authForm.submit(authFormSubmit);
+      // var authForm = $('#' + base_id + '_auth_form');
+      // initForm(authForm, { resizable: false });
+      // var authFormSubmit = function(evt) {
+      //   dispatcher.post('hideForm');
+      //   var _user = $('#' + base_id + '_auth_user').val();
+      //   var password = $('#' + base_id + '_auth_pass').val();
+      //   dispatcher.post('ajax', [{
+      //       action: 'login',
+      //       user: _user,
+      //       password: password,
+      //     },
+      //     function(response) {
+      //         if (response.exception) {
+      //           dispatcher.post('showForm', [authForm]);
+      //           $('#' + base_id + '_auth_user').select().focus();
+      //         } else {
+      //           user = _user;
+      //           $('#' + base_id + '_auth_button').val('Logout ' + user);
+      //           $('#' + base_id + '_auth_user').val('');
+      //           $('#' + base_id + '_auth_pass').val('');
+      //           $('.login').show();
+      //           dispatcher.post('user', [user]);
+      //         }
+      //     }]);
+      //   return false;
+      // };
+      // $('#' + base_id + '_auth_button').click(function(evt) {
+      //   if (user) {
+      //     dispatcher.post('ajax', [{
+      //       action: 'logout'
+      //     }, function(response) {
+      //       user = null;
+      //       $('#' + base_id + '_auth_button').val('Login');
+      //       $('.login').hide();
+      //       dispatcher.post('user', [null]);
+      //     }]);
+      //   } else {
+      //     dispatcher.post('showForm', [authForm]);
+      //   }
+      // });
+      // authForm.submit(authFormSubmit);
 
 
-      var tutorialForm = $('#' + base_id + '_tutorial');
+      // var tutorialForm = $('#' + base_id + '_tutorial');
       var isWebkit = 'WebkitAppearance' in document.documentElement.style;
       if (!isWebkit) {
         // Inject the browser warning
         $('#' + base_id + '_browserwarning').css('display', 'block');
       }
-      initForm(tutorialForm, {
-        width: 800,
-        height: 600,
-        no_cancel: true,
-        no_ok: true,
-        buttons: [{
-          id: "tutorial-ok",
-          text: "OK",
-          click: function() { tutorialForm.dialog('close'); }
-        }],
-        close: function() {
-          if (fileBrowserWaiting) {
-            showFileBrowser();
-          }
-        }
-      });
+      // initForm(tutorialForm, {
+      //   width: 800,
+      //   height: 600,
+      //   no_cancel: true,
+      //   no_ok: true,
+      //   buttons: [{
+      //     id: "tutorial-ok",
+      //     text: "OK",
+      //     click: function() { tutorialForm.dialog('close'); }
+      //   }],
+      //   close: function() {
+      //     if (fileBrowserWaiting) {
+      //       showFileBrowser();
+      //     }
+      //   }
+      // });
 
       var init = function() {
         dispatcher.post('initForm', [viewspanForm, {
@@ -2036,7 +2052,7 @@ var VisualizerUI = (function($, window, undefined) {
         //       // don't show tutorial if there's a specific document (annoyance)
         //       if (!doc) {
         //         dispatcher.post('showForm', [tutorialForm]);
-        //         $('#tutorial-ok').focus();
+        //         $('#' + base_id + '_tutorial-ok').focus();
         //       }
         //     }
         //   },
@@ -2080,8 +2096,8 @@ var VisualizerUI = (function($, window, undefined) {
       var noFileSpecified = function() {
         // not (only) an error, so no messaging
         dispatcher.post('clearSVG');
-        showFileBrowser();
-      }
+        // showFileBrowser();
+      };
 
       var showUnableToReadTextFile = function() {
         dispatcher.post('messages', [[['Unable to read the text file.', 'error']]]);
@@ -2183,7 +2199,7 @@ var VisualizerUI = (function($, window, undefined) {
           documentChangesTimeout = 1 * 1000;
         }
         documentChangesTimer = setTimeout(checkForDocumentChanges, documentChangesTimeout);
-      }
+      };
 
       if (Configuration.autorefreshOn) {
         checkForDocumentChanges();
@@ -2232,22 +2248,22 @@ var VisualizerUI = (function($, window, undefined) {
         
         // Annotation mode
         if (Configuration.confirmModeOn) {
-          $('#annotation_speed1')[0].checked = true;
+          $('#' + base_id + '_annotation_speed1')[0].checked = true;
         } else if (Configuration.rapidModeOn) {
-          $('#annotation_speed3')[0].checked = true;
+          $('#' + base_id + '_annotation_speed3')[0].checked = true;
         } else {
-          $('#annotation_speed2')[0].checked = true;
+          $('#' + base_id + '_annotation_speed2')[0].checked = true;
         }
-        $('#' + base_id + '_annotation_speed input').button('refresh');
+        $('#' + base_id + '_annotation_speed input').button().button('refresh');
 
         // Label abbrevs
         $('#' + base_id + '_label_abbreviations_on')[0].checked  = Configuration.abbrevsOn;
         $('#' + base_id + '_label_abbreviations_off')[0].checked = !Configuration.abbrevsOn;
-        $('#' + base_id + '_label_abbreviations input').button('refresh');
+        $('#' + base_id + '_label_abbreviations input').button().button('refresh');
 
         // Text backgrounds        
         $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]')[0].checked = true;
-        $('#' + base_id + '_text_backgrounds input').button('refresh');
+        $('#' + base_id + '_text_backgrounds input').button().button('refresh');
 
         // SVG width
         var splitSvgWidth = Configuration.svgWidth.match(/^(.*?)(px|\%)$/);
@@ -2257,16 +2273,16 @@ var VisualizerUI = (function($, window, undefined) {
         } else {
           $('#' + base_id + '_svg_width_value')[0].value = splitSvgWidth[1];
           $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]')[0].checked = true;
-          $('#' + base_id + '_svg_width_unit input').button('refresh');
+          $('#' + base_id + '_svg_width_unit input').button().button('refresh');
         }
 
         // Autorefresh
         $('#' + base_id + '_autorefresh_mode')[0].checked = Configuration.autorefreshOn;
-        $('#' + base_id + '_autorefresh_mode').button('refresh');
+        $('#' + base_id + '_autorefresh_mode').button().button('refresh');
 
         // Type Collapse Limit
         $('#' + base_id + '_type_collapse_limit')[0].value = Configuration.typeCollapseLimit;
-      }
+      };
 
       $('#' + base_id + '_prev').button().click(function() {
         return moveInFileBrowser(-1);
@@ -2276,7 +2292,7 @@ var VisualizerUI = (function($, window, undefined) {
       });
       $('#' + base_id + '_footer').show();
 
-      $('#source_collection_conf_on, #source_collection_conf_off').change(function() {
+      $('#' + base_id + '_source_collection_conf_on, #' + base_id + '_source_collection_conf_off').change(function() {
         var conf = $('#' + base_id + '_source_collection_conf_on').is(':checked') ? 1 : 0;
         var $source_collection_link = $('#' + base_id + '_source_collection a');
         var link = $source_collection_link.attr('href').replace(/&include_conf=./, '&include_conf=' + conf);
@@ -2291,8 +2307,8 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var onScreamingHalt = function() {
-        $('#' + base_id + '_waiter').dialog('close');
-        $('#pulldown, #navbuttons, #spinner').remove();
+        $waiterDialog.dialog('close');
+        $('#' + base_id + '_pulldown, #' + base_id + '_navbuttons, #' + base_id + '_spinner').remove();
         dispatcher.post('hideForm');
       };
 
@@ -2309,7 +2325,7 @@ var VisualizerUI = (function($, window, undefined) {
           on('showForm', showForm).
           on('hideForm', hideForm).
           on('initForm', initForm).
-          on('collectionLoaded', rememberNormDb).
+          // on('collectionLoaded', rememberNormDb).
           on('collectionLoaded', collectionLoaded).
           on('spanAndAttributeTypesLoaded', spanAndAttributeTypesLoaded).
           on('isReloadOkay', isReloadOkay).
@@ -2329,13 +2345,26 @@ var VisualizerUI = (function($, window, undefined) {
           on('touchstart', onTouchStart).
           on('touchend', onTouchEnd).
           on('resize', onResize).
-          on('searchResultsReceived', searchResultsReceived).
-          on('clearSearch', clearSearch).
+          // on('searchResultsReceived', searchResultsReceived).
+          // on('clearSearch', clearSearch).
           on('clearSVG', showNoDocMessage).
           on('screamingHalt', onScreamingHalt).
           on('configurationChanged', configurationChanged).
           on('configurationUpdated', updateConfigurationUI);
       return {
+        dialogs: {
+          // fileBrowser: fileBrowser,
+          // searchForm: searchForm,
+          // dataForm: dataForm,
+          optionsForm: optionsForm,
+          // moreInfoDialog: moreInfoDialog,
+          // authForm: authForm,
+          // tutorialForm: tutorialForm,
+          // aboutDialog: aboutDialog,
+          viewspanForm: viewspanForm,
+          $waiterDialog: $waiterDialog
+        },
+        ajax: ajax,
         initForm: initForm
       };
 

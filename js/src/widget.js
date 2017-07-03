@@ -1,6 +1,5 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
-var $ = require('./lib/jquery.min');
 
 // brat jquery-theme styles
 require('./static/jquery-theme/jquery-ui.css');
@@ -19,15 +18,16 @@ var webFontURLs = [
     require('file-loader!./static/fonts/PT_Sans-Caption-Web-Regular.ttf'),
     require('file-loader!./static/fonts/Liberation_Sans-Regular.ttf')
 ];
+//jquery
+var $ = require('./lib/jquery.min');
 //brat modules
 var Configuration = require('./configuration');
 var Dispatcher = require('./dispatcher');
 var Visualizer = require('./visualizer');
 var VisualizerUI = require('./visualizer_ui');
 var URLMonitor = require('./url_monitor').URLMonitor;
-var Ajax = require('./ajax');
 var AnnotatorUI = require('./annotator_ui');
-var Spinner = require('./spinner')
+var Spinner = require('./spinner');
 var AnnotationLog = require('./annotation_log');
 
 
@@ -72,32 +72,38 @@ var AnnotatorModel = VisualizerModel.extend({
 // Custom View. Renders the widget model.
 var VisualizerView = widgets.DOMWidgetView.extend({
     render: function () {
-        console.log('Value changed!!!');
         this.value_changed();
         if (this.dispatcher === undefined) {
             this.el.id = "brat_" + new Date().getTime().toString();
             var $divSvg = $("<div id='" + this.el.id + "_svg'></div>").appendTo(this.el);
             this.embed($divSvg, this.model);
         }
+        this.model.get('value').collection = null;
+        this.collection_changed();
+        this.value_changed();
+        this.model.on('change:collection', this.collection_changed, this);
         this.model.on('change:value', this.value_changed, this);
     },
 
     value_changed: function () {
-        console.log('Value changed!!!');
+        if (this.dispatcher !== undefined) {
+            var docData = this.model.get('value');
+            this.dispatcher.post('requestRenderData', [docData]);
+        }
+    },
+
+    collection_changed: function () {
+        if (this.dispatcher !== undefined) {
+            var collData = this.model.get('collection');
+            this.dispatcher.post('collectionLoaded', [collData]);
+        }
     },
 
     embed: function (container, model) {
-        var collData = model.get('collection');
-        var docData = model.get('value');
         if (this.dispatcher === undefined) {
             this.dispatcher = new Dispatcher();
-        }
-        if (this.visualizer === undefined) {
             this.visualizer = new Visualizer(this.el.id, Configuration, this.dispatcher, container, webFontURLs);
         }
-        docData.collection = null;
-        this.dispatcher.post('collectionLoaded', [collData]);
-        this.dispatcher.post('requestRenderData', [docData]);
     }
 });
 
@@ -114,18 +120,17 @@ var AnnotatorView = VisualizerView.extend({
                 $(this.get_messages_div_str()).appendTo(this.el);
 
                 this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
-                //this.set_ajax_simulator(this.dispatcher);
-                this.ajax = new Ajax(this.el.id, this.dispatcher, this.simulate_ajax, model);
-                //this.visualizerUI = new VisualizerUIsimulator(this.el.id, this.dispatcher, this.visualizer.svg);
-                this.visualizerUI = new VisualizerUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg);
-                this.annotatorUI = new AnnotatorUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm);
+                this.visualizerUI = new VisualizerUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg,
+                    model, this.simulate_ajax);
+                this.annotatorUI = new AnnotatorUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg,
+                    this.visualizerUI.initForm, this.visualizerUI.dialogs);
                 this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
                 //this.logger = new AnnotationLog(this.dispatcher);
                 this.dispatcher.post('init');
             }
         },
 
-        simulate_ajax: function(model, options) {
+        simulate_ajax: function (model, options) {
             var response = 'AJAX SIMULATOR';
             switch (options.data.action) {
                 case 'loadConf':
@@ -140,7 +145,7 @@ var AnnotatorView = VisualizerView.extend({
                     var textStatus = 'Not supported action';
                     var errorThrown = textStatus + ' ' + options.data.action;
                     console.error(response + ': ' + errorThrown);
-                    response = { statusText: textStatus};
+                    response = {statusText: textStatus};
                     options.error(response, textStatus, errorThrown);
             }
         },
@@ -199,11 +204,11 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_source_collection_conf">
             <input type="radio" id="{base_id}_source_collection_conf_off" value="0"
                    name="source_collection_conf_radio"/>
-            <label for="source_collection_conf_off"
+            <label for="{base_id}_source_collection_conf_off"
                    title="Do not include the configuration files">off</label>
             <input type="radio" id="{base_id}_source_collection_conf_on" value="1"
                    name="source_collection_conf_radio" checked="checked"/>
-            <label for="source_collection_conf_on"
+            <label for="{base_id}_source_collection_conf_on"
                    title="Do include the configuration files">on</label>
           </span>
         </div>
@@ -213,7 +218,7 @@ var AnnotatorView = VisualizerView.extend({
         <legend>Compare</legend>
         <div class="optionRow">
           <span class="optionLabel">Side-by-side</span>
-          <span id="side-by-side_cmp" title="Enter side-by-side comparison mode"/>
+          <span id="{base_id}_side-by-side_cmp" title="Enter side-by-side comparison mode"/>
         </div>
       </fieldset>
       <!-- Data dialog automatic annotation section -->
@@ -268,11 +273,11 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_label_abbreviations" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_label_abbreviations_off" value="off"
                    name="label_abbrev_radio"/>
-            <label for="label_abbreviations_off"
+            <label for="{base_id}_label_abbreviations_off"
                    title="Always display full form of labels.">Off</label>
             <input type="radio" id="{base_id}_label_abbreviations_on" value="on"
                    name="label_abbrev_radio" checked="checked"/>
-            <label for="label_abbreviations_on"
+            <label for="{base_id}_label_abbreviations_on"
                    title="Abbreviate annotation labels in limited space.">On</label>
           </span>
         </div>
@@ -281,28 +286,28 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_text_backgrounds" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_text_backgrounds_blank" value="blank"
                    name="text_background_radio"/>
-            <label for="text_backgrounds_blank"
+            <label for="{base_id}_text_backgrounds_blank"
                    title="Blank white text backgrounds.">Blank</label>
             <input type="radio" id="{base_id}_text_backgrounds_striped" value="striped"
                    name="text_background_radio" checked="checked"/>
-            <label for="text_backgrounds_striped"
+            <label for="{base_id}_text_backgrounds_striped"
                    title="Striped text backgrounds with every second sentence on light gray background.">Striped</label>
           </span>
         </div>
         <div class="optionRow">
           <span class="optionLabel">Layout density</span>
           <span id="{base_id}_layout_density" class="radio_group small-buttons">
-            <input type="radio" id="layout_density1" value="1"
+            <input type="radio" id="{base_id}_layout_density1" value="1"
                    name="layout_radio"/>
-            <label for="layout_density1"
+            <label for="{base_id}_layout_density1"
                    title="Dense annotation layout: minimizes space taken by annotations.">Dense</label>
-            <input type="radio" id="layout_density2" value="2"
+            <input type="radio" id="{base_id}_layout_density2" value="2"
                    name="layout_radio" checked="checked" />
-            <label for="layout_density2"
+            <label for="{base_id}_layout_density2"
                    title="Normal annotation layout density: balances between annotation size and readability.">Normal</label>
-            <input type="radio" id="layout_density3" value="3"
+            <input type="radio" id="{base_id}_layout_density3" value="3"
                    name="layout_radio"/>
-            <label for="layout_density3"
+            <label for="{base_id}_layout_density3"
                    title="Spacious annotation layout: allows extra space for annotations to improve readability.">Spacious</label>
           </span>
         </div>
@@ -313,10 +318,10 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_svg_width_unit" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_svg_width_unit_percent" value="%"
                    name="svg_width_radio" checked="checked"/>
-            <label for="svg_width_unit_percent">percent</label>
+            <label for="{base_id}_svg_width_unit_percent">percent</label>
             <input type="radio" id="{base_id}_svg_width_unit_pixels" value="px"
                    name="svg_width_radio"/>
-            <label for="svg_width_unit_pixels">pixels</label>
+            <label for="{base_id}_svg_width_unit_pixels">pixels</label>
           </span>
         </div>
       </fieldset>
@@ -325,17 +330,17 @@ var AnnotatorView = VisualizerView.extend({
         <div class="optionRow">
           <span class="optionLabel">Annotation mode</span>
           <span id="{base_id}_annotation_speed" class="radio_group small-buttons">
-            <input type="radio" id="annotation_speed1" value="1"
+            <input type="radio" id="{base_id}_annotation_speed1" value="1"
                    name="annspeed_radio" checked="checked"/>
-            <label for="annotation_speed1"
+            <label for="{base_id}_annotation_speed1"
                    title="Careful annotation mode: ask for additional confirmation of annotation changes. Suitable for annotators in training and for mature corpora requiring few changes.">Careful</label>
-            <input type="radio" id="annotation_speed2" value="2"
+            <input type="radio" id="{base_id}_annotation_speed2" value="2"
                    name="annspeed_radio"/>
-            <label for="annotation_speed2"
+            <label for="{base_id}_annotation_speed2"
                    title="Normal annotation mode. Suitable for standard annotation processes.">Normal</label>
-            <input type="radio" id="annotation_speed3" value="3"
+            <input type="radio" id="{base_id}_annotation_speed3" value="3"
                    name="annspeed_radio"/>
-            <label for="annotation_speed3"
+            <label for="{base_id}_annotation_speed3"
                    title="Rapid annotation mode: activate automatic support for speeding up annotation process. Suitable for experienced annotators performing an established task.">Rapid</label>
             <select id="{base_id}_rapid_model"/>
           </span>
@@ -352,7 +357,7 @@ var AnnotatorView = VisualizerView.extend({
           <span class="optionLabel">Collaboration</span>
           <span class="small-buttons">
             <input id="{base_id}_autorefresh_mode" type="checkbox"/>
-            <label for="autorefresh_mode"
+            <label for="{base_id}_autorefresh_mode"
                    title="Toggle the autorefresh mode on/off. When autorefresh is on, the system will periodically check with the server for updates to the document you are working on. This is useful when collaborating on annotation but consumes some resources, so you may wish to turn autorefresh off if there are no simultaneous edits.">Autorefresh</label>
           </span>
         </div>
@@ -434,20 +439,20 @@ var AnnotatorView = VisualizerView.extend({
             <tr>
               <td>Arg1</td>
               <td>
-                <select id="search_form_relation_arg1_type" class="fullwidth"/>
+                <select id="{base_id}_search_form_relation_arg1_type" class="fullwidth"/>
               </td>
               <td>
-                <input id="search_form_relation_arg1_text" class="fullwidth"
+                <input id="{base_id}_search_form_relation_arg1_text" class="fullwidth"
                     placeholder="Text to match (empty=anything)"/>
               </td>
             </tr>
             <tr>
               <td>Arg2</td>
               <td>
-               <select id="search_form_relation_arg2_type" class="fullwidth"/>
+               <select id="{base_id}_search_form_relation_arg2_type" class="fullwidth"/>
               </td>
               <td>
-                <input id="search_form_relation_arg2_text" class="fullwidth"
+                <input id="{base_id}_search_form_relation_arg2_text" class="fullwidth"
                     placeholder="Text to match (empty=anything)"/>
               </td>
             </tr>
@@ -459,12 +464,12 @@ var AnnotatorView = VisualizerView.extend({
               <input type="radio" id="{base_id}_search_form_relation_show_arg_text_off"
                      value="off" name="search_form_relation_show_arg_text_radio"
                      checked="checked"/>
-              <label for="search_form_relation_show_arg_text_off"
+              <label for="{base_id}_search_form_relation_show_arg_text_off"
                      title="Don't show texts of relation arguments in search results.">off</label>
               <input type="radio" id="{base_id}_search_form_relation_show_arg_text_on"
                      value="on"
                      name="search_form_relation_show_arg_text_radio"/>
-              <label for="search_form_relation_show_arg_text_on"
+              <label for="{base_id}_search_form_relation_show_arg_text_on"
                      title="Show texts of relation arguments in search results.">on</label>
             </span>
           </div>
@@ -475,12 +480,12 @@ var AnnotatorView = VisualizerView.extend({
               <input type="radio" id="{base_id}_search_form_relation_show_arg_type_off"
                      value="off" name="search_form_relation_show_arg_type_radio"
                      checked="checked"/>
-              <label for="search_form_relation_show_arg_type_off"
+              <label for="{base_id}_search_form_relation_show_arg_type_off"
                      title="Don't show types of relation arguments in search results.">off</label>
               <input type="radio" id="{base_id}_search_form_relation_show_arg_type_on"
                      value="on"
                      name="search_form_relation_show_arg_type_radio"/>
-              <label for="search_form_relation_show_arg_type_on"
+              <label for="{base_id}_search_form_relation_show_arg_type_on"
                      title="Show types of relation arguments in search results.">on</label>
             </span>
           </div>
@@ -536,11 +541,11 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_search_scope" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_search_scope_doc" value="document"
                    name="search_scope_radio" checked="checked"/>
-            <label for="search_scope_doc"
+            <label for="{base_id}_search_scope_doc"
                    title="Search in current document only.">document</label>
             <input type="radio" id="{base_id}_search_scope_coll" value="collection"
                    name="search_scope_radio"/>
-            <label for="search_scope_coll"
+            <label for="{base_id}_search_scope_coll"
                    title="Search in all documents in current collection.">collection</label>
           </span>
         </div>
@@ -550,11 +555,11 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_concordancing" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_concordancing_off" value="document"
                    name="concordancing_radio" checked="checked"/>
-            <label for="concordancing_off"
+            <label for="{base_id}_concordancing_off"
                    title="Display matched search results only.">off</label>
             <input type="radio" id="{base_id}_concordancing_on" value="collection"
                    name="concordancing_radio"/>
-            <label for="concordancing_on"
+            <label for="{base_id}_concordancing_on"
                    title="In addition to search results, display also the text context of the matches in Key Word In Context (KWIC) format.">on</label>
           </span>
         </div>
@@ -566,15 +571,15 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_text_match" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_text_match_word" value="word"
                    name="text_match_radio" checked="checked"/>
-            <label for="text_match_word"
+            <label for="{base_id}_text_match_word"
                    title="Match whole words only.">whole word</label>
             <input type="radio" id="{base_id}_text_match_substr" value="substring"
                    name="text_match_radio"/>
-            <label for="text_match_substr"
+            <label for="{base_id}_text_match_substr"
                    title="Match any substring.">any substring</label>
             <input type="radio" id="{base_id}_text_match_regex" value="regex"
                    name="text_match_radio"/>
-            <label for="text_match_regex"
+            <label for="{base_id}_text_match_regex"
                    title="Treat given text as regular expression.">regex</label>
           </span>
         </div>
@@ -583,11 +588,11 @@ var AnnotatorView = VisualizerView.extend({
           <span id="{base_id}_match_case" class="radio_group small-buttons">
             <input type="radio" id="{base_id}_match_case_off" value="document"
                    name="match_case_radio" checked="checked"/>
-            <label for="match_case_off"
+            <label for="{base_id}_match_case_off"
                    title="Ignore character case in text search ('abc' matches 'ABC')">off</label>
             <input type="radio" id="{base_id}_match_case_on" value="collection"
                    name="match_case_radio"/>
-            <label for="match_case_on"
+            <label for="{base_id}_match_case_on"
                    title="Require identical character case in text search ('abc' does not match 'ABC')">on</label>
           </span>
         </div>
@@ -659,7 +664,7 @@ var AnnotatorView = VisualizerView.extend({
         <legend>Normalization</legend>
         <div id="{base_id}_norm_container">
           <select id="{base_id}_span_norm_db"/>
-          <a id="{base_id}_span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="`+fugueShadowlessMagnifierPng+`" style="vertical-align: middle"/></a>
+          <a id="{base_id}_span_norm_db_link" target="brat_linked" href="#" title="Search DB"><img src="` + fugueShadowlessMagnifierPng + `" style="vertical-align: middle"/></a>
           <span class="span_norm_label">ID:</span>
           <input id="{base_id}_span_norm_id" class="span_norm_id_input"
                  style="width:20%"/>
@@ -667,7 +672,7 @@ var AnnotatorView = VisualizerView.extend({
           <input id="{base_id}_span_norm_txt" class="span_norm_txt_input"
                  readonly="readonly" style="width:45%"
                  placeholder="Click here to search"/>
-          <a id="{base_id}_span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="`+fugueShadowlessExternalPng+`" style="vertical-align: middle"/></a>
+          <a id="{base_id}_span_norm_ref_link" target="brat_linked" href="#" title="See in DB"><img src="` + fugueShadowlessExternalPng + `" style="vertical-align: middle"/></a>
           <input id="{base_id}_clear_norm_button" type="button"
                  value="&#x2715;" title="Clear normalization"/>
         </div>
@@ -791,12 +796,13 @@ var AnnotatorView = VisualizerView.extend({
         get_messages_div_str: function () {
             //noinspection JSAnnotator
             var strMessages = `<div id='{base_id}_messa_cont'>
-    <img id="{base_id}_spinner" src="`+spinnerGif+`"/>
+    <img id="{base_id}_spinner" src="` + spinnerGif + `"/>
     <div id="{base_id}_messagepullup" class="messages" style="display: none"/>
     <div id="{base_id}_messages" class="messages"/>
     <div id="{base_id}_pulluptrigger"/>
+    <div id="{base_id}_commentpopup"/>
     <div id="{base_id}_waiter" class="dialog" title="Please wait">
-      <img src="`+spinnerGif+`"/>
+      <img src="` + spinnerGif + `"/>
     </div>
 </div>`;
             return this.get_interpolat_dom(strMessages);

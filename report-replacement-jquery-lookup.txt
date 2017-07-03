@@ -349,3 +349,39 @@ Found Occurrences  (335 usages found)
                     2273 $('#footer').show();
                     2276 var conf = $('#source_collection_conf_on').is(':checked') ? 1 : 0;
                     2290 $('#waiter').dialog('close');
+
+Targets
+    Occurrences of '\$\('#([a-zA-Z_0-9\-]+)'\)' in brat-copy
+Found Occurrences  (23 usages found)
+    Usage in comments  (10 usages found)
+        brat-widget  (10 usages found)
+            js/src  (10 usages found)
+                visualizer_ui.js  (10 usages found)
+                    1084         var $arg1 = $('#search_form_relation_arg1_type').
+                    1086         var $arg2 = $('#search_form_relation_arg2_type').empty();
+                    1099         $('#search_form_relation_arg1_type').change();
+                    1106       $('#search_form_relation_arg1_type').change(function(evt) {
+                    1107         var $arg2 = $('#search_form_relation_arg2_type').
+                    1260             opts.arg1 = $('#search_form_relation_arg1_text').val();
+                    1261             opts.arg1type = $('#search_form_relation_arg1_type').val() || '';
+                    1262             opts.arg2 = $('#search_form_relation_arg2_text').val();
+                    1263             opts.arg2type = $('#search_form_relation_arg2_type').val() || '';
+                    2051 //         $('#tutorial-ok').focus();
+    Usage in string constants  (13 usages found)
+        brat-widget  (13 usages found)
+            js/src  (13 usages found)
+                annotator_ui.js  (8 usages found)
+                    946 $('#span_form-ok').focus();
+                    1044 $('#rapid_span_form-ok').focus();
+                    1204 $('#norm_search_dialog-ok').button(enable ? 'enable' : 'disable');
+                    1517 $('#arc_form-ok').focus();
+                    1875 $('#span_form-ok').focus();
+                    2397 $('#split_form-ok').focus();
+                    2500 var $ok = $('#span_form-ok').wrap('<span id="span_form_lock_bset"/>');
+                    2549 $('#span_form-ok').blur();
+                visualizer_ui.js  (5 usages found)
+                    1456 $('#annotation_speed3').button(disambiguators.length ? 'enable': 'disable');
+                    1773 $cmpButton = $('#side-by-side_cmp').empty();
+                    2247 $('#annotation_speed1')[0].checked = true;
+                    2249 $('#annotation_speed3')[0].checked = true;
+                    2251 $('#annotation_speed2')[0].checked = true;
