@@ -88,7 +88,7 @@ var URLMonitor = (function($, window, undefined) {
       var updateState = function() {
         dispatcher.post('makeAjaxObsolete');
         if (!changed) {
-          var new_url_hash = URLHash.parse(window.location.hash);
+          var new_url_hash = URLHash.parse(base_id, window.location.hash);
           // setCollection(new_url_hash.collection, new_url_hash.document,
           //     $.extend(new_url_hash.arguments, newIntArgs));
           that.url_hash = new_url_hash;
@@ -199,31 +199,33 @@ var URLHash = (function($, window, undefined) {
     };
 
     // TODO: Document and conform variables to the rest of the object
-    URLHash.parse = function(hash) {
+    URLHash.parse = function(base_id, hash) {
       if (hash.length) {
         // Remove the leading hash (#)
         hash = hash.substr(1);
       }
 
       var pathAndArgs = hash.split('?');
-      var path = pathAndArgs[0] || '';
-      var argsStr = pathAndArgs[1] || '';
-      var coll;
-      var slashPos = path.lastIndexOf('/');
-      if (slashPos === -1) {
-        coll = '/';
-      } else {
-        coll = path.substr(0, slashPos + 1);
-        if (coll[coll.length - 1] !== '/') {
-          coll += '/';
-        }
-        if (coll[0] !== '/') {
-          coll = '/' + coll;
-        }
-      }
-      var doc = path.substr(slashPos + 1);
+      // var path = pathAndArgs[0] || '';
+      var argsStr = pathAndArgs[0] || '';
+      // var argsStr = pathAndArgs[1] || '';
+      // var coll;
+      // var slashPos = path.lastIndexOf('/');
+      // if (slashPos === -1) {
+      //   coll = '/';
+      // } else {
+      //   coll = path.substr(0, slashPos + 1);
+      //   if (coll[coll.length - 1] !== '/') {
+      //     coll += '/';
+      //   }
+      //   if (coll[0] !== '/') {
+      //     coll = '/' + coll;
+      //   }
+      // }
+      // var doc = path.substr(slashPos + 1);
       var args = Util.deparam(argsStr);
-      return new URLHash(coll, doc, args);
+      // return new URLHash(coll, doc, args);
+      return new URLHash(base_id, args);
     };
 
     return URLHash;

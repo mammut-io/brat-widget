@@ -4,10 +4,11 @@
 require('./lib/jquery-ui.min');
 var Util = require('./util');
 require('./lib/jquery-ui.combobox.js');
+var URLHash = require('./url_monitor').URLHash;
 
 
 var AnnotatorUI = (function($, window, undefined) {
-    var AnnotatorUI = function(base_id, Configuration, dispatcher, svg, initForm, dialogs) {
+    var AnnotatorUI = function(base_id, lookupContext, Configuration, dispatcher, svg, initForm, dialogs) {
       var that = this;
       var arcDragOrigin = null;
       var arcDragOriginBox = null;
@@ -183,7 +184,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var onDblClick = function(evt) {
         // must be logged in
-        if (that.user === null) return;
+        // if (that.user === null) return;
         // must not be reselecting a span or an arc
         if (reselectedSpan || arcDragOrigin) return;
 
@@ -303,7 +304,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var onMouseDown = function(evt) {
         dragStartedAt = evt; // XXX do we really need the whole evt?
-        if (!that.user || arcDragOrigin) return;
+        if (/*!that.user || */arcDragOrigin) return;
         var target = $(evt.target);
         var id;
         // is it arc drag start?
@@ -696,7 +697,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
         var showAllAttributes = false;
         if (span) {
-          var linkHash = new URLHash(coll, doc, { focus: [[span.id]] }).getHash();
+          var linkHash = new URLHash(base_id, { focus: [[span.id]] }).getHash();
           var el = $('#' + base_id + '_span_' + span.type);
           if (el.length) {
             el[0].checked = true;
@@ -730,7 +731,7 @@ var AnnotatorUI = (function($, window, undefined) {
           }
         } else {
           var offsets = spanOptions.offsets[0];
-          var linkHash = new URLHash(coll, doc, { focus: [[offsets[0], offsets[1]]] }).getHash();
+          var linkHash = new URLHash(base_id, { focus: [[offsets[0], offsets[1]]] }).getHash();
           var firstRadio = $('#' + base_id + '_span_form input:radio:not([unused]):first')[0];
           if (firstRadio) {
             firstRadio.checked = true;
@@ -774,7 +775,7 @@ var AnnotatorUI = (function($, window, undefined) {
             var category = ct[0];
             var attributeTypes = ct[1];
             $.each(attributeTypes, function(attrNo, attr) {
-              $input = $('#'+category+'_attr_'+Util.escapeQuotes(attr.type));
+              $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
               if (attr.unused) {
                 $input.val('');
               } else if (attr.default) {
@@ -810,7 +811,7 @@ var AnnotatorUI = (function($, window, undefined) {
             console.error('Unrecognized generalType:', span.generalType);
           }
           $.each(attributeTypes, function(attrNo, attr) {
-            $input = $('#'+category+'_attr_'+Util.escapeQuotes(attr.type));
+            $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
             var val = span.attributes[attr.type];
             if (attr.unused) {
               $input.val(val || '');
@@ -832,14 +833,14 @@ var AnnotatorUI = (function($, window, undefined) {
           if (firstDb) {
             $('#' + base_id + '_span_norm_db').val(firstDb);
           }
-        }
+        };
 
         showValidNormalizations = function() {
           // set norm DB selector according to the first selected type
           var firstSelected = $('#' + base_id + '_entity_and_event_wrapper input:radio:checked')[0];
           var selectedType = firstSelected ? firstSelected.value : null;
           showValidNormalizationsFor(selectedType);
-        }
+        };
 
         // fill normalizations (if any)
         if (!reselectedSpan) {
@@ -885,7 +886,7 @@ var AnnotatorUI = (function($, window, undefined) {
           var validAttrs = type ? spanTypes[type].attributes : [];
           var shownCount = 0;
           $.each(attrTypes, function(attrNo, attr) {
-            var $input = $('#'+category+'_attr_'+Util.escapeQuotes(attr.type));
+            var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
             var showAttr = showAllAttributes || $.inArray(attr.type, validAttrs) != -1;
             if (showAttr) {
               // $input.button('widget').parent().show();
@@ -897,7 +898,7 @@ var AnnotatorUI = (function($, window, undefined) {
             }
           });
           return shownCount;
-        }
+        };
 
         showValidAttributes = function() {
           var type = $('#' + base_id + '_span_form input:radio:checked').val();
@@ -935,7 +936,7 @@ var AnnotatorUI = (function($, window, undefined) {
               removeClass('scroll_wrapper_upper').
               addClass('scroll_wrapper_full');
           }
-        }
+        };
         showValidAttributes();
 
         // TODO XXX: if seemed quite unexpected/unintuitive that the
@@ -1141,7 +1142,7 @@ var AnnotatorUI = (function($, window, undefined) {
             // assume that we always want to return to the span dialog
             // on normalization dialog close
             dispatcher.post('showForm', [spanForm, true]);
-          },
+          }
       });
       $('#' + base_id + '_norm_search_query').autocomplete({
         source: function(request, callback) {
@@ -1439,7 +1440,7 @@ var AnnotatorUI = (function($, window, undefined) {
         if (arcId) {
           // something was selected
           var focus = arcId instanceof Array ? arcId : [arcId];
-          var hash = new URLHash(coll, doc, { focus: [focus] }).getHash();
+          var hash = new URLHash(base_id, { focus: [focus] }).getHash();
           $('#' + base_id + '_arc_highlight_link').attr('href', hash).show(); // TODO incorrect
           var el = $('#' + base_id + '_arc_' + arcType)[0];
           if (el) {
@@ -1775,7 +1776,7 @@ var AnnotatorUI = (function($, window, undefined) {
       };      
 
       var onMouseUp = function(evt) {
-        if (that.user === null) return;
+        // if (that.user === null) return;
 
         var target = $(evt.target);
 
@@ -1849,7 +1850,7 @@ var AnnotatorUI = (function($, window, undefined) {
         rapidFillSpanTypesAndDisplayForm(sugg.start, sugg.end, sugg.text, sugg.types);
       };
 
-      var collapsed = {}
+      var collapsed = {};
       var toggleCollapsible = function($el, state) {
         var opening = state !== undefined ? state : !$el.hasClass('open');
         var $collapsible = $el.parent().find('.collapsible:first');
@@ -1963,7 +1964,7 @@ var AnnotatorUI = (function($, window, undefined) {
       var addAttributeTypesToDiv = function($top, types, category) {
         $.each(types, function(attrNo, attr) {
           var escapedType = Util.escapeQuotes(attr.type);
-          var attrId = category+'_attr_'+escapedType;
+          var attrId = base_id + '_' + category+'_attr_'+escapedType;
           var $span = $('<span class="attribute_type_label"/>').appendTo($top);
           if (attr.unused) {
             $('<input type="hidden" id="'+attrId+'" value=""/>').appendTo($span);
@@ -2056,22 +2057,22 @@ var AnnotatorUI = (function($, window, undefined) {
         // TODO: check for exceptions in response
 
         // fill in entity and event types
-        var $entityScroller = $('#' + base_id + '_entity_types div.scroller').empty();
+        var $entityScroller = $('#' + base_id + '_entity_types div.scroller', lookupContext).empty();
         addSpanTypesToDivInner($entityScroller, response.entity_types, 'entity');
-        var $eventScroller = $('#' + base_id + '_event_types div.scroller').empty();
+        var $eventScroller = $('#' + base_id + '_event_types div.scroller', lookupContext).empty();
         addSpanTypesToDivInner($eventScroller, response.event_types, 'event');
 
         // fill in attributes
-        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller').empty();
+        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller', lookupContext).empty();
         addAttributeTypesToDiv($entattrs, entityAttributeTypes, 'entity');
 
-        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller').empty();
+        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller', lookupContext).empty();
         addAttributeTypesToDiv($eveattrs, eventAttributeTypes, 'event');
 
         // fill search options in span dialog
         searchConfig = response.search_config;
-        var $searchlinks  = $('#' + base_id + '_span_search_links').empty();
-        var $searchlinks2 = $('#' + base_id + '_viewspan_search_links').empty();
+        var $searchlinks  = $('#' + base_id + '_span_search_links', lookupContext).empty();
+        var $searchlinks2 = $('#' + base_id + '_viewspan_search_links', lookupContext).empty();
         var firstLink=true;
         var linkFilled=false;
         if (searchConfig) {
@@ -2087,11 +2088,11 @@ var AnnotatorUI = (function($, window, undefined) {
           });
         }
         if (linkFilled) {
-          $('#' + base_id + '_span_search_fieldset').show();
-          $('#' + base_id + '_viewspan_search_fieldset').show();
+          $('#' + base_id + '_span_search_fieldset', lookupContext).show();
+          $('#' + base_id + '_viewspan_search_fieldset', lookupContext).show();
         } else {
-          $('#' + base_id + '_span_search_fieldset').hide();
-          $('#' + base_id + '_viewspan_search_fieldset').hide();
+          $('#' + base_id + '_span_search_fieldset', lookupContext).hide();
+          $('#' + base_id + '_viewspan_search_fieldset', lookupContext).hide();
         }
 
         spanForm.find('#' + base_id + '_entity_types input:radio').click(spanFormSubmitRadio);
@@ -2282,7 +2283,7 @@ var AnnotatorUI = (function($, window, undefined) {
           console.error('Unrecognized type category:', category);
         }
         $.each(attributeTypes, function(attrNo, attr) {
-          var $input = $('#'+category+'_attr_'+Util.escapeQuotes(attr.type));
+          var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
           if (attr.bool) {
             attributes[attr.type] = $input[0].checked;
           } else if ($input[0].selectedIndex) {

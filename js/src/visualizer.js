@@ -3175,7 +3175,7 @@ Util.profileStart('before render');
               } else {
                 spans[arc.origin] = true;
               }
-            }
+            };
             $.each(span.incoming, function(arcNo, arc) {
                 addArcAndSpan(arc, arc.origin);
             });

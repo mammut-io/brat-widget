@@ -1941,9 +1941,8 @@ var VisualizerUI = (function($, window, undefined) {
           window.getSelection().removeAllRanges();
           var span = data.spans[id];
 
-          //var urlHash = URLHash.parse(window.location.hash);
-          //urlHash.setArgument('focus', [[span.id]]);
-          var urlHash = new URLHash(base_id, { focus: [[ span.id ]] });
+          var urlHash = URLHash.parse(base_id, window.location.hash);
+          urlHash.setArgument('focus', [[span.id]]);
           $('#' + base_id + '_viewspan_highlight_link').show().attr('href', urlHash.getHash());
 
           $('#' + base_id + '_viewspan_selected').text(span.text);

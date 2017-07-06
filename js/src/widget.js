@@ -116,13 +116,15 @@ var AnnotatorView = VisualizerView.extend({
         embed: function (container, model) {
             AnnotatorView.__super__.embed.apply(this, arguments);
             if (this.urlMonitor === undefined) {
-                $(this.get_forms_div_str()).appendTo(this.el);
-                $(this.get_messages_div_str()).appendTo(this.el);
+                var $forms = $(this.get_forms_div_str());
+                $forms.appendTo(this.el);
+                var $messages = $(this.get_messages_div_str());
+                $messages.appendTo(this.el);
 
                 this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
                 this.visualizerUI = new VisualizerUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg,
                     model, this.simulate_ajax);
-                this.annotatorUI = new AnnotatorUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg,
+                this.annotatorUI = new AnnotatorUI(this.el.id, $forms, Configuration, this.dispatcher, this.visualizer.svg,
                     this.visualizerUI.initForm, this.visualizerUI.dialogs);
                 this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
                 //this.logger = new AnnotationLog(this.dispatcher);
