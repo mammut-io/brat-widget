@@ -1,12 +1,15 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
+require('./lib/jquery-ui.min');
+require('./lib/jquery-ui.combobox');
+
 var Util = require('./util');
 var Ajax = require('./ajax');
 var URLHash = require('./url_monitor').URLHash;
 
 var VisualizerUI = (function($, window, undefined) {
-    var VisualizerUI = function(base_id, Configuration, dispatcher, svg, model, simulate_ajax) {
+    var VisualizerUI = function(base_id, lookupContextForms, lookupContextMessages, Configuration, dispatcher, svg, model, simulate_ajax) {
       var that = this;
 
       var messagePostOutFadeDelay = 1000;
@@ -49,16 +52,19 @@ var VisualizerUI = (function($, window, undefined) {
       var matchFocus = '';
       var matches = '';
 
-      /* START "no svg" message - related */
+      /* START "no svg" message - related*/
 
-      var noSvgTimer = null;
+      // var noSvgTimer = null;
 
-      var $waiterDialog = $('#' + base_id + '_waiter').dialog({
-          appendTo: "#" + base_id + "_forms"
+      var $waiterDialog = $('#' + base_id + '_waiter', lookupContextMessages);
+      lookupContextForms.on('onload', function () {
+        $waiterDialog.dialog({
+            appendTo: "#" + base_id + "_forms"
+        });
       });
 
       var ajax = new Ajax(base_id, dispatcher, simulate_ajax, model, $waiterDialog);
-
+/*
 
       // this is necessary for centering
       $('#' + base_id + '_no_svg_wrapper').css('display', 'table');
@@ -79,7 +85,7 @@ var VisualizerUI = (function($, window, undefined) {
         $('#' + base_id + '_source_files').hide();
       };
       
-      /* END "no svg" message - related */
+       END "no svg" message - related */
 
       /* START collection browser sorting - related
 
@@ -137,11 +143,11 @@ var VisualizerUI = (function($, window, undefined) {
       /* START message display - related */
 
       var showPullupTrigger = function() {
-        $('#' + base_id + '_pulluptrigger').show('puff');
-      }
+        $('#' + base_id + '_pulluptrigger', lookupContextMessages).show('puff');
+      };
 
-      var $messageContainer = $('#' + base_id + '_messages');
-      var $messagepullup = $('#' + base_id + '_messagepullup');
+      var $messageContainer = $('#' + base_id + '_messages', lookupContextMessages);
+      var $messagepullup = $('#' + base_id + '_messagepullup', lookupContextMessages);
       var pullupTimer = null;
       var displayMessages = function(msgs) {
         var initialMessageNum = $messagepullup.children().length;
@@ -211,7 +217,7 @@ var VisualizerUI = (function($, window, undefined) {
         if (messageNum != initialMessageNum) {
           if (messageNum == 0) {
             // all gone; nothing to trigger
-            $('#' + base_id + '_pulluptrigger').hide('slow');
+            $('#' + base_id + '_pulluptrigger', lookupContextMessages).hide('slow');
           } else if (initialMessageNum == 0) {
             // first messages, show trigger at fade
             setTimeout(showPullupTrigger, messageDefaultFadeDelay+250);
@@ -220,14 +226,14 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       // hide pullup trigger by default, show on first message
-      $('#' + base_id + '_pulluptrigger').hide();
-      $('#' + base_id + '_pulluptrigger').
+      $('#' + base_id + '_pulluptrigger', lookupContextMessages).hide();
+      $('#' + base_id + '_pulluptrigger', lookupContextMessages).
         mouseenter(function(evt) {
           $('#' + base_id + '_pulluptrigger').hide('puff');
           clearTimeout(pullupTimer);
           slideToggle($messagepullup.stop(), true, true, true);
         });
-      $('#' + base_id + '_messagepullup').
+      $('#' + base_id + '_messagepullup', lookupContextMessages).
         mouseleave(function(evt) {
           setTimeout(showPullupTrigger, 500);
           clearTimeout(pullupTimer);
@@ -369,7 +375,7 @@ var VisualizerUI = (function($, window, undefined) {
             }
           }
         }
-        var drop=$('#' + base_id + '_norm_info_drop_point_'+infoSeqId);
+        var drop=$('#' + base_id + '_norm_info_drop_point_'+infoSeqId, lookupContextMessages);
         if (drop) {
           drop.html(norminfo);
         } else {
@@ -548,7 +554,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       /* START form management - related */
 
-      var initForm = function(form, opts) {
+      var initForm = function(formO, optsO) {formO.on('onload', [formO, optsO],function(form, opts) {
         opts = opts || {};
         var formId = form.attr('id');
 
@@ -600,7 +606,7 @@ var VisualizerUI = (function($, window, undefined) {
           form.parent().resizable('option', 'alsoResize',
               '#' + form.attr('id') + ', ' + alsoResize);
         }
-      };
+      })};
 
       var unsafeDialogOpen = function($dialog) {
         // does not restrict tab key to the dialog
@@ -609,7 +615,7 @@ var VisualizerUI = (function($, window, undefined) {
         // https://github.com/nlplab/brat/issues/934
 
         var self = $dialog.dialog('instance');
-        
+
         if (self._isOpen) { return; }
 
         self._isOpen = true;
@@ -633,9 +639,11 @@ var VisualizerUI = (function($, window, undefined) {
         if (unsafe) {
           unsafeDialogOpen(form);
         } else {
+          console.log('BORRAR - showForm - 1');
           form.dialog('open');
+          console.log('BORRAR - showForm - 2');
         }
-        slideToggle($('#' + base_id + '_pulldown').stop(), false);
+        // slideToggle($('#' + base_id + '_pulldown').stop(), false);
         return form;
       };
 
@@ -1434,7 +1442,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       /* START options dialog - related */
 
-      var optionsForm = $('#' + base_id + '_options_form');
+      var optionsForm = $('#' + base_id + '_options_form', lookupContextForms);
       var optionsFormSubmit = function(evt) {
         dispatcher.post('hideForm');
         return false;
@@ -1448,18 +1456,20 @@ var VisualizerUI = (function($, window, undefined) {
             keymap = {};
           }
       });
-      $('#' + base_id + '_options_button').click(function() {
+      $('#' + base_id + '_options_button', lookupContextForms).click(function() {
         dispatcher.post('showForm', [optionsForm]);
       });
       // make nice-looking buttons for checkboxes and radios
-      optionsForm.find('input[type="checkbox"]').button();
-      optionsForm.find('.radio_group').buttonset();
-      $('#' + base_id + '_rapid_model').addClass('ui-widget ui-state-default ui-button-text');
+      optionsForm.on('onload', function () {
+        optionsForm.find('input[type="checkbox"]').button();
+        optionsForm.find('.radio_group').buttonset();
+      });
+      $('#' + base_id + '_rapid_model', lookupContextForms).addClass('ui-widget ui-state-default ui-button-text');
 
       var fillDisambiguatorOptions = function(disambiguators) {
-        $('#' + base_id + '_annotation_speed3').button(disambiguators.length ? 'enable': 'disable');
+        $('#' + base_id + '_annotation_speed3', lookupContextForms).button(disambiguators.length ? 'enable': 'disable');
         //XXX: We need to disable rapid in the conf too if it is not available
-        var $rapid_mode = $('#' + base_id + '_rapid_model').html('');
+        var $rapid_mode = $('#' + base_id + '_rapid_model', lookupContextForms).html('');
         $.each(disambiguators, function(modelNo, model) {
           var $option = $('<option/>').attr('value', model[2]).text(model[2]);
           $rapid_mode.append($option);
@@ -1594,7 +1604,14 @@ var VisualizerUI = (function($, window, undefined) {
           }
         } else {
           lastGoodCollection = response.collection;
-          fillDisambiguatorOptions(response.disambiguator_config);
+          if(lookupContextForms.loaded){
+            fillDisambiguatorOptions(response.disambiguator_config);
+          }
+          else{
+            lookupContextForms.on('onload', function () {
+              fillDisambiguatorOptions(response.disambiguator_config);
+            });
+          }
           selectorData = response;
           documentListing = response; // 'backup'
           // searchConfig = response.search_config;
@@ -1649,11 +1666,11 @@ var VisualizerUI = (function($, window, undefined) {
           return false;
         }
         clearTimeout(saveSVGTimer);
-        $('#' + base_id + '_stored_file_regenerate').hide();
-        $('#' + base_id + '_stored_file_spinner').show()
+        $('#' + base_id + '_stored_file_regenerate', lookupContextForms).hide();
+        $('#' + base_id + '_stored_file_spinner', lookupContextForms).show();
         saveSVGTimer = dispatcher.post(1, 'ajax', [{
           action: 'storeSVG',
-          svg: $('#' + base_id + '_svg').html(),
+          svg: svg.html(),
           collection: coll,
           document: doc
         }, 'savedSVG']);
@@ -1662,7 +1679,7 @@ var VisualizerUI = (function($, window, undefined) {
       var onDoneRendering = function(coll, doc, args) {
         if (args && !args.edited) {
           var svgtop = $('svg').offset().top;
-          var $inFocus = $('#' + base_id + '_svg animate[data-type="focus"]:first').parent();
+          var $inFocus = $('#' + base_id + '_svg animate[data-type="focus"]:first', svg).parent();
           if ($inFocus.length) {
             $('html,body').
                 animate({ scrollTop: $inFocus.offset().top - svgtop - window.innerHeight / 2 }, { duration: 'slow', easing: 'swing'});
@@ -1670,25 +1687,39 @@ var VisualizerUI = (function($, window, undefined) {
         }
         dispatcher.post('allowReloadByURL');
         if (!currentForm) {
-          $waiterDialog.dialog('close');
+          if(lookupContextForms.loaded){
+            $waiterDialog.dialog('close');
+          }
+          else{
+            lookupContextForms.on('onload', function () {
+              $waiterDialog.dialog('close');
+            });
+          }
         }
       };
 
       var onStartedRendering = function() {
         hideForm();
         if (!currentForm) {
-          $waiterDialog.dialog('open');
+          if(lookupContextForms.loaded){
+            $waiterDialog.dialog('open');
+          }
+          else{
+            lookupContextForms.on('onload', function () {
+              $waiterDialog.dialog('open');
+            });
+          }
         }
       };
 
       var savedSVGreceived = function(response) {
-        $('#' + base_id + '_stored_file_spinner').hide()
+        $('#' + base_id + '_stored_file_spinner', lookupContextForms).hide()
 
         if (response && response.exception == 'corruptSVG') {
           dispatcher.post('messages', [[['Cannot save SVG: corrupt', 'error']]]);
           return;
         }
-        var $downloadStored = $('#' + base_id + '_download_stored').empty().show();
+        var $downloadStored = $('#' + base_id + '_download_stored', lookupContextForms).empty().show();
         $.each(response.stored, function(storedNo, stored) {
           var params = {
             'action': 'retrieveStored',
@@ -1711,15 +1742,15 @@ var VisualizerUI = (function($, window, undefined) {
       var invalidateSavedSVG = function() {
         // assuming that invalidation of the SVG invalidates all stored
         // static visualizations, as others are derived from the SVG
-        $('#' + base_id + '_download_stored').hide();
+        $('#' + base_id + '_download_stored', lookupContextForms).hide();
         // have a way to regenerate if dialog open when data invalidated
-        $('#' + base_id + '_stored_file_regenerate').show();
+        $('#' + base_id + '_stored_file_regenerate', lookupContextForms).show();
         currentDocumentSVGsaved = false;
       };
 
       var onNewSourceData = function(sourceData) {
         if (!sourceData) return;
-        var $sourceFiles = $('#' + base_id + '_source_files').empty();
+        var $sourceFiles = $('#' + base_id + '_source_files', lookupContextForms).empty();
         /* Add download links for all available extensions */
         $.each(sourceData.source_files, function(extNo, ext) {
           var $link = $('<a target="brat_search"/>').
@@ -1735,7 +1766,7 @@ var VisualizerUI = (function($, window, undefined) {
         });
         /* Add a download link for the whole collection */
         invalidateSavedSVG();
-
+/*
         mtime = sourceData.mtime;
         if (mtime) {
           // we're getting seconds and need milliseconds
@@ -1744,10 +1775,12 @@ var VisualizerUI = (function($, window, undefined) {
         } else {
           //$('#' + base_id + '_document_ctime').css("display", "none");
           $('#' + base_id + '_document_mtime').hide();
-        }
-      }
+        }*/
+      };
 
-      $('#' + base_id + '_source_collection_conf').buttonset();
+      lookupContextForms.on('onload', function () {
+        $('#' + base_id + '_source_collection_conf', lookupContextForms).buttonset();
+      });
 
       var gotCurrent = function(_coll, _doc, _args) {
         var oldColl = coll;
@@ -1840,6 +1873,7 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var menuTimer = null;
+      /*
       $('#' + base_id + '_header').
         mouseenter(function(evt) {
           clearTimeout(menuTimer);
@@ -1851,8 +1885,8 @@ var VisualizerUI = (function($, window, undefined) {
             slideToggle($('#' + base_id + '_pulldown').stop(), false);
           }, 500);
         });
-
-      $('#' + base_id + '_label_abbreviations input').click(function(evt) {
+*/
+      $('#' + base_id + '_label_abbreviations input', lookupContextForms).click(function(evt) {
         var val = this.value;
         val = val === 'on';
         if (val) {
@@ -1869,14 +1903,14 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post(1, 'resetData');
       });
 
-      $('#' + base_id + '_text_backgrounds input').click(function(evt) {
+      $('#' + base_id + '_text_backgrounds input', lookupContextForms).click(function(evt) {
         var val = this.value;
         dispatcher.post('textBackgrounds', [val]);
         // TODO: XXX: see comment above for why this is asynchronous
         dispatcher.post(1, 'resetData');
       });
 
-      $('#' + base_id + '_layout_density input').click(function(evt) {
+      $('#' + base_id + '_layout_density input', lookupContextForms).click(function(evt) {
         var val = this.value;
         dispatcher.post('layoutDensity', [val]);
         // TODO: XXX: see comment above for why this is asynchronous
@@ -1884,7 +1918,7 @@ var VisualizerUI = (function($, window, undefined) {
         return false;
       });
 
-      $('#' + base_id + '_svg_width_unit input').click(function(evt) {
+      $('#' + base_id + '_svg_width_unit input', lookupContextForms).click(function(evt) {
         var width_unit = this.value;
         var width_value = $('#' + base_id + '_svg_width_value')[0].value;
         var val = width_value+width_unit;
@@ -1894,15 +1928,15 @@ var VisualizerUI = (function($, window, undefined) {
         return false;
       });
 
-      $('#' + base_id + '_annotation_speed input').click(function(evt) {
+      $('#' + base_id + '_annotation_speed input', lookupContextForms).click(function(evt) {
         var val = this.value;
         dispatcher.post('annotationSpeed', [val]);
         return false;
       });      
     
-      $('#' + base_id + '_pulldown').find('input').button();
-      var headerHeight = $('#' + base_id + '_mainHeader').height();
-      $('#' + base_id + '_svg').css('margin-top', headerHeight + 10);
+      // $('#' + base_id + '_pulldown').find('input').button();
+      // var headerHeight = $('#' + base_id + '_mainHeader').height();
+      // svg.css('margin-top', headerHeight + 10);
       // aboutDialog = $('#' + base_id + '_about');
       // aboutDialog.dialog({
       //       autoOpen: false,
@@ -1930,8 +1964,11 @@ var VisualizerUI = (function($, window, undefined) {
         var x = Math.min(evt.clientX, screenWidth - elementWidth);
         element.css({ top: y, left: x });
       };
-      var viewspanForm = $('#' + base_id + '_viewspan_form').dialog({
-          appendTo: "#" + base_id + "_forms"
+      var viewspanForm = $('#' + base_id + '_viewspan_form', lookupContextForms);
+      lookupContextForms.on('onload', function () {
+        viewspanForm.dialog({
+            appendTo: "#" + base_id + "_forms"
+        });
       });
       var onDblClick = function(evt) {
         if (user && annotationAvailable) return;
@@ -1943,17 +1980,17 @@ var VisualizerUI = (function($, window, undefined) {
 
           var urlHash = URLHash.parse(base_id, window.location.hash);
           urlHash.setArgument('focus', [[span.id]]);
-          $('#' + base_id + '_viewspan_highlight_link').show().attr('href', urlHash.getHash());
+          $('#' + base_id + '_viewspan_highlight_link', lookupContextForms).show().attr('href', urlHash.getHash());
 
-          $('#' + base_id + '_viewspan_selected').text(span.text);
+          $('#' + base_id + '_viewspan_selected', lookupContextForms).text(span.text);
           var encodedText = encodeURIComponent(span.text);
           $.each(searchConfig, function(searchNo, search) {
-            $('#' + base_id + '_viewspan_'+search[0]).attr('href', search[1].replace('%s', encodedText));
+            $('#' + base_id + '_viewspan_'+search[0], lookupContextForms).attr('href', search[1].replace('%s', encodedText));
           });
           // annotator comments
-          $('#' + base_id + '_viewspan_notes').val(span.annotatorNotes || '');
+          $('#' + base_id + '_viewspan_notes', lookupContextForms).val(span.annotatorNotes || '');
           dispatcher.post('showForm', [viewspanForm]);
-          $('#' + base_id + 'viewspan_form-ok').focus();
+          $('#' + base_id + 'viewspan_form-ok', lookupContextForms).focus();
           adjustFormToCursor(evt, viewspanForm.parent());
         }
       };
@@ -2007,27 +2044,28 @@ var VisualizerUI = (function($, window, undefined) {
 
       // var tutorialForm = $('#' + base_id + '_tutorial');
       var isWebkit = 'WebkitAppearance' in document.documentElement.style;
+/*
       if (!isWebkit) {
         // Inject the browser warning
         $('#' + base_id + '_browserwarning').css('display', 'block');
       }
-      // initForm(tutorialForm, {
-      //   width: 800,
-      //   height: 600,
-      //   no_cancel: true,
-      //   no_ok: true,
-      //   buttons: [{
-      //     id: "tutorial-ok",
-      //     text: "OK",
-      //     click: function() { tutorialForm.dialog('close'); }
-      //   }],
-      //   close: function() {
-      //     if (fileBrowserWaiting) {
-      //       showFileBrowser();
-      //     }
-      //   }
-      // });
-
+      initForm(tutorialForm, {
+        width: 800,
+        height: 600,
+        no_cancel: true,
+        no_ok: true,
+        buttons: [{
+          id: "tutorial-ok",
+          text: "OK",
+          click: function() { tutorialForm.dialog('close'); }
+        }],
+        close: function() {
+          if (fileBrowserWaiting) {
+            showFileBrowser();
+          }
+        }
+      });
+*/
       var init = function() {
         dispatcher.post('initForm', [viewspanForm, {
             width: 760,
@@ -2204,7 +2242,7 @@ var VisualizerUI = (function($, window, undefined) {
         checkForDocumentChanges();
       }
 
-      $('#' + base_id + '_autorefresh_mode').click(function(evt) {
+      $('#' + base_id + '_autorefresh_mode', lookupContextForms).click(function(evt) {
         var val = this.checked;
         if (val) {
           Configuration.autorefreshOn = true;
@@ -2218,7 +2256,7 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post('configurationChanged');
       });
 
-      $('#' + base_id + '_type_collapse_limit').change(function(evt) {
+      $('#' + base_id + '_type_collapse_limit', lookupContextForms).change(function(evt) {
         Configuration.typeCollapseLimit = parseInt($(this).val(), 10);
         console.log("changed to", Configuration.typeCollapseLimit);
         dispatcher.post('configurationChanged');
@@ -2247,22 +2285,22 @@ var VisualizerUI = (function($, window, undefined) {
         
         // Annotation mode
         if (Configuration.confirmModeOn) {
-          $('#' + base_id + '_annotation_speed1')[0].checked = true;
+          $('#' + base_id + '_annotation_speed1', lookupContextForms)[0].checked = true;
         } else if (Configuration.rapidModeOn) {
-          $('#' + base_id + '_annotation_speed3')[0].checked = true;
+          $('#' + base_id + '_annotation_speed3', lookupContextForms)[0].checked = true;
         } else {
-          $('#' + base_id + '_annotation_speed2')[0].checked = true;
+          $('#' + base_id + '_annotation_speed2', lookupContextForms)[0].checked = true;
         }
-        $('#' + base_id + '_annotation_speed input').button().button('refresh');
+        $('#' + base_id + '_annotation_speed input', lookupContextForms).button().button('refresh');
 
         // Label abbrevs
-        $('#' + base_id + '_label_abbreviations_on')[0].checked  = Configuration.abbrevsOn;
-        $('#' + base_id + '_label_abbreviations_off')[0].checked = !Configuration.abbrevsOn;
-        $('#' + base_id + '_label_abbreviations input').button().button('refresh');
+        $('#' + base_id + '_label_abbreviations_on', lookupContextForms)[0].checked  = Configuration.abbrevsOn;
+        $('#' + base_id + '_label_abbreviations_off', lookupContextForms)[0].checked = !Configuration.abbrevsOn;
+        $('#' + base_id + '_label_abbreviations input', lookupContextForms).button().button('refresh');
 
         // Text backgrounds        
-        $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]')[0].checked = true;
-        $('#' + base_id + '_text_backgrounds input').button().button('refresh');
+        $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]', lookupContextForms)[0].checked = true;
+        $('#' + base_id + '_text_backgrounds input', lookupContextForms).button().button('refresh');
 
         // SVG width
         var splitSvgWidth = Configuration.svgWidth.match(/^(.*?)(px|\%)$/);
@@ -2270,19 +2308,19 @@ var VisualizerUI = (function($, window, undefined) {
           // TODO: reset to sensible value?
           dispatcher.post('messages', [[['Error parsing SVG width "'+Configuration.svgWidth+'"', 'error', 2]]]);
         } else {
-          $('#' + base_id + '_svg_width_value')[0].value = splitSvgWidth[1];
-          $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]')[0].checked = true;
-          $('#' + base_id + '_svg_width_unit input').button().button('refresh');
+          $('#' + base_id + '_svg_width_value', lookupContextForms)[0].value = splitSvgWidth[1];
+          $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]', lookupContextForms)[0].checked = true;
+          $('#' + base_id + '_svg_width_unit input', lookupContextForms).button().button('refresh');
         }
 
         // Autorefresh
-        $('#' + base_id + '_autorefresh_mode')[0].checked = Configuration.autorefreshOn;
-        $('#' + base_id + '_autorefresh_mode').button().button('refresh');
+        $('#' + base_id + '_autorefresh_mode', lookupContextForms)[0].checked = Configuration.autorefreshOn;
+        $('#' + base_id + '_autorefresh_mode', lookupContextForms).button().button('refresh');
 
         // Type Collapse Limit
-        $('#' + base_id + '_type_collapse_limit')[0].value = Configuration.typeCollapseLimit;
+        $('#' + base_id + '_type_collapse_limit', lookupContextForms)[0].value = Configuration.typeCollapseLimit;
       };
-
+/*
       $('#' + base_id + '_prev').button().click(function() {
         return moveInFileBrowser(-1);
       });
@@ -2290,10 +2328,10 @@ var VisualizerUI = (function($, window, undefined) {
         return moveInFileBrowser(+1);
       });
       $('#' + base_id + '_footer').show();
-
-      $('#' + base_id + '_source_collection_conf_on, #' + base_id + '_source_collection_conf_off').change(function() {
-        var conf = $('#' + base_id + '_source_collection_conf_on').is(':checked') ? 1 : 0;
-        var $source_collection_link = $('#' + base_id + '_source_collection a');
+*/
+      $('#' + base_id + '_source_collection_conf_on, #' + base_id + '_source_collection_conf_off', lookupContextForms).change(function() {
+        var conf = $('#' + base_id + '_source_collection_conf_on', lookupContextForms).is(':checked') ? 1 : 0;
+        var $source_collection_link = $('#' + base_id + '_source_collection a', lookupContextForms);
         var link = $source_collection_link.attr('href').replace(/&include_conf=./, '&include_conf=' + conf);
         $source_collection_link.attr('href', link);
       });
@@ -2307,7 +2345,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       var onScreamingHalt = function() {
         $waiterDialog.dialog('close');
-        $('#' + base_id + '_pulldown, #' + base_id + '_navbuttons, #' + base_id + '_spinner').remove();
+        // $('#' + base_id + '_pulldown, #' + base_id + '_navbuttons, #' + base_id + '_spinner').remove();
         dispatcher.post('hideForm');
       };
 
@@ -2346,7 +2384,7 @@ var VisualizerUI = (function($, window, undefined) {
           on('resize', onResize).
           // on('searchResultsReceived', searchResultsReceived).
           // on('clearSearch', clearSearch).
-          on('clearSVG', showNoDocMessage).
+          // on('clearSVG', showNoDocMessage).
           on('screamingHalt', onScreamingHalt).
           on('configurationChanged', configurationChanged).
           on('configurationUpdated', updateConfigurationUI);

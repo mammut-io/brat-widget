@@ -20,6 +20,9 @@ var webFontURLs = [
 ];
 //jquery
 var $ = require('./lib/jquery.min');
+require('./lib/jquery-ui.min');
+require('./lib/jquery-ui.combobox');
+require('./lib/jquery.svg.min');
 //brat modules
 var Configuration = require('./configuration');
 var Dispatcher = require('./dispatcher');
@@ -117,18 +120,27 @@ var AnnotatorView = VisualizerView.extend({
             AnnotatorView.__super__.embed.apply(this, arguments);
             if (this.urlMonitor === undefined) {
                 var $forms = $(this.get_forms_div_str());
+                $forms.loaded = false;
                 $forms.appendTo(this.el);
                 var $messages = $(this.get_messages_div_str());
+                $messages.loaded = false;
                 $messages.appendTo(this.el);
 
                 this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
-                this.visualizerUI = new VisualizerUI(this.el.id, Configuration, this.dispatcher, this.visualizer.svg,
-                    model, this.simulate_ajax);
-                this.annotatorUI = new AnnotatorUI(this.el.id, $forms, Configuration, this.dispatcher, this.visualizer.svg,
-                    this.visualizerUI.initForm, this.visualizerUI.dialogs);
+                this.visualizerUI = new VisualizerUI(this.el.id, $forms, $messages, Configuration,
+                    this.dispatcher, this.visualizer.svg, model, this.simulate_ajax);
+                this.annotatorUI = new AnnotatorUI(this.el.id, $forms, $messages, Configuration,
+                    this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm, this.visualizerUI.dialogs);
                 this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
                 //this.logger = new AnnotationLog(this.dispatcher);
-                this.dispatcher.post('init');
+                var that = this;
+                $forms.on('onload', function () {
+                    $forms.loaded = true;
+                    that.dispatcher.post('init');
+                });
+                $messages.on('onload', function () {
+                    $messages.loaded = true;
+                });
             }
         },
 

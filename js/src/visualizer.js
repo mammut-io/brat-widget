@@ -3,6 +3,8 @@
 
 var _ = require('underscore');
 
+require('./lib/jquery-ui.min');
+require('./lib/jquery-ui.combobox');
 require('./lib/jquery.svg.min');
 
 var URLHash = require('./url_monitor').URLHash;
@@ -477,13 +479,13 @@ var Visualizer = (function($, window, undefined) {
         }
         height += Configuration.visual.arcSpacing;
         return height;
-      }
+      };
 
       var adjustFragmentHeights = function(fromIndex, toIndex, fragmentHeights, height) {
         for (var i = fromIndex; i <= toIndex; i++) {
           if (fragmentHeights[i] < height) fragmentHeights[i] = height;
         }
-      }
+      };
 
       var fragmentComparator = function(a, b) {
         var tmp;
@@ -635,7 +637,7 @@ var Visualizer = (function($, window, undefined) {
           var t1, t2;
           if (argsDesc) {
             // sort the arguments according to the config
-            var args = {}
+            var args = {};
             args[rel[2][0][0]] = rel[2][0][1];
             args[rel[2][1][0]] = rel[2][1][1];
             t1 = args[argsDesc[0].role];
@@ -1135,7 +1137,7 @@ var Visualizer = (function($, window, undefined) {
       var resetData = function() {
         setData(sourceData);
         renderData();
-      }
+      };
 
       var translate = function(element, x, y) {
         $(element.group).attr('transform', 'translate(' + x + ', ' + y + ')');

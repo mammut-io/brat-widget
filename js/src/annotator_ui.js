@@ -2,13 +2,14 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
 require('./lib/jquery-ui.min');
+require('./lib/jquery-ui.combobox');
+
 var Util = require('./util');
-require('./lib/jquery-ui.combobox.js');
 var URLHash = require('./url_monitor').URLHash;
 
 
 var AnnotatorUI = (function($, window, undefined) {
-    var AnnotatorUI = function(base_id, lookupContext, Configuration, dispatcher, svg, initForm, dialogs) {
+    var AnnotatorUI = function(base_id, lookupContextForms, lookupContextMessages, Configuration, dispatcher, svg, initForm, dialogs) {
       var that = this;
       var arcDragOrigin = null;
       var arcDragOriginBox = null;
@@ -138,7 +139,7 @@ var AnnotatorUI = (function($, window, undefined) {
         if (Configuration.rapidModeOn && rapidAnnotationDialogVisible && 
             "0".charCodeAt() <= code && code <= "9".charCodeAt()) {
           var idx = String.fromCharCode(code);
-          var $input = $('#' + base_id + '_rapid_span_'+idx);
+          var $input = $('#' + base_id + '_rapid_span_'+idx, lookupContextForms);
           if ($input.length) {
             $input.click();
           }
@@ -222,8 +223,8 @@ var AnnotatorUI = (function($, window, undefined) {
           } else {
             arcOptions.id = originSpanId + "~" + type + "~" + targetSpanId;
           }
-          $('#' + base_id + '_arc_origin').text(Util.spanDisplayForm(spanTypes, originSpan.type) + ' ("' + originSpan.text + '")');
-          $('#' + base_id + '_arc_target').text(Util.spanDisplayForm(spanTypes, targetSpan.type) + ' ("' + targetSpan.text + '")');
+          $('#' + base_id + '_arc_origin', lookupContextForms).text(Util.spanDisplayForm(spanTypes, originSpan.type) + ' ("' + originSpan.text + '")');
+          $('#' + base_id + '_arc_target', lookupContextForms).text(Util.spanDisplayForm(spanTypes, targetSpan.type) + ' ("' + targetSpan.text + '")');
           var arcId = eventDescId || [originSpanId, type, targetSpanId];
           fillArcTypesAndDisplayForm(evt, originSpan.type, targetSpan.type, type, arcId);
           // for precise timing, log dialog display to user.
@@ -642,9 +643,9 @@ var AnnotatorUI = (function($, window, undefined) {
           spanForm.dialog('option', { title: 'Edit Annotation' });
         } else {
           // new span; show everything that's available
-          if ($('#' + base_id + '_event_types').find('input').length == 0) {
+          if ($('#' + base_id + '_event_types', lookupContextForms).find('input').length == 0) {
             hideFrame = 'event';
-          } else if ($('#' + base_id + '_entity_types').find('input').length == 0) {
+          } else if ($('#' + base_id + '_entity_types', lookupContextForms).find('input').length == 0) {
             hideFrame = 'entity';
           } else {
             hideFrame = 'none';
@@ -652,21 +653,21 @@ var AnnotatorUI = (function($, window, undefined) {
           spanForm.dialog('option', { title: 'New Annotation' });
         }
         if (hideFrame == 'event') {
-          $('#' + base_id + '_span_event_section').hide()
-          $('#' + base_id + '_span_entity_section').show().
+          $('#' + base_id + '_span_event_section', lookupContextForms).hide()
+          $('#' + base_id + '_span_entity_section', lookupContextForms).show().
             removeClass('wrapper_half_left').
             addClass('wrapper_full_width');
         } else if (hideFrame == 'entity') {
-          $('#' + base_id + '_span_entity_section').hide()
-          $('#' + base_id + '_span_event_section').show().
+          $('#' + base_id + '_span_entity_section', lookupContextForms).hide()
+          $('#' + base_id + '_span_event_section', lookupContextForms).show().
             removeClass('wrapper_half_right').
             addClass('wrapper_full_width');
         } else {
           // show both entity and event halves
-          $('#' + base_id + '_span_entity_section').show().
+          $('#' + base_id + '_span_entity_section', lookupContextForms).show().
             removeClass('wrapper_full_width').
             addClass('wrapper_half_left');
-          $('#' + base_id + '_span_event_section').show().
+          $('#' + base_id + '_span_event_section', lookupContextForms).show().
             removeClass('wrapper_full_width').
             addClass('wrapper_half_right');
         }
@@ -678,37 +679,37 @@ var AnnotatorUI = (function($, window, undefined) {
           $('#' + base_id + '_del_span_button').hide();
         }
 
-        $('#' + base_id + '_span_selected').text(spanText);
+        $('#' + base_id + '_span_selected', lookupContextForms).text(spanText);
         var encodedText = encodeURIComponent(spanText);       
         $.each(searchConfig, function(searchNo, search) {
-          $('#' + base_id + '_span_'+search[0]).attr('href', search[1].replace('%s', encodedText));
+          $('#' + base_id + '_span_'+search[0], lookupContextForms).attr('href', search[1].replace('%s', encodedText));
         });
 
         // enable all inputs by default (see setSpanTypeSelectability)
-        $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
+        $('#' + base_id + '_span_form input:not([unused])', lookupContextForms).removeAttr('disabled');
 
         // close span types if there's over typeCollapseLimit
-        if ($('#' + base_id + '_entity_types .item').length > Configuration.typeCollapseLimit) {
+        if ($('#' + base_id + '_entity_types .item', lookupContextForms).length > Configuration.typeCollapseLimit) {
           $('#' + base_id + '_entity_types .open').removeClass('open');
         }
-        if ($('#' + base_id + '_event_types .item').length > Configuration.typeCollapseLimit) {
-          $('#' + base_id + '_event_types .open').removeClass('open');
+        if ($('#' + base_id + '_event_types .item', lookupContextForms).length > Configuration.typeCollapseLimit) {
+          $('#' + base_id + '_event_types .open', lookupContextForms).removeClass('open');
         }
 
         var showAllAttributes = false;
         if (span) {
           var linkHash = new URLHash(base_id, { focus: [[span.id]] }).getHash();
-          var el = $('#' + base_id + '_span_' + span.type);
+          var el = $('#' + base_id + '_span_' + span.type, lookupContextForms);
           if (el.length) {
             el[0].checked = true;
           } else {
-            $('#' + base_id + '_span_form input:radio:checked').each(function (radioNo, radio) {
+            $('#' + base_id + '_span_form input:radio:checked', lookupContextForms).each(function (radioNo, radio) {
               radio.checked = false;
             });
           }
 
           // open the span type
-          $('#' + base_id + '_span_' + span.type).parents('.collapsible').each(function() {
+          $('#' + base_id + '_span_' + span.type, lookupContextForms).parents('.collapsible').each(function() {
             toggleCollapsible($(this).parent().prev(), true);
           });
 
@@ -725,14 +726,14 @@ var AnnotatorUI = (function($, window, undefined) {
             }
           });
           if (repeatingArcTypes.length) {
-            $('#' + base_id + '_span_form_split').show();
+            $('#' + base_id + '_span_form_split', lookupContextForms).show();
           } else {
-            $('#' + base_id + '_span_form_split').hide();
+            $('#' + base_id + '_span_form_split', lookupContextForms).hide();
           }
         } else {
           var offsets = spanOptions.offsets[0];
           var linkHash = new URLHash(base_id, { focus: [[offsets[0], offsets[1]]] }).getHash();
-          var firstRadio = $('#' + base_id + '_span_form input:radio:not([unused]):first')[0];
+          var firstRadio = $('#' + base_id + '_span_form input:radio:not([unused]):first', lookupContextForms)[0];
           if (firstRadio) {
             firstRadio.checked = true;
           } else {
@@ -740,29 +741,29 @@ var AnnotatorUI = (function($, window, undefined) {
             dispatcher.post('messages', [[['No valid span types defined', 'error']]]);
             return;
           }
-          $('#' + base_id + '_span_form_split').hide();
-          $('#' + base_id + '_span_notes').val('');
+          $('#' + base_id + '_span_form_split', lookupContextForms).hide();
+          $('#' + base_id + '_span_notes', lookupContextForms).val('');
           showAllAttributes = true;
         }
-        $('#' + base_id + '_span_highlight_link').attr('href', linkHash);
+        $('#' + base_id + '_span_highlight_link', lookupContextForms).attr('href', linkHash);
         if (span && !reselectedSpan) {
-          $('#' + base_id + '_span_form_reselect, #' + base_id + '_span_form_delete, #' + base_id + '_span_form_add_fragment').show();
+          $('#' + base_id + '_span_form_reselect, #' + base_id + '_span_form_delete, #' + base_id + '_span_form_add_fragment', lookupContextForms).show();
           keymap[$.ui.keyCode.DELETE] = 'span_form_delete';
           keymap[$.ui.keyCode.INSERT] = 'span_form_reselect';
           keymap['S-' + $.ui.keyCode.ENTER] = 'span_form_add_fragment';
-          $('#' + base_id + '_span_notes').val(span.annotatorNotes || '');
+          $('#' + base_id + '_span_notes', lookupContextForms).val(span.annotatorNotes || '');
         } else {
-          $('#' + base_id + '_span_form_reselect, #' + base_id + '_span_form_delete, #' + base_id + '_span_form_add_fragment').hide();
+          $('#' + base_id + '_span_form_reselect, #' + base_id + '_span_form_delete, #' + base_id + '_span_form_add_fragment', lookupContextForms).hide();
           keymap[$.ui.keyCode.DELETE] = null;
           keymap[$.ui.keyCode.INSERT] = null;
           keymap['S-' + $.ui.keyCode.ENTER] = null;
         }
         if (span && !reselectedSpan && span.offsets.length > 1) {
-          $('#' + base_id + '_span_form_reselect_fragment, #' + base_id + '_span_form_delete_fragment').show();
+          $('#' + base_id + '_span_form_reselect_fragment, #' + base_id + '_span_form_delete_fragment', lookupContextForms).show();
           keymap['S-' + $.ui.keyCode.DELETE] = 'span_form_delete_fragment';
           keymap['S-' + $.ui.keyCode.INSERT] = 'span_form_reselect_fragment';
         } else {
-          $('#' + base_id + '_span_form_reselect_fragment, #' + base_id + '_span_form_delete_fragment').hide();
+          $('#' + base_id + '_span_form_reselect_fragment, #' + base_id + '_span_form_delete_fragment', lookupContextForms).hide();
           keymap['S-' + $.ui.keyCode.DELETE] = null;
           keymap['S-' + $.ui.keyCode.INSERT] = null;
         }
@@ -775,7 +776,7 @@ var AnnotatorUI = (function($, window, undefined) {
             var category = ct[0];
             var attributeTypes = ct[1];
             $.each(attributeTypes, function(attrNo, attr) {
-              $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
+              $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
               if (attr.unused) {
                 $input.val('');
               } else if (attr.default) {
@@ -811,7 +812,7 @@ var AnnotatorUI = (function($, window, undefined) {
             console.error('Unrecognized generalType:', span.generalType);
           }
           $.each(attributeTypes, function(attrNo, attr) {
-            $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
+            $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
             var val = span.attributes[attr.type];
             if (attr.unused) {
               $input.val(val || '');
@@ -831,13 +832,13 @@ var AnnotatorUI = (function($, window, undefined) {
           // TODO: support specific IDs, not just DB specifiers
           var firstDb = type && normDbsByType[type] ? normDbsByType[type][0] : null;
           if (firstDb) {
-            $('#' + base_id + '_span_norm_db').val(firstDb);
+            $('#' + base_id + '_span_norm_db', lookupContextForms).val(firstDb);
           }
         };
 
         showValidNormalizations = function() {
           // set norm DB selector according to the first selected type
-          var firstSelected = $('#' + base_id + '_entity_and_event_wrapper input:radio:checked')[0];
+          var firstSelected = $('#' + base_id + '_entity_and_event_wrapper input:radio:checked', lookupContextForms)[0];
           var selectedType = firstSelected ? firstSelected.value : null;
           showValidNormalizationsFor(selectedType);
         };
@@ -847,9 +848,9 @@ var AnnotatorUI = (function($, window, undefined) {
           // clear first
           clearNormalizationUI();
 
-          var $normDb = $('#' + base_id + '_span_norm_db');
-          var $normId = $('#' + base_id + '_span_norm_id');
-          var $normText = $('#' + base_id + '_span_norm_txt');
+          var $normDb = $('#' + base_id + '_span_norm_db', lookupContextForms);
+          var $normId = $('#' + base_id + '_span_norm_id', lookupContextForms);
+          var $normText = $('#' + base_id + '_span_norm_txt', lookupContextForms);
 
           // fill if found (NOTE: only shows last on multiple)
           var normFilled = false;
@@ -886,7 +887,7 @@ var AnnotatorUI = (function($, window, undefined) {
           var validAttrs = type ? spanTypes[type].attributes : [];
           var shownCount = 0;
           $.each(attrTypes, function(attrNo, attr) {
-            var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
+            var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
             var showAttr = showAllAttributes || $.inArray(attr.type, validAttrs) != -1;
             if (showAttr) {
               // $input.button('widget').parent().show();
@@ -901,7 +902,7 @@ var AnnotatorUI = (function($, window, undefined) {
         };
 
         showValidAttributes = function() {
-          var type = $('#' + base_id + '_span_form input:radio:checked').val();
+          var type = $('#' + base_id + '_span_form input:radio:checked', lookupContextForms).val();
           
           showAllAttributes = false;
           
@@ -911,28 +912,28 @@ var AnnotatorUI = (function($, window, undefined) {
           // show attribute frames only if at least one attribute is
           // shown, and set size classes appropriately
           if (eventAttrCount > 0) {
-            $('#' + base_id + '_event_attributes').show();
-            $('#' + base_id + '_event_attribute_label').show();
-            $('#' + base_id + '_event_types').
+            $('#' + base_id + '_event_attributes', lookupContextForms).show();
+            $('#' + base_id + '_event_attribute_label', lookupContextForms).show();
+            $('#' + base_id + '_event_types', lookupContextForms).
               removeClass('scroll_wrapper_full').
               addClass('scroll_wrapper_upper');
           } else {
-            $('#' + base_id + '_event_attributes').hide();
-            $('#' + base_id + '_event_attribute_label').hide();
-            $('#' + base_id + '_event_types').
+            $('#' + base_id + '_event_attributes', lookupContextForms).hide();
+            $('#' + base_id + '_event_attribute_label', lookupContextForms).hide();
+            $('#' + base_id + '_event_types', lookupContextForms).
               removeClass('scroll_wrapper_upper').
               addClass('scroll_wrapper_full');
           }
           if (entityAttrCount > 0) {
-            $('#' + base_id + '_entity_attributes').show();
-            $('#' + base_id + '_entity_attribute_label').show();
-            $('#' + base_id + '_entity_types').
+            $('#' + base_id + '_entity_attributes', lookupContextForms).show();
+            $('#' + base_id + '_entity_attribute_label', lookupContextForms).show();
+            $('#' + base_id + '_entity_types', lookupContextForms).
               removeClass('scroll_wrapper_full').
               addClass('scroll_wrapper_upper');
           } else {
-            $('#' + base_id + '_entity_attributes').hide();
-            $('#' + base_id + '_entity_attribute_label').hide();
-            $('#' + base_id + '_entity_types').
+            $('#' + base_id + '_entity_attributes', lookupContextForms).hide();
+            $('#' + base_id + '_entity_attribute_label', lookupContextForms).hide();
+            $('#' + base_id + '_entity_types', lookupContextForms).
               removeClass('scroll_wrapper_upper').
               addClass('scroll_wrapper_full');
           }
@@ -946,8 +947,9 @@ var AnnotatorUI = (function($, window, undefined) {
         if (reselectedSpan) { // && !Configuration.confirmModeOn) {
           submitReselect();
         } else {
-          dispatcher.post('showForm', [spanForm, true]);
-          $('#' + base_id + '_span_form-ok').focus();
+          //dispatcher.post('showForm', [spanForm, true]);
+          dispatcher.post('showForm', [spanForm]);
+          $('#' + base_id + '_span_form-ok', lookupContextForms).focus();
           adjustToCursor(evt, spanForm.parent());
         }
       };
@@ -961,10 +963,10 @@ var AnnotatorUI = (function($, window, undefined) {
       var rapidFillSpanTypesAndDisplayForm = function(start, end, text, types) {
         // variant of fillSpanTypesAndDisplayForm for rapid annotation mode
         keymap = spanKeymap;
-        $('#' + base_id + '_rapid_span_selected').text(text);
+        $('#' + base_id + '_rapid_span_selected', lookupContextForms).text(text);
 
         // fill types
-        var $spanTypeDiv = $('#' + base_id + '_rapid_span_types_div');
+        var $spanTypeDiv = $('#' + base_id + '_rapid_span_types_div', lookupContextForms);
         // remove previously filled, if any
         $spanTypeDiv.empty();
         $.each(types, function(typeNo, typeAndProb) {
@@ -1035,7 +1037,7 @@ var AnnotatorUI = (function($, window, undefined) {
         // set up click event handlers
         rapidSpanForm.find('#' + base_id + '_rapid_span_types input:radio').click(rapidSpanFormSubmitRadio);
 
-        var firstRadio = $('#' + base_id + '_rapid_span_form input:radio:first')[0];
+        var firstRadio = $('#' + base_id + '_rapid_span_form input:radio:first', lookupContextForms)[0];
         if (firstRadio) {
           firstRadio.checked = true;
         } else {
@@ -1045,7 +1047,7 @@ var AnnotatorUI = (function($, window, undefined) {
         }
         dispatcher.post('showForm', [rapidSpanForm]);
         rapidAnnotationDialogVisible = true;
-        $('#' + base_id + '_rapid_span_form-ok').focus();
+        $('#' + base_id + '_rapid_span_form-ok', lookupContextForms).focus();
         // TODO: avoid using global for stored click event
 //         adjustToCursor(lastRapidAnnotationEvent, rapidSpanForm.parent(),
 //                        true, true);
@@ -1057,23 +1059,25 @@ var AnnotatorUI = (function($, window, undefined) {
                        false, false);
       };
 
-      var clearArcNotes = function(evt) {
-        $('#' + base_id + '_arc_notes').val('');
-      };
-      $('#' + base_id + '_clear_arc_notes_button').button();
-      $('#' + base_id + '_clear_arc_notes_button').click(clearArcNotes);
+      lookupContextForms.on('onload', function () {
+        var clearArcNotes = function(evt) {
+          $('#' + base_id + '_arc_notes', lookupContextForms).val('');
+        };
+        $('#' + base_id + '_clear_arc_notes_button', lookupContextForms).button();
+        $('#' + base_id + '_clear_arc_notes_button', lookupContextForms).click(clearArcNotes);
 
-      var clearSpanNotes = function(evt) {
-        $('#' + base_id + '_span_notes').val('');
-      };
-      $('#' + base_id + '_clear_span_notes_button').button();
-      $('#' + base_id + '_clear_span_notes_button').click(clearSpanNotes);
+        var clearSpanNotes = function(evt) {
+          $('#' + base_id + '_span_notes').val('');
+        };
+        $('#' + base_id + '_clear_span_notes_button', lookupContextForms).button();
+        $('#' + base_id + '_clear_span_notes_button', lookupContextForms).click(clearSpanNotes);
 
-      var clearSpanNorm = function(evt) {
-        clearNormalizationUI();
-      };
-      $('#' + base_id + '_clear_norm_button').button();
-      $('#' + base_id + '_clear_norm_button').click(clearSpanNorm);
+        var clearSpanNorm = function(evt) {
+          clearNormalizationUI();
+        };
+        $('#' + base_id + '_clear_norm_button', lookupContextForms).button();
+        $('#' + base_id + '_clear_norm_button', lookupContextForms).click(clearSpanNorm);
+      });
 
       // invoked on response to ajax request for id lookup
       var setSpanNormText = function(response) {
@@ -1103,13 +1107,13 @@ var AnnotatorUI = (function($, window, undefined) {
         clearNormalizationUI();
         updateNormalizationDbLink();
       };
-      $('#' + base_id + '_span_norm_db').change(spanNormDbUpdate);
+      $('#' + base_id + '_span_norm_db', lookupContextForms).change(spanNormDbUpdate);
 
       // on any change to the normalization ID, update the text of the
       // reference
       var spanNormIdUpdate = function(evt) {
         var key = $(this).val();
-        var db = $('#' + base_id + '_span_norm_db').val();
+        var db = $('#' + base_id + '_span_norm_db', lookupContextForms).val();
         if (key != oldSpanNormIdValue) {
           if (key.match(/^\s*$/)) {
             // don't query empties, just clear instead
@@ -1125,9 +1129,9 @@ var AnnotatorUI = (function($, window, undefined) {
         }
       };
       // see http://stackoverflow.com/questions/1948332/detect-all-changes-to-a-input-type-text-immediately-using-jquery
-      $('#' + base_id + '_span_norm_id').bind('propertychange keyup input paste', spanNormIdUpdate);
+      $('#' + base_id + '_span_norm_id', lookupContextForms).bind('propertychange keyup input paste', spanNormIdUpdate);
       // nice-looking select for normalization
-      $('#' + base_id + '_span_norm_db').addClass('ui-widget ui-state-default ui-button-text');
+      $('#' + base_id + '_span_norm_db', lookupContextForms).addClass('ui-widget ui-state-default ui-button-text');
 
       var normSearchDialog = $('#' + base_id + '_norm_search_dialog');
       initForm(normSearchDialog, {
@@ -1144,35 +1148,37 @@ var AnnotatorUI = (function($, window, undefined) {
             dispatcher.post('showForm', [spanForm, true]);
           }
       });
-      $('#' + base_id + '_norm_search_query').autocomplete({
-        source: function(request, callback) {
-          var query = $.ui.autocomplete.escapeRegex(request.term);
-          var pattern = new RegExp('\\b' + query, 'i');
-          callback($.grep(lastNormSearches, function(search) {
-            return pattern.test(search.value) || pattern.test(search.id);
-          }));
-        },
-        minLength: 0,
-        select: function(evt, ui) {
-          evt.stopPropagation();
-          normSubmit(ui.item.id, ui.item.value);
-        },
-        focus: function(evt, ui) {
-          // do nothing
-        },
-      }).autocomplete('instance')._renderItem = function($ul, item) {
-        // XXX TODO TEST
-        return $('<li></li>').
-          data('item.autocomplete', item).
-          append('<a>' + Util.escapeHTML(item.value) + '<div class="autocomplete-id">' + Util.escapeHTML(item.id) + "</div></a>").
-          appendTo($ul);
-      };
+      lookupContextForms.on('onload', function () {
+        $('#' + base_id + '_norm_search_query', lookupContextForms).autocomplete({
+          source: function(request, callback) {
+            var query = $.ui.autocomplete.escapeRegex(request.term);
+            var pattern = new RegExp('\\b' + query, 'i');
+            callback($.grep(lastNormSearches, function(search) {
+              return pattern.test(search.value) || pattern.test(search.id);
+            }));
+          },
+          minLength: 0,
+          select: function(evt, ui) {
+            evt.stopPropagation();
+            normSubmit(ui.item.id, ui.item.value);
+          },
+          focus: function(evt, ui) {
+            // do nothing
+          }
+        }).autocomplete('instance')._renderItem = function($ul, item) {
+          // XXX TODO TEST
+          return $('<li></li>').
+            data('item.autocomplete', item).
+            append('<a>' + Util.escapeHTML(item.value) + '<div class="autocomplete-id">' + Util.escapeHTML(item.id) + "</div></a>").
+            appendTo($ul);
+        };
+      });
       var normSubmit = function(selectedId, selectedTxt) {
         // we got a value; act if it was a submit
-        $('#' + base_id + '_span_norm_id').val(selectedId);
+        $('#' + base_id + '_span_norm_id', lookupContextForms).val(selectedId);
         // don't forget to update this reference value
         oldSpanNormIdValue = selectedId;
-        $('#' + base_id + '_span_norm_txt').val(selectedTxt);
+        $('#' + base_id + '_span_norm_txt', lookupContextForms).val(selectedTxt);
         updateNormalizationRefLink();
         // update history
         var nextLastNormSearches = [
@@ -1194,8 +1200,8 @@ var AnnotatorUI = (function($, window, undefined) {
       };
       var normSearchSubmit = function(evt) {
         if (normSearchSubmittable) {
-          var selectedId = $('#' + base_id + '_norm_search_id').val();
-          var selectedTxt = $('#' + base_id + '_norm_search_query').val();
+          var selectedId = $('#' + base_id + '_norm_search_id', lookupContextForms).val();
+          var selectedTxt = $('#' + base_id + '_norm_search_query', lookupContextForms).val();
 
           normSubmit(selectedId, selectedTxt);
         } else {
@@ -1205,16 +1211,16 @@ var AnnotatorUI = (function($, window, undefined) {
       };
       var normSearchSubmittable = false;
       var setNormSearchSubmit = function(enable) {
-        $('#' + base_id + '_norm_search_dialog-ok').button(enable ? 'enable' : 'disable');
+        $('#' + base_id + '_norm_search_dialog-ok', lookupContextForms).button(enable ? 'enable' : 'disable');
         normSearchSubmittable = enable;
       };
       normSearchDialog.submit(normSearchSubmit);
       var chooseNormId = function(evt) {
         var $element = $(evt.target).closest('tr');
-        $('#' + base_id + '_norm_search_result_select tr').removeClass('selected');
+        $('#' + base_id + '_norm_search_result_select tr', lookupContextForms).removeClass('selected');
         $element.addClass('selected');
-        $('#' + base_id + '_norm_search_query').val($element.attr('data-txt'));
-        $('#' + base_id + '_norm_search_id').val($element.attr('data-id'));
+        $('#' + base_id + '_norm_search_query', lookupContextForms).val($element.attr('data-txt'));
+        $('#' + base_id + '_norm_search_id', lookupContextForms).val($element.attr('data-id'));
         setNormSearchSubmit(true);
       };
       var chooseNormIdAndSubmit = function(evt) {
@@ -1280,8 +1286,8 @@ var AnnotatorUI = (function($, window, undefined) {
                         name: val,
                         collection: coll}, 'normSearchResult']);
       };
-      $('#' + base_id + '_norm_search_button').click(performNormSearch);
-      $('#' + base_id + '_norm_search_query').focus(function() {
+      $('#' + base_id + '_norm_search_button', lookupContextForms).click(performNormSearch);
+      $('#' + base_id + '_norm_search_query', lookupContextForms).focus(function() {
         setNormSearchSubmit(false);
       });
       var showNormSearchDialog = function() {
@@ -1307,8 +1313,10 @@ var AnnotatorUI = (function($, window, undefined) {
         dispatcher.post('showForm', [normSearchDialog]);
         $('#' + base_id + '_norm_search_query').focus().select();
       };
-      $('#' + base_id + '_span_norm_txt').click(showNormSearchDialog);
-      $('#' + base_id + '_norm_search_button').button();
+      $('#' + base_id + '_span_norm_txt', lookupContextForms).click(showNormSearchDialog);
+      lookupContextForms.on('onload', function () {
+        $('#' + base_id + '_norm_search_button', lookupContextForms).button();
+      });
 
       var arcFormSubmitRadio = function(evt) {
         // TODO: check for confirm_mode?
@@ -1316,12 +1324,12 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var arcFormSubmit = function(evt, typeRadio) {
-        typeRadio = typeRadio || $('#' + base_id + '_arc_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_arc_form input:radio:checked', lookupContextForms);
         var type = typeRadio.val();
         dispatcher.post('hideForm', [arcForm]);
 
         arcOptions.type = type;
-        arcOptions.comment = $('#' + base_id + '_arc_notes').val();
+        arcOptions.comment = $('#' + base_id + '_arc_notes', lookupContextForms).val();
         dispatcher.post('ajax', [arcOptions, 'edited']);
         return false;
       };
@@ -1350,7 +1358,7 @@ var AnnotatorUI = (function($, window, undefined) {
         var mapOfParents = {};
         if (spanTypes[originType]) {
           var arcTypes = spanTypes[originType].arcs;
-          $scroller = $('#' + base_id + '_arc_roles .scroller').empty();
+          $scroller = $('#' + base_id + '_arc_roles .scroller', lookupContextForms).empty();
 
           // lay them out into the form
           $.each(arcTypes || [], function(arcTypeNo, arcDesc) {
@@ -1441,19 +1449,19 @@ var AnnotatorUI = (function($, window, undefined) {
           // something was selected
           var focus = arcId instanceof Array ? arcId : [arcId];
           var hash = new URLHash(base_id, { focus: [focus] }).getHash();
-          $('#' + base_id + '_arc_highlight_link').attr('href', hash).show(); // TODO incorrect
-          var el = $('#' + base_id + '_arc_' + arcType)[0];
+          $('#' + base_id + '_arc_highlight_link', lookupContextForms).attr('href', hash).show(); // TODO incorrect
+          var el = $('#' + base_id + '_arc_' + arcType, lookupContextForms)[0];
           if (el) {
             el.checked = true;
           } else {
               // try w/o numeric suffix
-              el = $('#' + base_id + '_arc_' + noNumArcType)[0];
+              el = $('#' + base_id + '_arc_' + noNumArcType, lookupContextForms)[0];
               if (el) {
                   el.checked = true;
               }
           }
 
-          $('#' + base_id + '_arc_form_reselect, #' + base_id + '_arc_form_delete').show();
+          $('#' + base_id + '_arc_form_reselect, #' + base_id + '_arc_form_delete', lookupContextForms).show();
           keymap[$.ui.keyCode.DELETE] = 'arc_form_delete';
           keymap[$.ui.keyCode.INSERT] = 'arc_form_reselect';
 
@@ -1471,21 +1479,21 @@ var AnnotatorUI = (function($, window, undefined) {
           arcForm.dialog('option', { title: 'Edit Annotation' });
         } else {
           // new arc
-          $('#' + base_id + '_arc_highlight_link').hide();
-          el = $('#' + base_id + '_arc_form input:radio:first')[0];
+          $('#' + base_id + '_arc_highlight_link', lookupContextForms).hide();
+          el = $('#' + base_id + '_arc_form input:radio:first', lookupContextForms)[0];
           if (el) {
             el.checked = true;
           }
 
-          $('#' + base_id + '_arc_form_reselect, #' + base_id + '_arc_form_delete, #' + base_id + '_arc_form_reverse').hide();
+          $('#' + base_id + '_arc_form_reselect, #' + base_id + '_arc_form_delete, #' + base_id + '_arc_form_reverse', lookupContextForms).hide();
 
           arcForm.dialog('option', { title: 'New Annotation' });
         }
         if (reversalPossible) {
-          $('#' + base_id + '_arc_form_reverse').show();
+          $('#' + base_id + '_arc_form_reverse', lookupContextForms).show();
           keymap['S-' + $.ui.keyCode.INSERT] = 'arc_form_reverse';
         } else {
-          $('#' + base_id + '_arc_form_reverse').hide();
+          $('#' + base_id + '_arc_form_reverse', lookupContextForms).hide();
         }
 
         if (!Configuration.confirmModeOn) {
@@ -1501,24 +1509,24 @@ var AnnotatorUI = (function($, window, undefined) {
           arcAnnotatorNotes = ed && ed.annotatorNotes;
         }
         if (arcAnnotatorNotes) {
-          $('#' + base_id + '_arc_notes').val(arcAnnotatorNotes);
+          $('#' + base_id + '_arc_notes', lookupContextForms).val(arcAnnotatorNotes);
         } else {
-          $('#' + base_id + '_arc_notes').val('');
+          $('#' + base_id + '_arc_notes', lookupContextForms).val('');
         }
 
         // disable notes for arc types that don't support storage (#945)
         if(isMultiRelation || isEquiv) {
           // disable the actual input
-          $('#' + base_id + '_arc_notes').attr('disabled', 'disabled');
+          $('#' + base_id + '_arc_notes', lookupContextForms).attr('disabled', 'disabled');
           // add to fieldset for style
-          $('#' + base_id + '_arc_notes_fieldset').attr('disabled', 'disabled');
+          $('#' + base_id + '_arc_notes_fieldset', lookupContextForms).attr('disabled', 'disabled');
         } else {
-          $('#' + base_id + '_arc_notes').removeAttr('disabled')
-          $('#' + base_id + '_arc_notes_fieldset').removeAttr('disabled')
+          $('#' + base_id + '_arc_notes', lookupContextForms).removeAttr('disabled')
+          $('#' + base_id + '_arc_notes_fieldset', lookupContextForms).removeAttr('disabled')
         }
 
         dispatcher.post('showForm', [arcForm]);
-        $('#' + base_id + '_arc_form-ok').focus();
+        $('#' + base_id + '_arc_form-ok', lookupContextForms).focus();
         adjustToCursor(evt, arcForm.parent());
       };
       
@@ -1549,7 +1557,7 @@ var AnnotatorUI = (function($, window, undefined) {
         startArcDrag(arcOptions.origin);
       };
 
-      var arcForm = $('#' + base_id + '_arc_form');
+      var arcForm = $('#' + base_id + '_arc_form', lookupContextForms);
       dispatcher.post('initForm', [arcForm, {
           width: 500,
           buttons: [{
@@ -1572,8 +1580,8 @@ var AnnotatorUI = (function($, window, undefined) {
         }]);
       arcForm.submit(arcFormSubmit);
       // set button tooltips (@amadanmath: can this be done in init?)
-      $('#' + base_id + '_arc_form_reselect').attr('title', 'Re-select the annotation this connects into.');
-      $('#' + base_id + '_arc_form_delete').attr('title', 'Delete this annotation.');
+      $('#' + base_id + '_arc_form_reselect', lookupContextForms).attr('title', 'Re-select the annotation this connects into.');
+      $('#' + base_id + '_arc_form_delete', lookupContextForms).attr('title', 'Delete this annotation.');
 
       var stopArcDrag = function(target) {
         if (arcDragOrigin) {
@@ -1769,7 +1777,7 @@ var AnnotatorUI = (function($, window, undefined) {
                             start: selectedFrom,
                             end: selectedTo,
                             text: spanText,
-                            model: $('#' + base_id + '_rapid_model').val(),
+                            model: $('#' + base_id + '_rapid_model', lookupContextForms).val(),
                             }, 'suggestedSpanTypes']);
           }
         }
@@ -1814,8 +1822,8 @@ var AnnotatorUI = (function($, window, undefined) {
                 collection: coll,
                 'document': doc
               };
-              $('#' + base_id + '_arc_origin').text(Util.spanDisplayForm(spanTypes, originSpan.type)+' ("'+originSpan.text+'")');
-              $('#' + base_id + '_arc_target').text(Util.spanDisplayForm(spanTypes, targetSpan.type)+' ("'+targetSpan.text+'")');
+              $('#' + base_id + '_arc_origin', lookupContextForms).text(Util.spanDisplayForm(spanTypes, originSpan.type)+' ("'+originSpan.text+'")');
+              $('#' + base_id + '_arc_target', lookupContextForms).text(Util.spanDisplayForm(spanTypes, targetSpan.type)+' ("'+targetSpan.text+'")');
               fillArcTypesAndDisplayForm(evt, originSpan.type, targetSpan.type);
               // for precise timing, log dialog display to user.
               dispatcher.post('logAction', ['arcSelected']);
@@ -1870,13 +1878,13 @@ var AnnotatorUI = (function($, window, undefined) {
       var collapseHandler = function(evt) {
         toggleCollapsible($(evt.target));
       };
-      $('#' + base_id + '_arc_roles, #' + base_id + '_span_roles').on('click', '.collapser', collapseHandler);
+      $('#' + base_id + '_arc_roles, #' + base_id + '_span_roles', lookupContextForms).on('click', '.collapser', collapseHandler);
 
       var spanFormSubmitRadio = function(evt) {
         if (Configuration.confirmModeOn) {
           showValidAttributes();
           showValidNormalizations();
-          $('#' + base_id + '_span_form-ok').focus();
+          $('#' + base_id + '_span_form-ok', lookupContextForms).focus();
         } else {
           spanFormSubmit(evt, $(evt.target));
         }
@@ -2006,12 +2014,12 @@ var AnnotatorUI = (function($, window, undefined) {
         // just assume all attributes are event attributes
         // TODO: support for entity attributes
         // TODO2: the above comment is almost certainly false, check and remove
-        $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
+        $('#' + base_id + '_span_form input:not([unused])', lookupContextForms).removeAttr('disabled');
         var $toDisable;
         if (category == "event") {
-          $toDisable = $('#' + base_id + '_span_form input[category="entity"]');
+          $toDisable = $('#' + base_id + '_span_form input[category="entity"]', lookupContextForms);
         } else if (category == "entity") {
-          $toDisable = $('#' + base_id + '_span_form input[category="event"]');
+          $toDisable = $('#' + base_id + '_span_form input[category="event"]', lookupContextForms);
         } else {
           console.error('Unrecognized attribute category:', category);
           $toDisable = $();
@@ -2022,7 +2030,7 @@ var AnnotatorUI = (function($, window, undefined) {
         // is checked, which would cause error on "OK". In this case,
         // check the first valid choice.
         if ($checkedToDisable.length) {
-          var $toCheck = $('#' + base_id + '_span_form input[category="' + category + '"][disabled!="disabled"]:first');
+          var $toCheck = $('#' + base_id + '_span_form input[category="' + category + '"][disabled!="disabled"]:first', lookupContextForms);
           // so weird, attr('checked', 'checked') fails sometimes, so
           // replaced with more "metal" version
           $toCheck[0].checked = true;
@@ -2031,7 +2039,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var onMultiAttrChange = function(evt) {
         if ($(this).val() == '') {
-          $('#' + base_id + '_span_form input:not([unused])').removeAttr('disabled');
+          $('#' + base_id + '_span_form input:not([unused])', lookupContextForms).removeAttr('disabled');
         } else {
           var attrCategory = evt.target.getAttribute('category');
           setSpanTypeSelectability(attrCategory);
@@ -2057,22 +2065,22 @@ var AnnotatorUI = (function($, window, undefined) {
         // TODO: check for exceptions in response
 
         // fill in entity and event types
-        var $entityScroller = $('#' + base_id + '_entity_types div.scroller', lookupContext).empty();
+        var $entityScroller = $('#' + base_id + '_entity_types div.scroller', lookupContextForms).empty();
         addSpanTypesToDivInner($entityScroller, response.entity_types, 'entity');
-        var $eventScroller = $('#' + base_id + '_event_types div.scroller', lookupContext).empty();
+        var $eventScroller = $('#' + base_id + '_event_types div.scroller', lookupContextForms).empty();
         addSpanTypesToDivInner($eventScroller, response.event_types, 'event');
 
         // fill in attributes
-        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller', lookupContext).empty();
+        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller', lookupContextForms).empty();
         addAttributeTypesToDiv($entattrs, entityAttributeTypes, 'entity');
 
-        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller', lookupContext).empty();
+        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller', lookupContextForms).empty();
         addAttributeTypesToDiv($eveattrs, eventAttributeTypes, 'event');
 
         // fill search options in span dialog
         searchConfig = response.search_config;
-        var $searchlinks  = $('#' + base_id + '_span_search_links', lookupContext).empty();
-        var $searchlinks2 = $('#' + base_id + '_viewspan_search_links', lookupContext).empty();
+        var $searchlinks  = $('#' + base_id + '_span_search_links', lookupContextForms).empty();
+        var $searchlinks2 = $('#' + base_id + '_viewspan_search_links', lookupContextForms).empty();
         var firstLink=true;
         var linkFilled=false;
         if (searchConfig) {
@@ -2088,11 +2096,11 @@ var AnnotatorUI = (function($, window, undefined) {
           });
         }
         if (linkFilled) {
-          $('#' + base_id + '_span_search_fieldset', lookupContext).show();
-          $('#' + base_id + '_viewspan_search_fieldset', lookupContext).show();
+          $('#' + base_id + '_span_search_fieldset', lookupContextForms).show();
+          $('#' + base_id + '_viewspan_search_fieldset', lookupContextForms).show();
         } else {
-          $('#' + base_id + '_span_search_fieldset', lookupContext).hide();
-          $('#' + base_id + '_viewspan_search_fieldset', lookupContext).hide();
+          $('#' + base_id + '_span_search_fieldset', lookupContextForms).hide();
+          $('#' + base_id + '_viewspan_search_fieldset', lookupContextForms).hide();
         }
 
         spanForm.find('#' + base_id + '_entity_types input:radio').click(spanFormSubmitRadio);
@@ -2111,7 +2119,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var setupTaggerUI = function(response) {
         var taggers = response.ner_taggers || [];
-        $taggerButtons = $('#' + base_id + '_tagger_buttons').empty();
+        $taggerButtons = $('#' + base_id + '_tagger_buttons', lookupContextForms).empty();
         $.each(taggers, function(taggerNo, tagger) {
           // expect a tuple with ID, name, model, and URL
           var taggerId = tagger[0];
@@ -2130,15 +2138,22 @@ var AnnotatorUI = (function($, window, undefined) {
             tagCurrentDocument(taggerId);
           });
         });
-        $taggerButtons.find('input').button();
+        if(lookupContextForms.loaded){
+          $taggerButtons.find('input').button();
+        }
+        else{
+          lookupContextForms.on('onload', function () {
+            $taggerButtons.find('input').button();
+          });
+        }
         // if nothing was set up, hide the whole fieldset and show
         // a message to this effect, else the other way around
         if ($taggerButtons.find('input').length == 0) {
-          $('#' + base_id + '_auto_tagging_fieldset').hide();
-          $('#' + base_id + '_no_tagger_message').show();
+          $('#' + base_id + '_auto_tagging_fieldset', lookupContextForms).hide();
+          $('#' + base_id + '_no_tagger_message', lookupContextForms).show();
         } else {
-          $('#' + base_id + '_auto_tagging_fieldset').show();
-          $('#' + base_id + '_no_tagger_message').hide();
+          $('#' + base_id + '_auto_tagging_fieldset', lookupContextForms).show();
+          $('#' + base_id + '_no_tagger_message', lookupContextForms).hide();
         }
       };
 
@@ -2161,7 +2176,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var setupNormalizationUI = function(response) {
         var norm_resources = response.normalization_config || [];
-        var $norm_select = $('#' + base_id + '_span_norm_db');
+        var $norm_select = $('#' + base_id + '_span_norm_db', lookupContextForms);
         // clear possible existing
         $norm_select.empty();
         // fill in new
@@ -2183,24 +2198,24 @@ var AnnotatorUI = (function($, window, undefined) {
         $norm_select.html(html.join(''));
         // if we have nothing, just hide the whole thing
         if (!norm_resources.length) {
-          $('#' + base_id + '_norm_fieldset').hide();
+          $('#' + base_id + '_norm_fieldset', lookupContextForms).hide();
         } else {
-          $('#' + base_id + '_norm_fieldset').show();
+          $('#' + base_id + '_norm_fieldset', lookupContextForms).show();
         }
       };
 
       // hides the reference link in the normalization UI
       var hideNormalizationRefLink = function() {
-        $('#' + base_id + '_span_norm_ref_link').hide();
+        $('#' + base_id + '_span_norm_ref_link', lookupContextForms).hide();
       };
 
       // updates the reference link in the normalization UI according
       // to the current value of the normalization DB and ID.
       var updateNormalizationRefLink = function() {
-        var $normId = $('#' + base_id + '_span_norm_id');
-        var $normLink = $('#' + base_id + '_span_norm_ref_link');
+        var $normId = $('#' + base_id + '_span_norm_id', lookupContextForms);
+        var $normLink = $('#' + base_id + '_span_norm_ref_link', lookupContextForms);
         var normId = $normId.val();
-        var $normDb = $('#' + base_id + '_span_norm_db');
+        var $normDb = $('#' + base_id + '_span_norm_db', lookupContextForms);
         var normDb = $normDb.val();
         if (!normId || !normDb || normId.match(/^\s*$/)) {
           $normLink.hide();
@@ -2225,8 +2240,8 @@ var AnnotatorUI = (function($, window, undefined) {
       // updates the DB search link in the normalization UI according
       // to the current value of the normalization DB.
       var updateNormalizationDbLink = function() {
-        var $dbLink = $('#' + base_id + '_span_norm_db_link');
-        var $normDb = $('#' + base_id + '_span_norm_db');
+        var $dbLink = $('#' + base_id + '_span_norm_db_link', lookupContextForms);
+        var $normDb = $('#' + base_id + '_span_norm_db', lookupContextForms);
         var normDb = $normDb.val();
         if (!normDb) return; // no normalisation configured
         var link = normDbUrlByDbName[normDb];
@@ -2243,8 +2258,8 @@ var AnnotatorUI = (function($, window, undefined) {
       // resets user-settable normalization-related UI elements to a
       // blank state (does not blank #' + base_id + '_span_norm_db <select>).
       var clearNormalizationUI = function() {
-        var $normId = $('#' + base_id + '_span_norm_id');
-        var $normText = $('#' + base_id + '_span_norm_txt');
+        var $normId = $('#' + base_id + '_span_norm_id', lookupContextForms);
+        var $normText = $('#' + base_id + '_span_norm_txt', lookupContextForms);
         $normId.val('');
         oldSpanNormIdValue = '';
         $normId.removeClass('valid_value').removeClass('invalid_value');
@@ -2258,9 +2273,9 @@ var AnnotatorUI = (function($, window, undefined) {
         // Note that only no or one normalization is supported in the
         // UI at the moment.
         var normalizations = [];
-        var normDb = $('#' + base_id + '_span_norm_db').val();
-        var normId = $('#' + base_id + '_span_norm_id').val();
-        var normText = $('#' + base_id + '_span_norm_txt').val();
+        var normDb = $('#' + base_id + '_span_norm_db', lookupContextForms).val();
+        var normId = $('#' + base_id + '_span_norm_id', lookupContextForms).val();
+        var normText = $('#' + base_id + '_span_norm_txt', lookupContextForms).val();
         // empty ID -> no normalization
         if (!normId.match(/^\s*$/)) {
           normalizations.push([normDb, normId, normText]);
@@ -2271,7 +2286,7 @@ var AnnotatorUI = (function($, window, undefined) {
       // returns attributes that are valid for the selected type in
       // the span dialog
       var spanAttributes = function(typeRadio) {
-        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked', lookupContextForms);
         var attributes = {};
         var attributeTypes;
         var category = typeRadio.attr('category');
@@ -2283,7 +2298,7 @@ var AnnotatorUI = (function($, window, undefined) {
           console.error('Unrecognized type category:', category);
         }
         $.each(attributeTypes, function(attrNo, attr) {
-          var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
+          var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
           if (attr.bool) {
             attributes[attr.type] = $input[0].checked;
           } else if ($input[0].selectedIndex) {
@@ -2351,8 +2366,8 @@ var AnnotatorUI = (function($, window, undefined) {
 
 
       // TODO: why are these globals defined here instead of at the top?
-      var spanForm = $('#' + base_id + '_span_form');
-      var rapidSpanForm = $('#' + base_id + '_rapid_span_form');
+      var spanForm = $('#' + base_id + '_span_form', lookupContextForms);
+      var rapidSpanForm = $('#' + base_id + '_rapid_span_form', lookupContextForms);
     
       var deleteSpan = function() {
         if (Configuration.confirmModeOn && !confirm("Are you sure you want to delete this annotation?")) {
@@ -2377,10 +2392,10 @@ var AnnotatorUI = (function($, window, undefined) {
         selectedFragment = null;
       };
 
-      var splitForm = $('#' + base_id + '_split_form');
+      var splitForm = $('#' + base_id + '_split_form', lookupContextForms);
       splitForm.submit(function(evt) {
         var splitRoles = [];
-        $('#' + base_id + '_split_roles input:checked').each(function() {
+        $('#' + base_id + '_split_roles input:checked', lookupContextForms).each(function() {
           splitRoles.push($(this).val());
         });
         $.extend(spanOptions, {
@@ -2398,12 +2413,12 @@ var AnnotatorUI = (function($, window, undefined) {
           alsoResize: '.scroll_fset',
           width: 400,
           open: function() {
-            $('#' + base_id + '_split_form-ok').focus();
+            $('#' + base_id + '_split_form-ok', lookupContextForms).focus();
           }
         }]);
       var splitSpan = function() {
         dispatcher.post('hideForm');
-        var $roles = $('#' + base_id + '_split_roles').empty();
+        var $roles = $('#' + base_id + '_split_roles', lookupContextForms).empty();
         var numRoles = repeatingArcTypes.length;
         var roles = $.each(repeatingArcTypes, function() {
           var $role = $('<input id="' + base_id + '_split_on_' + Util.escapeQuotes(this) +
@@ -2464,12 +2479,12 @@ var AnnotatorUI = (function($, window, undefined) {
         $(evt.target).button('option', 'icons', {
           primary: locked ? 'ui-icon-locked' : 'ui-icon-unlocked'
         });
-        $('#' + base_id + '_unlock_type_button').toggle(locked);
+        // $('#' + base_id + '_unlock_type_button').toggle(locked);
         if (!locked) lockOptions = null;
       };
-      $('#' + base_id + '_unlock_type_button').button().hide().click(function(evt) {
-        setTypeLock(false);
-      });
+      // $('#' + base_id + '_unlock_type_button').button().hide().click(function(evt) {
+      //   setTypeLock(false);
+      // });
 
       dispatcher.post('initForm', [spanForm, {
           alsoResize: '#' + base_id + '_entity_and_event_wrapper',
@@ -2495,13 +2510,13 @@ var AnnotatorUI = (function($, window, undefined) {
               text: 'Move Frag.',
               click: reselectFragment
             }, {
-              id: 'span_form_split',
+              id: base_id + '_span_form_split',
               text: 'Split',
               click: splitSpan
             }
           ],
           create: function(evt) {
-            var $ok = $('#' + base_id + '_span_form-ok').wrap('<span id="' + base_id + '_span_form_lock_bset"/>');
+            var $ok = $('#' + base_id + '_span_form-ok', lookupContextForms).wrap('<span id="' + base_id + '_span_form_lock_bset"/>');
             var $span = $ok.parent();
             var $lock = $('<input id="' + base_id + '_span_form_lock" type="checkbox"/>').insertBefore($ok);
             $('<label for="' + base_id + '_span_form_lock"/>').text("Lock type").insertBefore($ok);
@@ -2529,13 +2544,13 @@ var AnnotatorUI = (function($, window, undefined) {
           }
         }]);
       // set button tooltips (@amadanmath: can this be done in init?)
-      $('#' + base_id + '_span_form_reselect').attr('title', 'Re-select the text span that this annotation marks.');
-      $('#' + base_id + '_span_form_delete').attr('title', 'Delete this annotation.');
-      $('#' + base_id + '_span_form_split').attr('title', 'Split this annotation into multiple similar annotations, distributing its arguments.');
+      $('#' + base_id + '_span_form_reselect', lookupContextForms).attr('title', 'Re-select the text span that this annotation marks.');
+      $('#' + base_id + '_span_form_delete', lookupContextForms).attr('title', 'Delete this annotation.');
+      $('#' + base_id + '_span_form_split', lookupContextForms).attr('title', 'Split this annotation into multiple similar annotations, distributing its arguments.');
 
       var setTypeLock = function(val) {
-        $('#' + base_id + '_span_form_lock').prop('checked', val).button('refresh');
-        $('#' + base_id + '_unlock_type_button').toggle(val);
+        $('#' + base_id + '_span_form_lock', lookupContextForms).prop('checked', val).button('refresh');
+        // $('#' + base_id + '_unlock_type_button').toggle(val);
         if (!val) lockOptions = null;
       };
 
@@ -2548,11 +2563,11 @@ var AnnotatorUI = (function($, window, undefined) {
         }]);
 
       var spanFormSubmit = function(evt, typeRadio) {
-        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked', lookupContextForms);
         var type = typeRadio.val();
-        $('#' + base_id + '_span_form-ok').blur();
+        $('#' + base_id + '_span_form-ok', lookupContextForms).blur();
 
-        var locked = $('#' + base_id + '_span_form_lock').is(':checked');
+        var locked = $('#' + base_id + '_span_form_lock', lookupContextForms).is(':checked');
         if (locked && !lockOptions) {
           lockOptions = {
             type: type
@@ -2565,7 +2580,7 @@ var AnnotatorUI = (function($, window, undefined) {
           collection: coll,
           'document': doc,
           type: type,
-          comment: $('#' + base_id + '_span_notes').val()
+          comment: $('#' + base_id + '_span_notes', lookupContextForms).val()
         });
 
         spanOptions.attributes = $.toJSON(spanAttributes());
@@ -2588,7 +2603,7 @@ var AnnotatorUI = (function($, window, undefined) {
         dispatcher.post('ajax', [spanOptions, 'edited']);
         return false;
       };
-      $('#' + base_id + '_span_notes').focus(function () {
+      $('#' + base_id + '_span_notes', lookupContextForms).focus(function () {
           keymap = null;
         }).blur(function () {
           keymap = spanKeymap;
@@ -2596,7 +2611,7 @@ var AnnotatorUI = (function($, window, undefined) {
       spanForm.submit(spanFormSubmit);
 
       var rapidSpanFormSubmit = function(evt, typeRadio) {
-        typeRadio = typeRadio || $('#' + base_id + '_rapid_span_form input:radio:checked');
+        typeRadio = typeRadio || $('#' + base_id + '_rapid_span_form input:radio:checked', lookupContextForms);
         var type = typeRadio.val();
 
         // unfocus all elements to prevent focus being kept after
@@ -2614,7 +2629,7 @@ var AnnotatorUI = (function($, window, undefined) {
           };
           // TODO: avoid using the stored mouse event
           fillSpanTypesAndDisplayForm(lastRapidAnnotationEvent,
-                                      $('#' + base_id + '_rapid_span_selected').text());
+                                      $('#' + base_id + '_rapid_span_selected', lookupContextForms).text());
           dispatcher.post('logAction', ['normalSpanSelected']);
         } else {
           // normal type selection; submit createSpan with the selected type.
@@ -2632,10 +2647,10 @@ var AnnotatorUI = (function($, window, undefined) {
       };
       rapidSpanForm.submit(rapidSpanFormSubmit);
 
-      var importForm = $('#' + base_id + '_import_form');
+      var importForm = $('#' + base_id + '_import_form', lookupContextForms);
       var importFormSubmit = function(evt) {
-        var _docid = $('#' + base_id + '_import_docid').val();
-        var _doctext = $('#' + base_id + '_import_text').val();
+        var _docid = $('#' + base_id + '_import_docid', lookupContextForms).val();
+        var _doctext = $('#' + base_id + '_import_text', lookupContextForms).val();
         var opts = {
           action : 'importDocument',
           collection : coll,
@@ -2665,13 +2680,13 @@ var AnnotatorUI = (function($, window, undefined) {
             keymap = {};
           },
         }]);
-      $('#' + base_id + '_import_button').click(function() {
+      $('#' + base_id + '_import_button', lookupContextForms).click(function() {
         dispatcher.post('hideForm');
         dispatcher.post('showForm', [importForm]);
         importForm.find('input, textarea').val('');
       });
 
-      var importCollForm = $('#' + base_id + '_import_coll_form');
+      var importCollForm = $('#' + base_id + '_import_coll_form', lookupContextForms);
       var importCollDone = function() {
         // TODO
       };
@@ -2692,7 +2707,7 @@ var AnnotatorUI = (function($, window, undefined) {
             keymap = {};
           },
         }]);
-      $('#' + base_id + '_import_collection_button').click(function() {
+      $('#' + base_id + '_import_collection_button', lookupContextForms).click(function() {
         dispatcher.post('hideForm');
         dispatcher.post('showForm', [importCollForm]);
         importCollForm.find('input').val('');
@@ -2701,7 +2716,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       /* BEGIN delete button - related */
 
-      $('#' + base_id + '_delete_document_button').click(function() {
+      $('#' + base_id + '_delete_document_button', lookupContextForms).click(function() {
         if (!doc) {
           dispatcher.post('messages', [[['No document selected', 'error']]]);
           return false;
@@ -2717,7 +2732,7 @@ var AnnotatorUI = (function($, window, undefined) {
         dispatcher.post('ajax', [delOptions, 'docDeleted']);
       });
 
-      $('#' + base_id + '_delete_collection_button').click(function() {
+      $('#' + base_id + '_delete_collection_button', lookupContextForms).click(function() {
         if (!coll) {
           dispatcher.post('messages', [[['No collection selected', 'error']]]);
           return false;
@@ -2734,7 +2749,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
       /* END delete button - related */
 
-      $('#' + base_id + '_undo_button').click(function() {
+      $('#' + base_id + '_undo_button', lookupContextForms).click(function() {
         if (coll && doc) {
           if (undoStack.length > 0) {
             var storedUndo = undoStack.pop();
@@ -2762,13 +2777,15 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var $waiter = dialogs.$waiterDialog;
-      $waiter.dialog({
+      lookupContextMessages.on('onload', function () {
+        $waiter.dialog({
         closeOnEscape: false,
         buttons: {},
         modal: true,
         open: function(evt, ui) {
           $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
         }
+      });
       });
       // hide the waiter (Sampo said it's annoying)
       // we don't elliminate it altogether because it still provides the
