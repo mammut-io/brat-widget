@@ -1059,7 +1059,7 @@ var AnnotatorUI = (function($, window, undefined) {
                        false, false);
       };
 
-      lookupContextForms.on('onload', function () {
+      var initClearButtons = function () {
         var clearArcNotes = function(evt) {
           $('#' + base_id + '_arc_notes', lookupContextForms).val('');
         };
@@ -1077,7 +1077,7 @@ var AnnotatorUI = (function($, window, undefined) {
         };
         $('#' + base_id + '_clear_norm_button', lookupContextForms).button();
         $('#' + base_id + '_clear_norm_button', lookupContextForms).click(clearSpanNorm);
-      });
+      };
 
       // invoked on response to ajax request for id lookup
       var setSpanNormText = function(response) {
@@ -1148,7 +1148,7 @@ var AnnotatorUI = (function($, window, undefined) {
             dispatcher.post('showForm', [spanForm, true]);
           }
       });
-      lookupContextForms.on('onload', function () {
+      var initAutocompleteSearchNorm = function () {
         $('#' + base_id + '_norm_search_query', lookupContextForms).autocomplete({
           source: function(request, callback) {
             var query = $.ui.autocomplete.escapeRegex(request.term);
@@ -1172,7 +1172,7 @@ var AnnotatorUI = (function($, window, undefined) {
             append('<a>' + Util.escapeHTML(item.value) + '<div class="autocomplete-id">' + Util.escapeHTML(item.id) + "</div></a>").
             appendTo($ul);
         };
-      });
+      };
       var normSubmit = function(selectedId, selectedTxt) {
         // we got a value; act if it was a submit
         $('#' + base_id + '_span_norm_id', lookupContextForms).val(selectedId);
@@ -1314,9 +1314,9 @@ var AnnotatorUI = (function($, window, undefined) {
         $('#' + base_id + '_norm_search_query').focus().select();
       };
       $('#' + base_id + '_span_norm_txt', lookupContextForms).click(showNormSearchDialog);
-      lookupContextForms.on('onload', function () {
+      var initSearchNormButton = function () {
         $('#' + base_id + '_norm_search_button', lookupContextForms).button();
-      });
+      };
 
       var arcFormSubmitRadio = function(evt) {
         // TODO: check for confirm_mode?
@@ -2138,14 +2138,7 @@ var AnnotatorUI = (function($, window, undefined) {
             tagCurrentDocument(taggerId);
           });
         });
-        if(lookupContextForms.loaded){
-          $taggerButtons.find('input').button();
-        }
-        else{
-          lookupContextForms.on('onload', function () {
-            $taggerButtons.find('input').button();
-          });
-        }
+        $taggerButtons.find('input').button();
         // if nothing was set up, hide the whole fieldset and show
         // a message to this effect, else the other way around
         if ($taggerButtons.find('input').length == 0) {
@@ -2777,16 +2770,16 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var $waiter = dialogs.$waiterDialog;
-      lookupContextMessages.on('onload', function () {
-        $waiter.dialog({
-        closeOnEscape: false,
-        buttons: {},
-        modal: true,
-        open: function(evt, ui) {
-          $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
-        }
-      });
-      });
+      var initWaiterDialog = function () {
+          $waiter.dialog({
+          closeOnEscape: false,
+          buttons: {},
+          modal: true,
+          open: function(evt, ui) {
+            $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
+          }
+        });
+      };
       // hide the waiter (Sampo said it's annoying)
       // we don't elliminate it altogether because it still provides the
       // overlay to prevent interaction
@@ -2820,6 +2813,10 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var init = function() {
+        initClearButtons();
+        initAutocompleteSearchNorm();
+        initSearchNormButton();
+        initWaiterDialog();
         dispatcher.post('annotationIsAvailable');
       };
 

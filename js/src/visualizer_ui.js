@@ -57,11 +57,11 @@ var VisualizerUI = (function($, window, undefined) {
       // var noSvgTimer = null;
 
       var $waiterDialog = $('#' + base_id + '_waiter', lookupContextMessages);
-      lookupContextForms.on('onload', function () {
+      var initWaiterDialog = function () {
         $waiterDialog.dialog({
             appendTo: "#" + base_id + "_forms"
         });
-      });
+      };
 
       var ajax = new Ajax(base_id, dispatcher, simulate_ajax, model, $waiterDialog);
 /*
@@ -554,7 +554,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       /* START form management - related */
 
-      var initForm = function(formO, optsO) {formO.on('onload', [formO, optsO],function(form, opts) {
+      var initForm = function(form, opts) {
         opts = opts || {};
         var formId = form.attr('id');
 
@@ -606,7 +606,7 @@ var VisualizerUI = (function($, window, undefined) {
           form.parent().resizable('option', 'alsoResize',
               '#' + form.attr('id') + ', ' + alsoResize);
         }
-      })};
+      };
 
       var unsafeDialogOpen = function($dialog) {
         // does not restrict tab key to the dialog
@@ -1460,10 +1460,10 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post('showForm', [optionsForm]);
       });
       // make nice-looking buttons for checkboxes and radios
-      optionsForm.on('onload', function () {
+      var initOptionsFormButtons = function () {
         optionsForm.find('input[type="checkbox"]').button();
         optionsForm.find('.radio_group').buttonset();
-      });
+      };
       $('#' + base_id + '_rapid_model', lookupContextForms).addClass('ui-widget ui-state-default ui-button-text');
 
       var fillDisambiguatorOptions = function(disambiguators) {
@@ -1604,14 +1604,7 @@ var VisualizerUI = (function($, window, undefined) {
           }
         } else {
           lastGoodCollection = response.collection;
-          if(lookupContextForms.loaded){
-            fillDisambiguatorOptions(response.disambiguator_config);
-          }
-          else{
-            lookupContextForms.on('onload', function () {
-              fillDisambiguatorOptions(response.disambiguator_config);
-            });
-          }
+          fillDisambiguatorOptions(response.disambiguator_config);
           selectorData = response;
           documentListing = response; // 'backup'
           // searchConfig = response.search_config;
@@ -1692,7 +1685,6 @@ var VisualizerUI = (function($, window, undefined) {
           }
           else{
             lookupContextForms.on('onload', function () {
-              $waiterDialog.dialog('close');
             });
           }
         }
