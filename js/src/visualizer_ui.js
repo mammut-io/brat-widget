@@ -1680,27 +1680,14 @@ var VisualizerUI = (function($, window, undefined) {
         }
         dispatcher.post('allowReloadByURL');
         if (!currentForm) {
-          if(lookupContextForms.loaded){
-            $waiterDialog.dialog('close');
-          }
-          else{
-            lookupContextForms.on('onload', function () {
-            });
-          }
+          // $waiterDialog.dialog('close');
         }
       };
 
       var onStartedRendering = function() {
         hideForm();
         if (!currentForm) {
-          if(lookupContextForms.loaded){
-            $waiterDialog.dialog('open');
-          }
-          else{
-            lookupContextForms.on('onload', function () {
-              $waiterDialog.dialog('open');
-            });
-          }
+          // $waiterDialog.dialog('open');
         }
       };
 
@@ -1770,9 +1757,9 @@ var VisualizerUI = (function($, window, undefined) {
         }*/
       };
 
-      lookupContextForms.on('onload', function () {
+      var initSourceColConfButtons = function () {
         $('#' + base_id + '_source_collection_conf', lookupContextForms).buttonset();
-      });
+      };
 
       var gotCurrent = function(_coll, _doc, _args) {
         var oldColl = coll;
@@ -1957,12 +1944,12 @@ var VisualizerUI = (function($, window, undefined) {
         element.css({ top: y, left: x });
       };
       var viewspanForm = $('#' + base_id + '_viewspan_form', lookupContextForms);
-      lookupContextForms.on('onload', function () {
+      var initViewSpanFormDialog = function () {
         viewspanForm.dialog({
             appendTo: "#" + base_id + "_forms"
         });
         console.log('BORRAR - viewspanForm - onload');
-      });
+      };
       var onDblClick = function(evt) {
         if (user && annotationAvailable) return;
         var target = $(evt.target);
@@ -2060,6 +2047,10 @@ var VisualizerUI = (function($, window, undefined) {
       });
 */
       var init = function() {
+        initWaiterDialog();
+        initOptionsFormButtons();
+        initSourceColConfButtons();
+        initViewSpanFormDialog();
         dispatcher.post('initForm', [viewspanForm, {
             width: 760,
             no_cancel: true
