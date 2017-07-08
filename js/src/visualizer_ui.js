@@ -2,7 +2,6 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
 require('./lib/jquery-ui.min');
-require('./lib/jquery-ui.combobox');
 
 var Util = require('./util');
 var Ajax = require('./ajax');

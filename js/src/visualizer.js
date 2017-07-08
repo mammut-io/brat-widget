@@ -3,8 +3,6 @@
 
 var _ = require('underscore');
 
-require('./lib/jquery-ui.min');
-require('./lib/jquery-ui.combobox');
 require('./lib/jquery.svg.min');
 
 var URLHash = require('./url_monitor').URLHash;
