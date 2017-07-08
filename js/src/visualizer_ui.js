@@ -1969,6 +1969,7 @@ var VisualizerUI = (function($, window, undefined) {
         viewspanForm.dialog({
             appendTo: "#" + base_id + "_forms"
         });
+        console.log('BORRAR - viewspanForm - onload');
       });
       var onDblClick = function(evt) {
         if (user && annotationAvailable) return;
