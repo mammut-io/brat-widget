@@ -33,7 +33,7 @@ var VisualizerUI = (function($, window, undefined) {
       var coll, doc, args;
       var collScroll;
       var docScroll;
-      var user = null;
+      // var user = null;
       var annotationAvailable = false;
 
       var svgElement = $(svg._svg);
@@ -1941,7 +1941,7 @@ var VisualizerUI = (function($, window, undefined) {
           appendTo: "#" + base_id + "_forms"
       });
       var onDblClick = function(evt) {
-        if (user && annotationAvailable) return;
+        if (/*user && */annotationAvailable) return;
         var target = $(evt.target);
         var id;
         if (id = target.attr('data-span-id')) {
@@ -2098,7 +2098,6 @@ var VisualizerUI = (function($, window, undefined) {
           }
           dispatcher.post('configurationUpdated');
         }]);
-        initialized = true;
       };
 
       var noFileSpecified = function() {

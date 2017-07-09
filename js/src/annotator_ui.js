@@ -2065,33 +2065,32 @@ var AnnotatorUI = (function($, window, undefined) {
           return;
         }
         spanKeymap = {};
-
         // TODO: check for exceptions in response
 
         // fill in entity and event types
-        var $entityScroller = $('#' + base_id + '_entity_types div.scroller', lookupContextForms).empty();
+        var $entityScroller = $('#' + base_id + '_entity_types div.scroller').empty();
         addSpanTypesToDivInner($entityScroller, response.entity_types, 'entity');
-        var $eventScroller = $('#' + base_id + '_event_types div.scroller', lookupContextForms).empty();
+        var $eventScroller = $('#' + base_id + '_event_types div.scroller').empty();
         addSpanTypesToDivInner($eventScroller, response.event_types, 'event');
 
         // fill in attributes
-        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller', lookupContextForms).empty();
+        var $entattrs = $('#' + base_id + '_entity_attributes div.scroller').empty();
         addAttributeTypesToDiv($entattrs, entityAttributeTypes, 'entity');
 
-        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller', lookupContextForms).empty();
+        var $eveattrs = $('#' + base_id + '_event_attributes div.scroller').empty();
         addAttributeTypesToDiv($eveattrs, eventAttributeTypes, 'event');
 
         // fill search options in span dialog
         searchConfig = response.search_config;
-        var $searchlinks  = $('#' + base_id + '_span_search_links', lookupContextForms).empty();
-        var $searchlinks2 = $('#' + base_id + '_viewspan_search_links', lookupContextForms).empty();
+        var $searchlinks  = $('#' + base_id + '_span_search_links').empty();
+        var $searchlinks2 = $('#' + base_id + '_viewspan_search_links').empty();
         var firstLink=true;
         var linkFilled=false;
         if (searchConfig) {
           $.each(searchConfig, function(searchNo, search) {
             if (!firstLink) {
-              $searchlinks.append(',\n')
-              $searchlinks2.append(',\n')
+              $searchlinks.append(',\n');
+              $searchlinks2.append(',\n');
             }
             firstLink=false;
             $searchlinks.append('<a target="_blank" id="' + base_id + '_span_'+search[0]+'" href="#">'+search[0]+'</a>');
@@ -2100,11 +2099,11 @@ var AnnotatorUI = (function($, window, undefined) {
           });
         }
         if (linkFilled) {
-          $('#' + base_id + '_span_search_fieldset', lookupContextForms).show();
-          $('#' + base_id + '_viewspan_search_fieldset', lookupContextForms).show();
+          $('#' + base_id + '_span_search_fieldset').show();
+          $('#' + base_id + '_viewspan_search_fieldset').show();
         } else {
-          $('#' + base_id + '_span_search_fieldset', lookupContextForms).hide();
-          $('#' + base_id + '_viewspan_search_fieldset', lookupContextForms).hide();
+          $('#' + base_id + '_span_search_fieldset').hide();
+          $('#' + base_id + '_viewspan_search_fieldset').hide();
         }
 
         spanForm.find('#' + base_id + '_entity_types input:radio').click(spanFormSubmitRadio);
@@ -2815,10 +2814,10 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var init = function() {
+        initialized = true;
         if(rememberSpanSettingsResponse !== null)
           rememberSpanSettings(rememberSpanSettingsResponse);
         dispatcher.post('annotationIsAvailable');
-        initialized = true;
       };
 
       var arcDragArcDrawn = function(arc) {
