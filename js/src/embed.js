@@ -47,20 +47,17 @@ var loadedModules = [
     require('./static/jquery-theme/images/ui-icons_cd0a0a_256x240.png'),
     require('./static/jquery-theme/images/ui-icons_d8e7f3_256x240.png'),
     require('./static/jquery-theme/images/ui-icons_f9bd01_256x240.png'),
-    // brat jquery-theme
-    require('./static/jquery-theme/jquery-ui.css'),
-    require('./static/jquery-theme/jquery-ui-redmond.css'),
     // brat
     require('./static/style-vis.css'),
     require('./static/style-ui.css'),
     require('./static/style.css'),
 
     //brat lib
-    require('./lib/jquery.min.js'),
+    require('jquery'),
     require('./lib/jquery.svg.min.js'),
     require('./lib/webfont.js'),
-    require('./lib/jquery-ui.min.js'),
-    require('./lib/jquery-ui.combobox.js'),
+    require('jquery-ui'),
+    require('jquery-ui.combobox'),
     //brat code
     require('./ajax.js'),
     require('./annotation_log.js'),

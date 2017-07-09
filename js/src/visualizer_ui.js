@@ -1,7 +1,9 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
-require('./lib/jquery-ui.min');
+require('jquery-ui/ui/widgets/button');
+require('jquery-ui/ui/widgets/checkboxradio');
+require('jquery-ui/ui/widgets/dialog');
 
 var Util = require('./util');
 var Ajax = require('./ajax');
@@ -638,9 +640,7 @@ var VisualizerUI = (function($, window, undefined) {
         if (unsafe) {
           unsafeDialogOpen(form);
         } else {
-          console.log('BORRAR - showForm - 1');
           form.dialog('open');
-          console.log('BORRAR - showForm - 2');
         }
         // slideToggle($('#' + base_id + '_pulldown').stop(), false);
         return form;
@@ -1947,7 +1947,6 @@ var VisualizerUI = (function($, window, undefined) {
         viewspanForm.dialog({
             appendTo: "#" + base_id + "_forms"
         });
-        console.log('BORRAR - viewspanForm - onload');
       };
       var onDblClick = function(evt) {
         if (user && annotationAvailable) return;
@@ -2111,6 +2110,7 @@ var VisualizerUI = (function($, window, undefined) {
           }
           dispatcher.post('configurationUpdated');
         }]);
+        initialized = true;
       };
 
       var noFileSpecified = function() {
@@ -2265,7 +2265,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       var updateConfigurationUI = function() {
         // update UI to reflect non-user config changes (e.g. load)
-        
+
         // Annotation mode
         if (Configuration.confirmModeOn) {
           $('#' + base_id + '_annotation_speed1', lookupContextForms)[0].checked = true;

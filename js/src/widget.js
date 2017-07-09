@@ -167,7 +167,6 @@ var AnnotatorView = VisualizerView.extend({
             callback: function (evt) {
                 evt.target.disabled = true;
                 evt.data.dispatcher.post('init');
-                console.log('BORRAR - initialize');
             }
         }],
 

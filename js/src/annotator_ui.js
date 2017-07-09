@@ -1,8 +1,11 @@
 // -*- Mode: JavaScript; tab-width: 2; indent-tabs-mode: nil; -*-
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
-require('./lib/jquery-ui.min');
-require('./lib/jquery-ui.combobox');
+require('jquery-ui/ui/widgets/button');
+require('jquery-ui/ui/widgets/checkboxradio');
+require('jquery-ui/ui/widgets/dialog');
+require('jquery-ui/ui/widgets/autocomplete');
+require('jquery-ui.combobox');
 
 var Util = require('./util');
 var URLHash = require('./url_monitor').URLHash;
@@ -75,6 +78,9 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var arcTargets = [];
       var arcTargetRects;
+
+      var initialized = false;
+      var rememberSpanSettingsResponse = null;
 
       var stripNumericSuffix = function(s) {
         // utility function, originally for stripping numerix suffixes
@@ -1980,7 +1986,7 @@ var AnnotatorUI = (function($, window, undefined) {
             var escapedName = Util.escapeQuotes(attr.name);
             var $input = $('<input type="checkbox" id="'+attrId+
                            '" value="' + escapedType + 
-                           '" category="' + category + '"/>');
+                           '" category="' + category + '" data-bare="' + escapedName + '"/>');
             var $label = $('<label for="'+attrId+
                            '" data-bare="' + escapedName + '">&#x2610; ' + 
                            escapedName + '</label>');
@@ -2060,6 +2066,10 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var rememberSpanSettings = function(response) {
+        if(!initialized) {
+          rememberSpanSettingsResponse = response;
+          return;
+        }
         spanKeymap = {};
 
         // TODO: check for exceptions in response
@@ -2813,11 +2823,14 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var init = function() {
+        if(rememberSpanSettingsResponse !== null)
+          rememberSpanSettings(rememberSpanSettingsResponse);
         initClearButtons();
         initAutocompleteSearchNorm();
         initSearchNormButton();
         initWaiterDialog();
         dispatcher.post('annotationIsAvailable');
+        initialized = true;
       };
 
       var arcDragArcDrawn = function(arc) {
