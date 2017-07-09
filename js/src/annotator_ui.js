@@ -1065,25 +1065,23 @@ var AnnotatorUI = (function($, window, undefined) {
                        false, false);
       };
 
-      var initClearButtons = function () {
-        var clearArcNotes = function(evt) {
-          $('#' + base_id + '_arc_notes', lookupContextForms).val('');
-        };
-        $('#' + base_id + '_clear_arc_notes_button', lookupContextForms).button();
-        $('#' + base_id + '_clear_arc_notes_button', lookupContextForms).click(clearArcNotes);
-
-        var clearSpanNotes = function(evt) {
-          $('#' + base_id + '_span_notes').val('');
-        };
-        $('#' + base_id + '_clear_span_notes_button', lookupContextForms).button();
-        $('#' + base_id + '_clear_span_notes_button', lookupContextForms).click(clearSpanNotes);
-
-        var clearSpanNorm = function(evt) {
-          clearNormalizationUI();
-        };
-        $('#' + base_id + '_clear_norm_button', lookupContextForms).button();
-        $('#' + base_id + '_clear_norm_button', lookupContextForms).click(clearSpanNorm);
+      var clearArcNotes = function(evt) {
+        $('#' + base_id + '_arc_notes', lookupContextForms).val('');
       };
+      $('#' + base_id + '_clear_arc_notes_button', lookupContextForms).button();
+      $('#' + base_id + '_clear_arc_notes_button', lookupContextForms).click(clearArcNotes);
+
+      var clearSpanNotes = function(evt) {
+        $('#' + base_id + '_span_notes').val('');
+      };
+      $('#' + base_id + '_clear_span_notes_button', lookupContextForms).button();
+      $('#' + base_id + '_clear_span_notes_button', lookupContextForms).click(clearSpanNotes);
+
+      var clearSpanNorm = function(evt) {
+        clearNormalizationUI();
+      };
+      $('#' + base_id + '_clear_norm_button', lookupContextForms).button();
+      $('#' + base_id + '_clear_norm_button', lookupContextForms).click(clearSpanNorm);
 
       // invoked on response to ajax request for id lookup
       var setSpanNormText = function(response) {
@@ -1154,30 +1152,28 @@ var AnnotatorUI = (function($, window, undefined) {
             dispatcher.post('showForm', [spanForm, true]);
           }
       });
-      var initAutocompleteSearchNorm = function () {
-        $('#' + base_id + '_norm_search_query', lookupContextForms).autocomplete({
-          source: function(request, callback) {
-            var query = $.ui.autocomplete.escapeRegex(request.term);
-            var pattern = new RegExp('\\b' + query, 'i');
-            callback($.grep(lastNormSearches, function(search) {
-              return pattern.test(search.value) || pattern.test(search.id);
-            }));
-          },
-          minLength: 0,
-          select: function(evt, ui) {
-            evt.stopPropagation();
-            normSubmit(ui.item.id, ui.item.value);
-          },
-          focus: function(evt, ui) {
-            // do nothing
-          }
-        }).autocomplete('instance')._renderItem = function($ul, item) {
-          // XXX TODO TEST
-          return $('<li></li>').
-            data('item.autocomplete', item).
-            append('<a>' + Util.escapeHTML(item.value) + '<div class="autocomplete-id">' + Util.escapeHTML(item.id) + "</div></a>").
-            appendTo($ul);
-        };
+      $('#' + base_id + '_norm_search_query', lookupContextForms).autocomplete({
+        source: function(request, callback) {
+          var query = $.ui.autocomplete.escapeRegex(request.term);
+          var pattern = new RegExp('\\b' + query, 'i');
+          callback($.grep(lastNormSearches, function(search) {
+            return pattern.test(search.value) || pattern.test(search.id);
+          }));
+        },
+        minLength: 0,
+        select: function(evt, ui) {
+          evt.stopPropagation();
+          normSubmit(ui.item.id, ui.item.value);
+        },
+        focus: function(evt, ui) {
+          // do nothing
+        }
+      }).autocomplete('instance')._renderItem = function($ul, item) {
+        // XXX TODO TEST
+        return $('<li></li>').
+          data('item.autocomplete', item).
+          append('<a>' + Util.escapeHTML(item.value) + '<div class="autocomplete-id">' + Util.escapeHTML(item.id) + "</div></a>").
+          appendTo($ul);
       };
       var normSubmit = function(selectedId, selectedTxt) {
         // we got a value; act if it was a submit
@@ -1320,9 +1316,7 @@ var AnnotatorUI = (function($, window, undefined) {
         $('#' + base_id + '_norm_search_query').focus().select();
       };
       $('#' + base_id + '_span_norm_txt', lookupContextForms).click(showNormSearchDialog);
-      var initSearchNormButton = function () {
-        $('#' + base_id + '_norm_search_button', lookupContextForms).button();
-      };
+      $('#' + base_id + '_norm_search_button', lookupContextForms).button();
 
       var arcFormSubmitRadio = function(evt) {
         // TODO: check for confirm_mode?
@@ -2780,16 +2774,14 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var $waiter = dialogs.$waiterDialog;
-      var initWaiterDialog = function () {
-          $waiter.dialog({
-          closeOnEscape: false,
-          buttons: {},
-          modal: true,
-          open: function(evt, ui) {
-            $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
-          }
-        });
-      };
+      $waiter.dialog({
+        closeOnEscape: false,
+        buttons: {},
+        modal: true,
+        open: function(evt, ui) {
+          $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
+        }
+      });
       // hide the waiter (Sampo said it's annoying)
       // we don't elliminate it altogether because it still provides the
       // overlay to prevent interaction
@@ -2825,10 +2817,6 @@ var AnnotatorUI = (function($, window, undefined) {
       var init = function() {
         if(rememberSpanSettingsResponse !== null)
           rememberSpanSettings(rememberSpanSettingsResponse);
-        initClearButtons();
-        initAutocompleteSearchNorm();
-        initSearchNormButton();
-        initWaiterDialog();
         dispatcher.post('annotationIsAvailable');
         initialized = true;
       };

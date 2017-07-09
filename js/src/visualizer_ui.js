@@ -58,11 +58,9 @@ var VisualizerUI = (function($, window, undefined) {
       // var noSvgTimer = null;
 
       var $waiterDialog = $('#' + base_id + '_waiter', lookupContextMessages);
-      var initWaiterDialog = function () {
-        $waiterDialog.dialog({
-            appendTo: "#" + base_id + "_forms"
-        });
-      };
+      $waiterDialog.dialog({
+          appendTo: "#" + base_id + "_forms"
+      });
 
       var ajax = new Ajax(base_id, dispatcher, simulate_ajax, model, $waiterDialog);
 /*
@@ -1459,10 +1457,8 @@ var VisualizerUI = (function($, window, undefined) {
         dispatcher.post('showForm', [optionsForm]);
       });
       // make nice-looking buttons for checkboxes and radios
-      var initOptionsFormButtons = function () {
-        optionsForm.find('input[type="checkbox"]').button();
-        optionsForm.find('.radio_group').buttonset();
-      };
+      optionsForm.find('input[type="checkbox"]').button();
+      optionsForm.find('.radio_group').buttonset();
       $('#' + base_id + '_rapid_model', lookupContextForms).addClass('ui-widget ui-state-default ui-button-text');
 
       var fillDisambiguatorOptions = function(disambiguators) {
@@ -1679,14 +1675,14 @@ var VisualizerUI = (function($, window, undefined) {
         }
         dispatcher.post('allowReloadByURL');
         if (!currentForm) {
-          // $waiterDialog.dialog('close');
+          $waiterDialog.dialog('close');
         }
       };
 
       var onStartedRendering = function() {
         hideForm();
         if (!currentForm) {
-          // $waiterDialog.dialog('open');
+          $waiterDialog.dialog('open');
         }
       };
 
@@ -1756,9 +1752,7 @@ var VisualizerUI = (function($, window, undefined) {
         }*/
       };
 
-      var initSourceColConfButtons = function () {
-        $('#' + base_id + '_source_collection_conf', lookupContextForms).buttonset();
-      };
+      $('#' + base_id + '_source_collection_conf', lookupContextForms).buttonset();
 
       var gotCurrent = function(_coll, _doc, _args) {
         var oldColl = coll;
@@ -1943,11 +1937,9 @@ var VisualizerUI = (function($, window, undefined) {
         element.css({ top: y, left: x });
       };
       var viewspanForm = $('#' + base_id + '_viewspan_form', lookupContextForms);
-      var initViewSpanFormDialog = function () {
-        viewspanForm.dialog({
-            appendTo: "#" + base_id + "_forms"
-        });
-      };
+      viewspanForm.dialog({
+          appendTo: "#" + base_id + "_forms"
+      });
       var onDblClick = function(evt) {
         if (user && annotationAvailable) return;
         var target = $(evt.target);
@@ -2045,10 +2037,6 @@ var VisualizerUI = (function($, window, undefined) {
       });
 */
       var init = function() {
-        initWaiterDialog();
-        initOptionsFormButtons();
-        initSourceColConfButtons();
-        initViewSpanFormDialog();
         dispatcher.post('initForm', [viewspanForm, {
             width: 760,
             no_cancel: true
@@ -2268,22 +2256,22 @@ var VisualizerUI = (function($, window, undefined) {
 
         // Annotation mode
         if (Configuration.confirmModeOn) {
-          $('#' + base_id + '_annotation_speed1', lookupContextForms)[0].checked = true;
+          $('#' + base_id + '_annotation_speed1')[0].checked = true;
         } else if (Configuration.rapidModeOn) {
-          $('#' + base_id + '_annotation_speed3', lookupContextForms)[0].checked = true;
+          $('#' + base_id + '_annotation_speed3')[0].checked = true;
         } else {
-          $('#' + base_id + '_annotation_speed2', lookupContextForms)[0].checked = true;
+          $('#' + base_id + '_annotation_speed2')[0].checked = true;
         }
-        $('#' + base_id + '_annotation_speed input', lookupContextForms).button().button('refresh');
+        $('#' + base_id + '_annotation_speed input').button().button('refresh');
 
         // Label abbrevs
-        $('#' + base_id + '_label_abbreviations_on', lookupContextForms)[0].checked  = Configuration.abbrevsOn;
-        $('#' + base_id + '_label_abbreviations_off', lookupContextForms)[0].checked = !Configuration.abbrevsOn;
-        $('#' + base_id + '_label_abbreviations input', lookupContextForms).button().button('refresh');
+        $('#' + base_id + '_label_abbreviations_on')[0].checked  = Configuration.abbrevsOn;
+        $('#' + base_id + '_label_abbreviations_off')[0].checked = !Configuration.abbrevsOn;
+        $('#' + base_id + '_label_abbreviations input').button().button('refresh');
 
         // Text backgrounds        
-        $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]', lookupContextForms)[0].checked = true;
-        $('#' + base_id + '_text_backgrounds input', lookupContextForms).button().button('refresh');
+        $('#' + base_id + '_text_backgrounds input[value="'+Configuration.textBackgrounds+'"]')[0].checked = true;
+        $('#' + base_id + '_text_backgrounds input').button().button('refresh');
 
         // SVG width
         var splitSvgWidth = Configuration.svgWidth.match(/^(.*?)(px|\%)$/);
@@ -2291,17 +2279,17 @@ var VisualizerUI = (function($, window, undefined) {
           // TODO: reset to sensible value?
           dispatcher.post('messages', [[['Error parsing SVG width "'+Configuration.svgWidth+'"', 'error', 2]]]);
         } else {
-          $('#' + base_id + '_svg_width_value', lookupContextForms)[0].value = splitSvgWidth[1];
-          $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]', lookupContextForms)[0].checked = true;
-          $('#' + base_id + '_svg_width_unit input', lookupContextForms).button().button('refresh');
+          $('#' + base_id + '_svg_width_value')[0].value = splitSvgWidth[1];
+          $('#' + base_id + '_svg_width_unit input[value="'+splitSvgWidth[2]+'"]')[0].checked = true;
+          $('#' + base_id + '_svg_width_unit input').button().button('refresh');
         }
 
         // Autorefresh
-        $('#' + base_id + '_autorefresh_mode', lookupContextForms)[0].checked = Configuration.autorefreshOn;
-        $('#' + base_id + '_autorefresh_mode', lookupContextForms).button().button('refresh');
+        $('#' + base_id + '_autorefresh_mode')[0].checked = Configuration.autorefreshOn;
+        $('#' + base_id + '_autorefresh_mode').button().button('refresh');
 
         // Type Collapse Limit
-        $('#' + base_id + '_type_collapse_limit', lookupContextForms)[0].value = Configuration.typeCollapseLimit;
+        $('#' + base_id + '_type_collapse_limit')[0].value = Configuration.typeCollapseLimit;
       };
 /*
       $('#' + base_id + '_prev').button().click(function() {
