@@ -67,9 +67,6 @@ var VisualizerUI = (function($, window, undefined) {
       // var noSvgTimer = null;
 
       var $waiterDialog = $('#' + base_id + '_waiter', lookupContextMessages);
-      $waiterDialog.dialog({
-          appendTo: "#" + base_id + "_forms"
-      });
 
       var ajax = new Ajax(base_id, dispatcher, simulate_ajax, model, $waiterDialog);
 /*
@@ -1949,9 +1946,6 @@ var VisualizerUI = (function($, window, undefined) {
         element.css({ top: y, left: x });
       };
       var viewspanForm = $('#' + base_id + '_viewspan_form', lookupContextForms);
-      viewspanForm.dialog({
-          appendTo: "#" + base_id + "_forms"
-      });
       var onDblClick = function(evt) {
         if (/*user && */annotationAvailable) return;
         var target = $(evt.target);

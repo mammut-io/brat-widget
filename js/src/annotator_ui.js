@@ -1622,7 +1622,6 @@ var AnnotatorUI = (function($, window, undefined) {
       };
 
       var tryToAnnotate = function(evt) {
-        console.log('Borrar - tryToAnnotate - 1');
         var sel = window.getSelection();
         var chunkIndexFrom = sel.anchorNode && $(sel.anchorNode.parentNode).attr('data-chunk-id');
         var theFocusNode = sel.focusNode;
@@ -1801,7 +1800,6 @@ var AnnotatorUI = (function($, window, undefined) {
 
       var onMouseUp = function(evt) {
         // if (that.user === null) return;
-        console.log('Borrar - onMouseUp - 1');
 
         var target = $(evt.target);
 
@@ -1816,7 +1814,6 @@ var AnnotatorUI = (function($, window, undefined) {
           return;
         }
 
-        console.log('Borrar - onMouseUp - 2');
         if (arcDragJustStarted && (Util.isMac ? evt.metaKey : evt.ctrlKey)) {
           // is it arc drag start (with ctrl or alt)? do nothing special
 
