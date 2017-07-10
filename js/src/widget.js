@@ -1,13 +1,6 @@
 var widgets = require('jupyter-js-widgets');
 var _ = require('underscore');
 
-// brat jquery-theme styles
-require('./static/jquery-theme/jquery-ui.css');
-require('./static/jquery-theme/jquery-ui-redmond.css');
-// brat styles
-require('./static/style-vis.css');
-require('./static/style-ui.css');
-require('./static/style.css');
 //brat images
 var spinnerGif = require('./static/img/spinner.gif');
 var fugueShadowlessMagnifierPng = require('./static/img/Fugue-shadowless-magnifier.png');

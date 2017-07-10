@@ -31,6 +31,12 @@ var loadedModules = [
     require('./static/img/Fugue-shadowless-magnifier.png'),
     require('./static/img/Fugue-shadowless-question.png'),
     require('./static/img/spinner.gif'),
+    //brat lib
+    require('jquery'),
+    require('./lib/jquery.svg.min.js'),
+    require('./lib/webfont.js'),
+    require('jquery-ui'),
+    require('jquery-ui.combobox'),
     // brat jquery-theme/images
     require('./static/jquery-theme/images/ui-bg_flat_0_aaaaaa_40x100.png'),
     require('./static/jquery-theme/images/ui-bg_flat_55_fbec88_40x100.png'),
@@ -47,17 +53,13 @@ var loadedModules = [
     require('./static/jquery-theme/images/ui-icons_cd0a0a_256x240.png'),
     require('./static/jquery-theme/images/ui-icons_d8e7f3_256x240.png'),
     require('./static/jquery-theme/images/ui-icons_f9bd01_256x240.png'),
+    // brat jquery-theme
+    require('./static/jquery-theme/jquery-ui.css'),
+    require('./static/jquery-theme/jquery-ui-redmond.css'),
     // brat
     require('./static/style-vis.css'),
     require('./static/style-ui.css'),
     require('./static/style.css'),
-
-    //brat lib
-    require('jquery'),
-    require('./lib/jquery.svg.min.js'),
-    require('./lib/webfont.js'),
-    require('jquery-ui'),
-    require('jquery-ui.combobox'),
     //brat code
     require('./ajax.js'),
     require('./annotation_log.js'),

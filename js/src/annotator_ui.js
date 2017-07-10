@@ -782,7 +782,7 @@ var AnnotatorUI = (function($, window, undefined) {
             var category = ct[0];
             var attributeTypes = ct[1];
             $.each(attributeTypes, function(attrNo, attr) {
-              $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
+              $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
               if (attr.unused) {
                 $input.val('');
               } else if (attr.default) {
@@ -818,7 +818,7 @@ var AnnotatorUI = (function($, window, undefined) {
             console.error('Unrecognized generalType:', span.generalType);
           }
           $.each(attributeTypes, function(attrNo, attr) {
-            $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
+            $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
             var val = span.attributes[attr.type];
             if (attr.unused) {
               $input.val(val || '');
@@ -893,7 +893,7 @@ var AnnotatorUI = (function($, window, undefined) {
           var validAttrs = type ? spanTypes[type].attributes : [];
           var shownCount = 0;
           $.each(attrTypes, function(attrNo, attr) {
-            var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
+            var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
             var showAttr = showAllAttributes || $.inArray(attr.type, validAttrs) != -1;
             if (showAttr) {
               // $input.button('widget').parent().show();
@@ -2118,7 +2118,7 @@ var AnnotatorUI = (function($, window, undefined) {
           tagger: taggerId,
         };
         dispatcher.post('ajax', [tagOptions, 'edited']);
-      }
+      };
 
       var setupTaggerUI = function(response) {
         var taggers = response.ner_taggers || [];
@@ -2282,7 +2282,7 @@ var AnnotatorUI = (function($, window, undefined) {
       // returns attributes that are valid for the selected type in
       // the span dialog
       var spanAttributes = function(typeRadio) {
-        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked', lookupContextForms);
+        typeRadio = typeRadio || $('#' + base_id + '_span_form input:radio:checked');
         var attributes = {};
         var attributeTypes;
         var category = typeRadio.attr('category');
@@ -2294,7 +2294,7 @@ var AnnotatorUI = (function($, window, undefined) {
           console.error('Unrecognized type category:', category);
         }
         $.each(attributeTypes, function(attrNo, attr) {
-          var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type), lookupContextForms);
+          var $input = $('#'+ base_id + '_' + category+'_attr_'+Util.escapeQuotes(attr.type));
           if (attr.bool) {
             attributes[attr.type] = $input[0].checked;
           } else if ($input[0].selectedIndex) {
