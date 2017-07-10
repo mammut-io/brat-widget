@@ -183,9 +183,9 @@ var AnnotatorView = VisualizerView.extend({
         }
     },
 
-    get_forms_div_str: function () {
+    get_import_form_str: function () {
         //noinspection JSAnnotator
-        var strForms = `<div id="{base_id}_forms"><form id="{base_id}_import_form" class="dialog" title="Import">
+        var importFormStr = `<form id="{base_id}_import_form" class="dialog" title="Import">
   <fieldset id="{base_id}_import_form_docid">
     <legend>Document ID</legend>
     <input id="{base_id}_import_docid" class="borderless"/>
@@ -194,15 +194,25 @@ var AnnotatorView = VisualizerView.extend({
     <legend>Document text</legend>
     <textarea id="{base_id}_import_text" class="borderless"/>
   </fieldset>
-</form>
-<form id="{base_id}_import_coll_form" class="dialog" title="Import collection">
+</form>`;
+        return importFormStr;
+    },
+
+    get_import_coll_form_str: function () {
+        //noinspection JSAnnotator
+        var importCollFormStr = `<form id="{base_id}_import_coll_form" class="dialog" title="Import collection">
   <fieldset id="{base_id}_import_coll_form_text">
     <legend>Collection archive (.zip, .tar.gz)</legend>
     <input type="file" id="{base_id}_import_coll" class="borderless" accept="application/zip,application/x-gzip" />
   </fieldset>
-</form>
-<!-- Data dialog -->
-<form id="{base_id}_data_form" class="dialog" title="Data">
+</form>`;
+        return importCollFormStr;
+    },
+
+    get_data_form_str: function () {
+        // Data dialog
+        //noinspection JSAnnotator
+        var dataFormStr = `<form id="{base_id}_data_form" class="dialog" title="Data">
   <!-- Data dialog export section -->
   <fieldset class="small-buttons">
     <legend>Export</legend>
@@ -287,9 +297,14 @@ var AnnotatorView = VisualizerView.extend({
       </div>
     </fieldset>
   </div>
-</form>
-<!-- Options dialog -->
-<form id="{base_id}_options_form" class="dialog" title="Options">
+</form>`;
+        return dataFormStr;
+    },
+
+    get_options_form_str: function () {
+        // Options dialog
+        //noinspection JSAnnotator
+        var optionsFormStr = `<form id="{base_id}_options_form" class="dialog" title="Options">
   <fieldset id="{base_id}_options_form_visual">
     <legend>Visual options</legend>
     <div class="optionRow">
@@ -386,15 +401,25 @@ var AnnotatorView = VisualizerView.extend({
       </span>
     </div>
   </fieldset>
-</form>
-<!-- More collection information dialog -->
-<form id="{base_id}_more_information_dialog" class="dialog" title="Collection information">
+</form>`;
+        return optionsFormStr;
+    },
+
+    get_more_information_form_str: function () {
+        // More collection information dialog
+        //noinspection JSAnnotator
+        var moreInformationFormStr = `<form id="{base_id}_more_information_dialog" class="dialog" title="Collection information">
   <fieldset>
     <textarea id="{base_id}_more_info_readme" readonly="readonly" class="borderless"/>
   </fieldset>
-</form>
-<!-- Search dialog -->
-<form id="{base_id}_search_form" class="dialog" title="Search">
+</form>`;
+        return moreInformationFormStr;
+    },
+
+    get_search_form_str: function () {
+        // Search dialog
+        //noinspection JSAnnotator
+        var searchFormStr = `<form id="{base_id}_search_form" class="dialog" title="Search">
   <div id="{base_id}_search_tabs">
     <ul>
       <li><a href="#search_tab_text">Text</a></li>
@@ -622,9 +647,14 @@ var AnnotatorView = VisualizerView.extend({
     </div>
     </div>
   </fieldset>
-</form>
-<!-- Span dialog (view only) -->
-<form id="{base_id}_viewspan_form" class="dialog" title="Span">
+</form>`;
+        return searchFormStr;
+    },
+
+    get_viewspan_form_str: function () {
+        // Span dialog (view only)
+        //noinspection JSAnnotator
+        var viewspanFormStr = `<form id="{base_id}_viewspan_form" class="dialog" title="Span">
   <fieldset id="{base_id}_viewspan_selected_fset">
     <legend>Text</legend>
     <a target="brat_linked" id="{base_id}_viewspan_highlight_link" href="#">Link</a>
@@ -640,9 +670,14 @@ var AnnotatorView = VisualizerView.extend({
     <legend>Notes</legend>
     <input id="{base_id}_viewspan_notes" class="borderless" readonly="readonly"/>
   </fieldset>
-</form>
-<!-- Span dialog (view+edit) -->
-<form id="{base_id}_span_form" class="dialog" title="Span">
+</form>`;
+        return viewspanFormStr;
+    },
+
+    get_span_form_str: function () {
+        // Span dialog (view+edit)
+        //noinspection JSAnnotator
+        var spanFormFormStr = `<form id="{base_id}_span_form" class="dialog" title="Span">
   <!-- Span dialog annotated text -->
   <fieldset id="{base_id}_span_selected_fset">
     <legend>Text</legend>
@@ -710,9 +745,14 @@ var AnnotatorView = VisualizerView.extend({
              value="&#x2715;" title="Clear notes"/>
     </div>
   </fieldset>
-</form>
-<!-- Rapid mode span dialog -->
-<form id="{base_id}_rapid_span_form" class="dialog" title="Span type">
+</form>`;
+        return spanFormFormStr;
+    },
+
+    get_rapid_span_form_str: function () {
+        // Rapid mode span dialog
+        //noinspection JSAnnotator
+        var rapidSpanFormStr = `<form id="{base_id}_rapid_span_form" class="dialog" title="Span type">
   <fieldset id="{base_id}_rapid_span_selected_fset">
     <legend>Text</legend>
     <div id="{base_id}_rapid_span_selected"/>
@@ -725,9 +765,14 @@ var AnnotatorView = VisualizerView.extend({
       </div>
     </fieldset>
   </div>
-</form>
-<!-- Arc dialog -->
-<form id="{base_id}_arc_form" class="dialog" title="Arc">
+</form>`;
+        return rapidSpanFormStr;
+    },
+
+    get_arc_form_str: function () {
+        // Arc dialog
+        //noinspection JSAnnotator
+        var arcFormStr = `<form id="{base_id}_arc_form" class="dialog" title="Arc">
   <fieldset id="{base_id}_arc_origin_fset">
     <legend>From</legend>
     <a target="brat_linked" id="{base_id}_arc_highlight_link" href="#">Link</a>
@@ -755,9 +800,14 @@ var AnnotatorView = VisualizerView.extend({
     </div>
   </fieldset>
 
-</form>
-<!-- Login dialog -->
-<form id="{base_id}_auth_form" class="dialog" title="Login">
+</form>`;
+        return arcFormStr;
+    },
+
+    get_auth_form_str: function () {
+        // Login dialog
+        //noinspection JSAnnotator
+        var authFormStr = `<form id="{base_id}_auth_form" class="dialog" title="Login">
   <fieldset>
     <legend>Username</legend>
     <input id="{base_id}_auth_user" placeholder="Username" class="borderless"/>
@@ -766,16 +816,26 @@ var AnnotatorView = VisualizerView.extend({
     <legend>Password</legend>
     <input id="{base_id}_auth_pass" type="password" placeholder="Password" class="borderless"/>
   </fieldset>
-</form>
-<!-- Split span annotation dialog -->
-<form id="{base_id}_split_form" class="dialog" title="Split the Span">
+</form>`;
+        return authFormStr;
+    },
+
+    get_split_form_str: function () {
+        // Split span annotation dialog
+        //noinspection JSAnnotator
+        var splitFormStr = `<form id="{base_id}_split_form" class="dialog" title="Split the Span">
   <fieldset>
     <legend>Split Roles</legend>
     <div id="{base_id}_split_roles" class="scroll_fset"/>
   </fieldset>
-</form>
-<!-- Browser dialog -->
-<form id="{base_id}_collection_browser" class="dialog" title="Open">
+</form>`;
+        return splitFormStr;
+    },
+
+    get_collection_browser_form_str: function () {
+        // Browser dialog
+        //noinspection JSAnnotator
+        var collectionBrowserFormStr = `<form id="{base_id}_collection_browser" class="dialog" title="Open">
   <fieldset>
     <legend>Collection</legend>
     <input id="{base_id}_collection_input" readonly="readonly" placeholder="Document" class="borderless"/>
@@ -795,9 +855,14 @@ var AnnotatorView = VisualizerView.extend({
     <thead class="ui-widget-header"/>
     <tbody class="ui-widget-content"/>
   </table>
-</form>
-<!-- Normalization DB search dialog -->
-<form id="{base_id}_norm_search_dialog" class="dialog" title="Search">
+</form>`;
+        return collectionBrowserFormStr;
+    },
+
+    get_norm_search_form_str: function () {
+        // Normalization DB search dialog
+        //noinspection JSAnnotator
+        var normSearchFormStr = `<form id="{base_id}_norm_search_dialog" class="dialog" title="Search">
   <fieldset>
     <legend>Query</legend>
     <div id="{base_id}_norm_search_container">
@@ -813,7 +878,19 @@ var AnnotatorView = VisualizerView.extend({
     <thead class="ui-widget-header"/>
     <tbody class="ui-widget-content"/>
   </table>
-</form></div>`;
+</form>`;
+        return normSearchFormStr;
+    },
+
+    get_forms_div_str: function () {
+        var strForms = `<div id="{base_id}_forms">`; //+ dataFormStr + optionsFormStr + moreInformationFormStr + viewspanFormStr +
+        strForms = strForms + this.get_options_form_str();
+        strForms = strForms + this.get_viewspan_form_str();
+        strForms = strForms + this.get_span_form_str();
+        strForms = strForms + this.get_rapid_span_form_str();
+        strForms = strForms + this.get_arc_form_str();
+        strForms = strForms + this.get_split_form_str();
+        strForms = strForms + `</div>`;
         return this.get_interpolat_dom(strForms);
     },
 

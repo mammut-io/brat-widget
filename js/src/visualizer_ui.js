@@ -53,6 +53,15 @@ var VisualizerUI = (function($, window, undefined) {
       var matchFocus = '';
       var matches = '';
 
+      var initialized = false;
+      var fillDisambiguatorOptionsDisambiguators = null;
+      var $forms = function (selector) {
+          if(initialized)
+            return $(selector);
+          else
+            return $(selector, lookupContextForms);
+      };
+
       /* START "no svg" message - related*/
 
       // var noSvgTimer = null;
@@ -142,7 +151,7 @@ var VisualizerUI = (function($, window, undefined) {
       /* START message display - related */
 
       var showPullupTrigger = function() {
-        $('#' + base_id + '_pulluptrigger', lookupContextMessages).show('puff');
+        $('#' + base_id + '_pulluptrigger').show('puff');
       };
 
       var $messageContainer = $('#' + base_id + '_messages', lookupContextMessages);
@@ -216,7 +225,7 @@ var VisualizerUI = (function($, window, undefined) {
         if (messageNum != initialMessageNum) {
           if (messageNum == 0) {
             // all gone; nothing to trigger
-            $('#' + base_id + '_pulluptrigger', lookupContextMessages).hide('slow');
+            $('#' + base_id + '_pulluptrigger').hide('slow');
           } else if (initialMessageNum == 0) {
             // first messages, show trigger at fade
             setTimeout(showPullupTrigger, messageDefaultFadeDelay+250);
@@ -374,7 +383,7 @@ var VisualizerUI = (function($, window, undefined) {
             }
           }
         }
-        var drop=$('#' + base_id + '_norm_info_drop_point_'+infoSeqId, lookupContextMessages);
+        var drop=$('#' + base_id + '_norm_info_drop_point_'+infoSeqId);
         if (drop) {
           drop.html(norminfo);
         } else {
@@ -1462,13 +1471,16 @@ var VisualizerUI = (function($, window, undefined) {
       $('#' + base_id + '_rapid_model', lookupContextForms).addClass('ui-widget ui-state-default ui-button-text');
 
       var fillDisambiguatorOptions = function(disambiguators) {
-        $('#' + base_id + '_annotation_speed3', lookupContextForms).button(disambiguators.length ? 'enable': 'disable');
-        //XXX: We need to disable rapid in the conf too if it is not available
-        var $rapid_mode = $('#' + base_id + '_rapid_model', lookupContextForms).html('');
-        $.each(disambiguators, function(modelNo, model) {
-          var $option = $('<option/>').attr('value', model[2]).text(model[2]);
-          $rapid_mode.append($option);
-        });
+        if(initialized){
+          $('#' + base_id + '_annotation_speed3').button().button(disambiguators.length ? 'enable': 'disable');
+          var $rapid_mode = $('#' + base_id + '_rapid_model').html('');
+          $.each(disambiguators, function(modelNo, model) {
+            var $option = $('<option/>').attr('value', model[2]).text(model[2]);
+            $rapid_mode.append($option);
+          });
+        }
+        else
+          fillDisambiguatorOptionsDisambiguators = disambiguators;
       };
 
       /* END options dialog - related */
@@ -1654,8 +1666,8 @@ var VisualizerUI = (function($, window, undefined) {
           return false;
         }
         clearTimeout(saveSVGTimer);
-        $('#' + base_id + '_stored_file_regenerate', lookupContextForms).hide();
-        $('#' + base_id + '_stored_file_spinner', lookupContextForms).show();
+        $('#' + base_id + '_stored_file_regenerate').hide();
+        $('#' + base_id + '_stored_file_spinner').show();
         saveSVGTimer = dispatcher.post(1, 'ajax', [{
           action: 'storeSVG',
           svg: svg.html(),
@@ -1687,13 +1699,13 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var savedSVGreceived = function(response) {
-        $('#' + base_id + '_stored_file_spinner', lookupContextForms).hide()
+        $('#' + base_id + '_stored_file_spinner').hide();
 
         if (response && response.exception == 'corruptSVG') {
           dispatcher.post('messages', [[['Cannot save SVG: corrupt', 'error']]]);
           return;
         }
-        var $downloadStored = $('#' + base_id + '_download_stored', lookupContextForms).empty().show();
+        var $downloadStored = $('#' + base_id + '_download_stored').empty().show();
         $.each(response.stored, function(storedNo, stored) {
           var params = {
             'action': 'retrieveStored',
@@ -1716,15 +1728,15 @@ var VisualizerUI = (function($, window, undefined) {
       var invalidateSavedSVG = function() {
         // assuming that invalidation of the SVG invalidates all stored
         // static visualizations, as others are derived from the SVG
-        $('#' + base_id + '_download_stored', lookupContextForms).hide();
+        $forms('#' + base_id + '_download_stored').hide();
         // have a way to regenerate if dialog open when data invalidated
-        $('#' + base_id + '_stored_file_regenerate', lookupContextForms).show();
+        $forms('#' + base_id + '_stored_file_regenerate').show();
         currentDocumentSVGsaved = false;
       };
 
       var onNewSourceData = function(sourceData) {
         if (!sourceData) return;
-        var $sourceFiles = $('#' + base_id + '_source_files', lookupContextForms).empty();
+        var $sourceFiles = $('#' + base_id + '_source_files').empty();
         /* Add download links for all available extensions */
         $.each(sourceData.source_files, function(extNo, ext) {
           var $link = $('<a target="brat_search"/>').
@@ -1950,17 +1962,17 @@ var VisualizerUI = (function($, window, undefined) {
 
           var urlHash = URLHash.parse(base_id, window.location.hash);
           urlHash.setArgument('focus', [[span.id]]);
-          $('#' + base_id + '_viewspan_highlight_link', lookupContextForms).show().attr('href', urlHash.getHash());
+          $('#' + base_id + '_viewspan_highlight_link').show().attr('href', urlHash.getHash());
 
-          $('#' + base_id + '_viewspan_selected', lookupContextForms).text(span.text);
+          $('#' + base_id + '_viewspan_selected').text(span.text);
           var encodedText = encodeURIComponent(span.text);
           $.each(searchConfig, function(searchNo, search) {
-            $('#' + base_id + '_viewspan_'+search[0], lookupContextForms).attr('href', search[1].replace('%s', encodedText));
+            $('#' + base_id + '_viewspan_'+search[0]).attr('href', search[1].replace('%s', encodedText));
           });
           // annotator comments
-          $('#' + base_id + '_viewspan_notes', lookupContextForms).val(span.annotatorNotes || '');
+          $('#' + base_id + '_viewspan_notes').val(span.annotatorNotes || '');
           dispatcher.post('showForm', [viewspanForm]);
-          $('#' + base_id + 'viewspan_form-ok', lookupContextForms).focus();
+          $('#' + base_id + 'viewspan_form-ok').focus();
           adjustFormToCursor(evt, viewspanForm.parent());
         }
       };
@@ -2037,6 +2049,8 @@ var VisualizerUI = (function($, window, undefined) {
       });
 */
       var init = function() {
+        initialized = true;
+        fillDisambiguatorOptions(fillDisambiguatorOptionsDisambiguators);
         dispatcher.post('initForm', [viewspanForm, {
             width: 760,
             no_cancel: true
@@ -2298,14 +2312,14 @@ var VisualizerUI = (function($, window, undefined) {
         return moveInFileBrowser(+1);
       });
       $('#' + base_id + '_footer').show();
-*/
+
       $('#' + base_id + '_source_collection_conf_on, #' + base_id + '_source_collection_conf_off', lookupContextForms).change(function() {
-        var conf = $('#' + base_id + '_source_collection_conf_on', lookupContextForms).is(':checked') ? 1 : 0;
-        var $source_collection_link = $('#' + base_id + '_source_collection a', lookupContextForms);
+        var conf = $('#' + base_id + '_source_collection_conf_on').is(':checked') ? 1 : 0;
+        var $source_collection_link = $('#' + base_id + '_source_collection a');
         var link = $source_collection_link.attr('href').replace(/&include_conf=./, '&include_conf=' + conf);
         $source_collection_link.attr('href', link);
       });
-
+*/
 
       var rememberData = function(_data) {
         if (_data && !_data.exception) {

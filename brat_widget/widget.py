@@ -40,7 +40,7 @@ class GeneralConfiguration:
         self.abbrevsOn = True
         self.textBackgrounds = "striped"
         self.svgWidth = '100%'
-        self.rapidModeOn = False
+        self.rapidModeOn = True
         self.confirmModeOn = True
         self.autorefreshOn = False
         self.typeCollapseLimit = 30
