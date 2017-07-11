@@ -199,7 +199,7 @@ input.invalid_value {
 
 /* BEGIN new entity and event dialog style */
 .split_wrapper {
-  height: 300px;
+  height: 150px;
   /* HACK tweaking to avoid overflows. */
   padding-bottom: 2.5em;
   /* end HACK */

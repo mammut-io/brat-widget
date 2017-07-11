@@ -74,7 +74,7 @@ var Ajax = (function($, window, undefined) {
                 // the callback; if it is anything else, the
                 // callback is responsible for handling it
                 if (response.exception == true) {
-                  $waiterDialog.dialog('close');
+                  // $waiterDialog.dialog('close');
                 } else if (callback) {
                   $.extend(response, merge);
                   dispatcher.post(0, callback, [response]);
@@ -85,7 +85,7 @@ var Ajax = (function($, window, undefined) {
             error: function(response, textStatus, errorThrown) {
               pending--;
               dispatcher.post('unspin');
-              $waiterDialog.dialog('close');
+              // $waiterDialog.dialog('close');
               dispatcher.post('messages', [[['Error: Action' + data.action + ' failed on error ' + response.statusText, 'error']]]);
               console.error(textStatus + ':', errorThrown, response);
             }

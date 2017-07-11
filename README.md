@@ -54,3 +54,13 @@ For a development installation (requires npm),
 - The regex `for="([a-zA-Z_0-9\-]+)"` was used to find all the referenced ids in the brat DOM embedded in the widget. And the regex `for="\{base_id\}_$1"` was used to perform the replacement using PyCharm. To find all the replacements use the following regex: `for="\{base_id\}_([a-zA-Z_0-9\-]+)"`.
 - The regex `\$\('#([a-zA-Z_ \.:-\[\]\(\)0-9\-]+)'\)` was used to find all the calls to JQuery that look for a path of several elements in the DOM. The result of this lookup gave 49 occurences in two files. The regex `\$\('#([a-zA-Z_\.:-\[\]\(\)0-9\-]+) ` was used as the lookup expression and `\$\('#' \+ base_id \+ '_$1 ` was used to perform the replacement using PyCharm. The regexes showed before produce more results than the first global lookup expression. To find all the replacements use the following regex: `\$\('#' \+ base_id \+ '_([a-zA-Z_]+) `. After the following was used to select another specific cases `#([a-zA-Z_\.:-\[\]\(\)0-9\-]+)`and `#' \+ base_id \+ '_$1` was used to perform the replacement using PyCharm.
 - In order to find the remaining cases where a DOM element is constructed using jQuery, the following regex was used to lookup `(id|for)="([a-zA-Z_0-9\-]+)` and this `$1="' \+ base_id \+ '_$2` was used for replacement.
+
+## Examples of the JSON documents sent to the server:
+
+- [getCollectionInformation](http://www.jsoneditoronline.org/?id=18051ed6ecce9470a1e7ce21687421a4)
+- [getDocument](http://www.jsoneditoronline.org/?id=7b0c10727c1dac6519a99c3a3c4d3768)
+- [createSpan](http://www.jsoneditoronline.org/?id=c11d7be261c2f507f15ea9733e927d38)
+- [deleteSpan](http://www.jsoneditoronline.org/?id=0f7b67e68870e4525c4a0f58b50cade6)
+- [createArc](http://www.jsoneditoronline.org/?id=dcac7fd71ec6f3716ba9f0265cb399ff)
+- [reverseArc](http://www.jsoneditoronline.org/?id=dcac7fd71ec6f3716ba9f0265cbc464a)
+- [deleteArc](http://www.jsoneditoronline.org/?id=c11d7be261c2f507f15ea9733e97b3df)

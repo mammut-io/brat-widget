@@ -6,6 +6,7 @@ require('jquery-ui/ui/widgets/checkboxradio');
 require('jquery-ui/ui/widgets/dialog');
 require('jquery-ui/ui/widgets/autocomplete');
 require('jquery-ui.combobox');
+require('jquery-json');
 
 var Util = require('./util');
 var URLHash = require('./url_monitor').URLHash;
@@ -2353,7 +2354,7 @@ var AnnotatorUI = (function($, window, undefined) {
             reselectedSpan = null;
           }
           svgElement.removeClass('reselect');
-          dialogs.$waiterDialog.dialog('close');
+          // dialogs.$waiterDialog.dialog('close');
         } else {
           if (response.edited == undefined) {
             console.warn('Warning: server response to edit has', response.edited, 'value for "edited"');
@@ -2392,7 +2393,7 @@ var AnnotatorUI = (function($, window, undefined) {
         spanOptions.offsets = JSON.stringify(spanOptions.offsets);
         dispatcher.post('ajax', [spanOptions, 'edited']);
         dispatcher.post('hideForm');
-        dialogs.$waiterDialog.dialog('open');
+        // dialogs.$waiterDialog.dialog('open');
       };
 
       var reselectSpan = function() {
@@ -2481,7 +2482,7 @@ var AnnotatorUI = (function($, window, undefined) {
 
         dispatcher.post('ajax', [spanOptions, 'edited']);
         dispatcher.post('hideForm');
-        dialogs.$waiterDialog.dialog('open');
+        // dialogs.$waiterDialog.dialog('open');
       };
 
       var spanChangeLock = function(evt) {
@@ -2500,47 +2501,53 @@ var AnnotatorUI = (function($, window, undefined) {
       dispatcher.post('initForm', [spanForm, {
           alsoResize: '#' + base_id + '_entity_and_event_wrapper',
           width: 760,
-          buttons: [{
-              id: 'span_form_add_fragment',
-              text: "Add Frag.",
-              click: addFragment
-            }, {
-              id: 'span_form_delete',
-              text: "Delete",
-              click: deleteSpan
-            }, {
-              id: 'span_form_delete_fragment',
-              text: "Delete Frag.",
-              click: deleteFragment
-            }, {
-              id: 'span_form_reselect',
-              text: 'Move',
-              click: reselectSpan
-            }, {
-              id: 'span_form_reselect_fragment',
-              text: 'Move Frag.',
-              click: reselectFragment
-            }, {
-              id: base_id + '_span_form_split',
-              text: 'Split',
-              click: splitSpan
-            }
-          ],
-          create: function(evt) {
-            var $ok = $('#' + base_id + '_span_form-ok').wrap('<span id="' + base_id + '_span_form_lock_bset"/>');
-            var $span = $ok.parent();
-            var $lock = $('<input id="' + base_id + '_span_form_lock" type="checkbox"/>').insertBefore($ok);
-            $('<label for="' + base_id + '_span_form_lock"/>').text("Lock type").insertBefore($ok);
-            $lock.button({
-              id: 'span_form_lock',
-              text: false,
-              icons: {
-                primary: 'ui-icon-unlocked'
+          buttons: [
+              // {
+              //     id: 'span_form_add_fragment',
+              //     text: "Add Frag.",
+              //     click: addFragment
+              // },
+              {
+                  id: 'span_form_delete',
+                  text: "Delete",
+                  click: deleteSpan
               },
-            });
-            $lock.click(spanChangeLock);
-            $($span).buttonset();
-          },
+              // {
+              //     id: 'span_form_delete_fragment',
+              //     text: "Delete Frag.",
+              //     click: deleteFragment
+              // },
+              // {
+              //     id: 'span_form_reselect',
+              //     text: 'Move',
+              //     click: reselectSpan
+              // },
+              // {
+              //     id: 'span_form_reselect_fragment',
+              //     text: 'Move Frag.',
+              //     click: reselectFragment
+              // },
+              // {
+              //     id: base_id + '_span_form_split',
+              //     text: 'Split',
+              //     click: splitSpan
+              // }
+          ],
+          // create: function(evt) {
+          //   var $ok = $('#' + base_id + '_span_form-ok').wrap('<span id="' + base_id + '_span_form_lock_bset"/>');
+          //   var $span = $ok.parent();
+          //   var $lock = $('<input id="' + base_id + '_span_form_lock" type="checkbox"/>').insertBefore($ok);
+          //   $('<label for="' + base_id + '_span_form_lock"/>').text("Lock type").insertBefore($ok);
+          //   $lock.button({
+          //     id: 'span_form_lock',
+          //     text: false,
+          //     icons: {
+          //       primary: 'ui-icon-unlocked'
+          //     },
+          //   });
+          //   $lock.click(spanChangeLock);
+          //   $($span).buttonset();
+          // },
           beforeClose: function(evt) {
             // in case the form is cancelled
             setTypeLock(!!lockOptions);
@@ -2610,7 +2617,7 @@ var AnnotatorUI = (function($, window, undefined) {
         // hiding them
         spanForm.parent().find('*').blur();
 
-        dialogs.$waiterDialog.dialog('open');
+        // dialogs.$waiterDialog.dialog('open');
         dispatcher.post('ajax', [spanOptions, 'edited']);
         return false;
       };
@@ -2650,7 +2657,7 @@ var AnnotatorUI = (function($, window, undefined) {
             'document': doc,
             type: type,
           });
-          dialogs.$waiterDialog.dialog('open');
+          // dialogs.$waiterDialog.dialog('open');
           rapidSpanOptions.offsets = JSON.stringify(rapidSpanOptions.offsets);
           dispatcher.post('ajax', [rapidSpanOptions, 'edited']);
         }
@@ -2787,19 +2794,19 @@ var AnnotatorUI = (function($, window, undefined) {
         evt.preventDefault();
       };
 
-      var $waiter = dialogs.$waiterDialog;
-      $waiter.dialog({
-        closeOnEscape: false,
-        buttons: {},
-        modal: true,
-        open: function(evt, ui) {
-          $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
-        }
-      });
+      // var $waiter = dialogs.$waiterDialog;
+      // $waiter.dialog({
+      //   closeOnEscape: false,
+      //   buttons: {},
+      //   modal: true,
+      //   open: function(evt, ui) {
+      //     $(evt.target).parent().find(".ui-dialog-titlebar-close").hide();
+      //   }
+      // });
       // hide the waiter (Sampo said it's annoying)
       // we don't elliminate it altogether because it still provides the
       // overlay to prevent interaction
-      $waiter.parent().css('opacity', '0');
+      // $waiter.parent().css('opacity', '0');
 
       var isReloadOkay = function() {
         // do not reload while the user is in the middle of editing

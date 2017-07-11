@@ -593,6 +593,7 @@ var VisualizerUI = (function($, window, undefined) {
             autoOpen: false,
             closeOnEscape: true,
             buttons: buttons,
+            closeText: '',
             modal: true
           }, opts);
 
@@ -1684,14 +1685,14 @@ var VisualizerUI = (function($, window, undefined) {
         }
         dispatcher.post('allowReloadByURL');
         if (!currentForm) {
-          $waiterDialog.dialog('close');
+          // $waiterDialog.dialog('close');
         }
       };
 
       var onStartedRendering = function() {
         hideForm();
         if (!currentForm) {
-          $waiterDialog.dialog('open');
+          // $waiterDialog.dialog('open');
         }
       };
 
@@ -2322,7 +2323,7 @@ var VisualizerUI = (function($, window, undefined) {
       };
 
       var onScreamingHalt = function() {
-        $waiterDialog.dialog('close');
+        // $waiterDialog.dialog('close');
         // $('#' + base_id + '_pulldown, #' + base_id + '_navbuttons, #' + base_id + '_spinner').remove();
         dispatcher.post('hideForm');
       };
@@ -2359,7 +2360,7 @@ var VisualizerUI = (function($, window, undefined) {
           on('dblclick', onDblClick).
           on('touchstart', onTouchStart).
           on('touchend', onTouchEnd).
-          on('resize', onResize).
+          // on('resize', onResize).
           // on('searchResultsReceived', searchResultsReceived).
           // on('clearSearch', clearSearch).
           // on('clearSVG', showNoDocMessage).
@@ -2377,7 +2378,7 @@ var VisualizerUI = (function($, window, undefined) {
           // tutorialForm: tutorialForm,
           // aboutDialog: aboutDialog,
           viewspanForm: viewspanForm,
-          $waiterDialog: $waiterDialog
+          // $waiterDialog: $waiterDialog
         },
         ajax: ajax,
         initForm: initForm

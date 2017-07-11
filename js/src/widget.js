@@ -883,6 +883,7 @@ var AnnotatorView = VisualizerView.extend({
     },
 
     get_forms_div_str: function () {
+        //noinspection JSAnnotator
         var strForms = `<div id="{base_id}_forms">`; //+ dataFormStr + optionsFormStr + moreInformationFormStr + viewspanFormStr +
         strForms = strForms + this.get_options_form_str();
         strForms = strForms + this.get_viewspan_form_str();
@@ -890,6 +891,7 @@ var AnnotatorView = VisualizerView.extend({
         strForms = strForms + this.get_rapid_span_form_str();
         strForms = strForms + this.get_arc_form_str();
         strForms = strForms + this.get_split_form_str();
+        //noinspection JSAnnotator
         strForms = strForms + `</div>`;
         return this.get_interpolat_dom(strForms);
     },
