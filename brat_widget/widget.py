@@ -95,6 +95,9 @@ class Visualizer(widgets.DOMWidget):
 @widgets.register('brat.Annotator')
 class Annotator(Visualizer):
     """"""
+    def __init__(self, **kwargs):
+        super(Visualizer, self).__init__(**kwargs)
+
     _view_name = Unicode('AnnotatorView').tag(sync=True)
     _model_name = Unicode('AnnotatorModel').tag(sync=True)
     _view_module = Unicode('brat-widget').tag(sync=True)

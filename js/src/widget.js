@@ -132,6 +132,18 @@ var VisualizerView = widgets.DOMWidgetView.extend({
 var AnnotatorView = VisualizerView.extend({
     render: function () {
         AnnotatorView.__super__.render.apply(this);
+        var customMessHandler = function(content, buffers) {
+                console.log('Borrar - customMessHandler');
+                console.log(arguments);
+            };
+        this.model.on('msg:custom', customMessHandler, this);
+        var localDispatcher = this.dispatcher;
+        this.once('displayed', function () {
+                console.log('Borrar - displayed');
+            localDispatcher.post('init');
+        })
+        // this.listenTo(this.model, 'msg:custom', _.bind(customMessHandler, this));
+        // this.listenTo(this.model, 'msg:custom', customMessHandler);
     },
 
     embed: function (container, model) {
