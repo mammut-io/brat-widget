@@ -69,7 +69,7 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         if (this.dispatcher === undefined) {
             this.el.id = "brat_" + new Date().getTime().toString();
             var $divSvg = $('<div id="' + this.el.id + '_svg"></div>');
-            this.embed($divSvg, this.model);
+            this.embed($divSvg);
         }
         this.model.get('value').collection = null;
         this.collection_changed();
@@ -92,7 +92,7 @@ var VisualizerView = widgets.DOMWidgetView.extend({
         }
     },
 
-    embed: function (container, model) {
+    embed: function (container) {
         if (this.dispatcher === undefined) {
             this.dispatcher = new Dispatcher();
             this.add_header();
@@ -132,21 +132,15 @@ var VisualizerView = widgets.DOMWidgetView.extend({
 var AnnotatorView = VisualizerView.extend({
     render: function () {
         AnnotatorView.__super__.render.apply(this);
-        var customMessHandler = function(content, buffers) {
-                console.log('Borrar - customMessHandler');
-                console.log(arguments);
-            };
-        this.model.on('msg:custom', customMessHandler, this);
+        this.model.on('msg:custom', this.custom_message_handler, this);
         var localDispatcher = this.dispatcher;
         this.once('displayed', function () {
-                console.log('Borrar - displayed');
+            console.log('Borrar - displayed');
             localDispatcher.post('init');
         })
-        // this.listenTo(this.model, 'msg:custom', _.bind(customMessHandler, this));
-        // this.listenTo(this.model, 'msg:custom', customMessHandler);
     },
 
-    embed: function (container, model) {
+    embed: function (container) {
         AnnotatorView.__super__.embed.apply(this, arguments);
         if (this.urlMonitor === undefined) {
             this.$forms = $(this.get_forms_div_str());
@@ -158,40 +152,73 @@ var AnnotatorView = VisualizerView.extend({
 
             this.urlMonitor = new URLMonitor(this.el.id, this.dispatcher);
             this.visualizerUI = new VisualizerUI(this.el.id, this.$forms,this.$messages, Configuration,
-                this.dispatcher, this.visualizer.svg, model, this.simulate_ajax);
+                this.dispatcher, this.visualizer.svg, _.bind(this.simulate_ajax, this));
             this.annotatorUI = new AnnotatorUI(this.el.id, this.$forms, this.$messages, Configuration,
                 this.dispatcher, this.visualizer.svg, this.visualizerUI.initForm, this.visualizerUI.dialogs);
             this.spinner = new Spinner(this.dispatcher, '#' + this.el.id + '_spinner');
             //this.logger = new AnnotationLog(this.dispatcher);
+            this.dispatcher.on('makeAjaxObsolete', _.bind(this.make_obsolete_simulated_ajax_calls_options, this));
         }
     },
 
     header_buttons: [{
-            id: 'init',
-            title: 'Iniciar Anotado',
+            id: 'undo',
+            title: 'Undo',
             callback: function (evt) {
                 evt.target.disabled = true;
-                evt.data.dispatcher.post('init');
+                console.log('Borrar - click boton Undo')
             }
         }],
 
-    simulate_ajax: function (model, options) {
-        var response = 'AJAX SIMULATOR';
+    simulated_ajax_calls_options: {},
+
+    custom_message_handler : function (content, buffers) {
+        console.log('Borrar - customMessHandler');
+        console.log(arguments);
+
+        if (this.simulated_ajax_calls_options.hasOwnProperty(content.id)) {
+            console.log('CUSTOM MESSAGE HANDLER: ' + content.action + ' - ' + content.id.toString());
+            var options = this.simulated_ajax_calls_options[content.id].options;
+            if(!content.success){
+                options.error(content.response, content.textStatus, content.errorThrown);
+            }
+            delete this.simulated_ajax_calls_options[content.id];
+        }
+        else
+            console.log('CUSTOM MESSAGE HANDLER: unknown id. ' + content.action + ' - ' + content.id.toString());
+    },
+
+    simulate_ajax: function (id, options, keep) {
+        var response = null;
         switch (options.data.action) {
             case 'loadConf':
-                console.log(response + ': loading configuration.');
+                console.log('AJAX SIMULATOR: loading configuration.');
                 response = {
                     action: options.data.action,
-                    config: model.get('general_configuration')
+                    config: this.model.get('general_configuration')
                 };
                 options.success(response);
                 break;
+            case 'getDocument':
+                console.log('AJAX SIMULATOR: getting document.');
+                response = this.model.get('value');
+                $.extend(response, {action: options.data.action});
+                options.success(response);
+                break;
             default:
-                var textStatus = 'Not supported action';
-                var errorThrown = textStatus + ' ' + options.data.action;
-                console.error(response + ': ' + errorThrown);
-                response = {statusText: textStatus};
-                options.error(response, textStatus, errorThrown);
+                this.simulated_ajax_calls_options[id] = {options: options, keep: keep};
+                this.send({id: id, data: options.data});
+        }
+    },
+
+    make_obsolete_simulated_ajax_calls_options: function (all) {
+        console.log('Borrar - make_obsolete_simulated_ajax_calls_options - all: ' + all);
+        if (all) {
+          this.simulated_ajax_calls_options = {};
+        } else {
+          $.each(this.simulated_ajax_calls_options, function(id, simulated_ajax_call) {
+            if (!simulated_ajax_call.keep) delete this.simulated_ajax_calls_options[id];
+          });
         }
     },
 

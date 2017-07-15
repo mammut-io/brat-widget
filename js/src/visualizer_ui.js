@@ -10,7 +10,7 @@ var Ajax = require('./ajax');
 var URLHash = require('./url_monitor').URLHash;
 
 var VisualizerUI = (function($, window, undefined) {
-    var VisualizerUI = function(base_id, lookupContextForms, lookupContextMessages, Configuration, dispatcher, svg, model, simulate_ajax) {
+    var VisualizerUI = function(base_id, lookupContextForms, lookupContextMessages, Configuration, dispatcher, svg, simulate_ajax) {
       var that = this;
 
       var messagePostOutFadeDelay = 1000;
@@ -68,7 +68,7 @@ var VisualizerUI = (function($, window, undefined) {
 
       var $waiterDialog = $('#' + base_id + '_waiter', lookupContextMessages);
 
-      var ajax = new Ajax(base_id, dispatcher, simulate_ajax, model, $waiterDialog);
+      var ajax = new Ajax(base_id, dispatcher, simulate_ajax);
 /*
 
       // this is necessary for centering

@@ -3076,7 +3076,7 @@ Util.profileReport();
         dispatcher.post('ajax', [{
             action: 'getDocument',
             collection: coll,
-            'document': doc,
+            'document': doc
           }, 'renderData', {
             collection: coll,
             'document': doc

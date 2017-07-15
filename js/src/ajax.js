@@ -2,7 +2,7 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 var Ajax = (function($, window, undefined) {
     var PROTOCOL_VERSION = 1
-    var Ajax = function(base_id, dispatcher, simulate_ajax, model, $waiterDialog) {
+    var Ajax = function(base_id, dispatcher, simulate_ajax) {
       var that = this;
       var pending = 0;
       var count = 0;
@@ -95,7 +95,7 @@ var Ajax = (function($, window, undefined) {
           $.extend(options, extraOptions);
         }
         // $.ajax(options);
-        simulate_ajax(model, options);
+        simulate_ajax(id, options, pendingList[id]);
         return id;
       };
 

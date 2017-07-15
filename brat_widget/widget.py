@@ -40,7 +40,7 @@ class GeneralConfiguration:
         self.abbrevsOn = True
         self.textBackgrounds = "striped"
         self.svgWidth = '100%'
-        self.rapidModeOn = True
+        self.rapidModeOn = False
         self.confirmModeOn = True
         self.autorefreshOn = False
         self.typeCollapseLimit = 30
@@ -96,7 +96,11 @@ class Visualizer(widgets.DOMWidget):
 class Annotator(Visualizer):
     """"""
     def __init__(self, **kwargs):
+        def local_custom_message_handler(widget, content, buffers):
+            self._custom_message_handler(widget, content, buffers)
+
         super(Visualizer, self).__init__(**kwargs)
+        self.on_msg(local_custom_message_handler)
 
     _view_name = Unicode('AnnotatorView').tag(sync=True)
     _model_name = Unicode('AnnotatorModel').tag(sync=True)
@@ -108,3 +112,18 @@ class Annotator(Visualizer):
                                      default_value=GeneralConfiguration()).tag(sync=True,
                                                                                to_json=GeneralConfiguration.to_json,
                                                                                from_json=GeneralConfiguration.from_json)
+
+    def _custom_message_handler(self, widget, content, buffers):
+        content_dict = content#json.loads(content)
+        action = content_dict['data']['action']
+        current_id = content_dict['id']
+        response_dict = {
+            'action': action,
+            'id': current_id,
+            'success': False,
+            'response': {'statusText': 'Not supported action.'},
+            'textStatus': 'Not supported action ' + action,
+            'errorThrown': ''
+        }
+        self.send(response_dict)
+        print('Borrar - _custom_message_handler: {0} - {1}'.format(current_id, action))

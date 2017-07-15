@@ -57,10 +57,6 @@ For a development installation (requires npm),
 
 ## Examples of the JSON documents sent to the server:
 
-- [getCollectionInformation](http://www.jsoneditoronline.org/?id=18051ed6ecce9470a1e7ce21687421a4)
-- [getDocument](http://www.jsoneditoronline.org/?id=7b0c10727c1dac6519a99c3a3c4d3768)
-- [createSpan](http://www.jsoneditoronline.org/?id=c11d7be261c2f507f15ea9733e927d38)
-- [deleteSpan](http://www.jsoneditoronline.org/?id=0f7b67e68870e4525c4a0f58b50cade6)
-- [createArc](http://www.jsoneditoronline.org/?id=dcac7fd71ec6f3716ba9f0265cb399ff)
-- [reverseArc](http://www.jsoneditoronline.org/?id=dcac7fd71ec6f3716ba9f0265cbc464a)
-- [deleteArc](http://www.jsoneditoronline.org/?id=c11d7be261c2f507f15ea9733e97b3df)
+- [Span actions](http://www.jsoneditoronline.org/?id=c11d7be261c2f507f15ea9733e927d38)
+- [Arc actions](http://www.jsoneditoronline.org/?id=dcac7fd71ec6f3716ba9f0265cb399ff)
+- [Other actions](http://www.jsoneditoronline.org/?id=dcac7fd71ec6f3716ba9f0265cbc464a)
