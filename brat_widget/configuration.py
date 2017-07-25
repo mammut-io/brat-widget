@@ -17,6 +17,12 @@ SPECIAL_RELATION_TYPES = set([ENTITY_NESTING_TYPE,
                               TEXTBOUND_OVERLAP_TYPE])
 OVERLAP_TYPE_ARG = '<OVL-TYPE>'
 
+# Reserved strings with special meanings in configuration.
+reserved_config_name   = ["ANY", "ENTITY", "RELATION", "EVENT", "NONE", "EMPTY", "REL-TYPE", "URL", "URLBASE", "GLYPH-POS", "DEFAULT", "NORM", "OVERLAP", "OVL-TYPE", "INHERIT"]
+# TODO: "GLYPH-POS" is no longer used, warn if encountered and
+# recommend to use "position" instead.
+reserved_config_string = ["<%s>" % n for n in reserved_config_name]
+
 class InvalidProjectConfigException(Exception):
     pass
 
@@ -170,6 +176,23 @@ class CollectionConfiguration(JsonDumpable):
         self._labels_by_storage_form = {}
 
     def initialize(self):
+        def handle_arguments(a, keys_by_type, special_arguments):
+            if 'targets' in a:
+                # if a['type'] in reserved_config_string:
+                #     if a['type'] is special_arguments:
+                #         Messager.warning(
+                #             "Project configuration: error parsing: %s argument '%s' appears multiple times." % (
+                #                 a['type'],
+                #                 5))
+                #         raise InvalidProjectConfigException()
+                #     special_arguments[a['type']] = a['targets']
+                #     # NOTE: skip the rest of processing -- don't add in normal args
+                # else:
+                    for t in a['targets']:
+                        if t not in keys_by_type:
+                            keys_by_type[t] = []
+                        keys_by_type[t].append(a['type'])
+
         def add_label_by_storage_form(dict):
             if 'name' in dict:
                 self._labels_by_storage_form[dict['type']] = dict['name']
@@ -181,6 +204,7 @@ class CollectionConfiguration(JsonDumpable):
                 dst_planed_list.append(t)
                 dst_dict[t['type']] = t
                 add_label_by_storage_form(t)
+
         populate_dict(self.entity_types, self._planed_entity_types, self._dict_entity_types)
         populate_dict(self.entity_attribute_types, self._planed_entity_attribute_types, self._dict_entity_attribute_types)
         populate_dict(self.event_types, self._planed_event_types, self._dict_event_types)
@@ -189,19 +213,25 @@ class CollectionConfiguration(JsonDumpable):
         populate_dict(self.relation_attribute_types, self._planed_relation_attribute_types, self._dict_relation_attribute_types)
         for e in self._planed_event_types:
             keys_by_type = {}
+            # special case (sorry): if the key is a reserved config
+            # string (e.g. "<REL-TYPE>" or "<URL>"), parse differently
+            # and store separately
+            special_arguments = {}
             if 'arcs' in e:
                 for a in e['arcs']:
                     add_label_by_storage_form(a)
-                    if 'targets' in a:
-                        for t in a['targets']:
-                            if t not in keys_by_type:
-                                keys_by_type[t] = []
-                            keys_by_type[t].append(a['type'])
+                    handle_arguments(a, keys_by_type, special_arguments)
             e['keys_by_type'] = keys_by_type
+            # e['special_arguments'] = special_arguments
         for e in self._planed_entity_types:
+            keys_by_type = {}
+            special_arguments = {}
             if 'arcs' in e:
                 for a in e['arcs']:
                     add_label_by_storage_form(a)
+                    handle_arguments(a, keys_by_type, special_arguments)
+            e['keys_by_type'] = keys_by_type
+            # e['special_arguments'] = special_arguments
 
     def get_dict(self):
         dict = JsonDumpable.get_dict(self)
@@ -614,12 +644,12 @@ class CollectionConfiguration(JsonDumpable):
                                  '('+inner+','+outer+') in config. '+
                                  'Ignoring latter.')
             for r in ovl:
-                if OVERLAP_TYPE_ARG not in r.special_arguments:
+                if OVERLAP_TYPE_ARG not in r['properties']:
                     Messager.warning('Warning: missing '+OVERLAP_TYPE_ARG+
                                      ' for '+TEXTBOUND_OVERLAP_TYPE+
                                      ', ignoring specification.')
                     continue
-                for val in r.special_arguments[OVERLAP_TYPE_ARG]:
+                for val in r['properties'][OVERLAP_TYPE_ARG]:
                     ovl_types |= set(val.split('|'))
         elif nst:
             # translate into new-style configuration
@@ -643,6 +673,6 @@ class CollectionConfiguration(JsonDumpable):
         # and transitive, i.e. that have "symmetric" and "transitive"
         # in their "<REL-TYPE>" special argument values.
         return [t['type'] for t in self.get_relation_type_list()
-                if "<REL-TYPE>" in t.special_arguments and
-                "symmetric" in t.special_arguments["<REL-TYPE>"] and
-                "transitive" in t.special_arguments["<REL-TYPE>"]]
+                if "<REL-TYPE>" in t['properties'] and
+                "symmetric" in t['properties']["<REL-TYPE>"] and
+                "transitive" in t['properties']["<REL-TYPE>"]]

@@ -54,11 +54,21 @@ class Annotator(Visualizer):
         def deleteSpan(data):
             return self.value.delete_span(data['id'])
 
+        def createArc(data):
+            return self.value.create_arc(data)
+
+        def deleteArc(data):
+            return self.value.delete_arc(data['origin'], data['target'], data['type'])
+
         executor = None
         if action == 'createSpan':
             executor = createSpan
         elif action == 'deleteSpan':
             executor = deleteSpan
+        elif action == 'createArc':
+            executor = createArc
+        elif action == 'deleteArc':
+            executor = deleteArc
         return executor
 
     def _custom_message_handler(self, widget, content, buffers):

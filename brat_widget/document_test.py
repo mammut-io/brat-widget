@@ -560,7 +560,7 @@ class DocumentTest(unittest.TestCase):
                     entity_found = True
                     break
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
         self.assertTrue(entity_found, 'New entity not found')
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
@@ -585,7 +585,7 @@ class DocumentTest(unittest.TestCase):
                     entity_found = True
                     break
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
         self.assertTrue(entity_found, 'New entity not found')
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
@@ -616,7 +616,7 @@ class DocumentTest(unittest.TestCase):
                     comment_found = True
                     break
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
         self.assertTrue(entity_found, 'Edited entity not found')
         self.assertTrue(comment_found, 'New comment not found')
         msg_count = Messager.get_pending_messages_count()
@@ -648,7 +648,7 @@ class DocumentTest(unittest.TestCase):
                     comment_found = True
                     break
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
         self.assertTrue(entity_found, 'Edited event not found')
         self.assertTrue(comment_found, 'New comment not found')
         msg_count = Messager.get_pending_messages_count()
@@ -678,7 +678,7 @@ class DocumentTest(unittest.TestCase):
                     entity_found = True
                     break
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
         self.assertFalse(entity_found, 'Deleted entity was found')
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
@@ -718,13 +718,104 @@ class DocumentTest(unittest.TestCase):
                     entity_found = True
                     break
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
         self.assertFalse(entity_found, 'Deleted entity was found')
         self.assertFalse(event_found, 'Deleted event was found')
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
 
-    def test_20_instantiate_widget_visualizer_just_entities(self):
+    def test_11_create_arc_create_arc_1(self):
+        json_data = """{
+      "action": "createArc",
+      "origin": "T8",
+      "target": "T7",
+      "type": "Located",
+      "comment": "Prueba",
+      "protocol": 1
+    }"""
+        data = json.loads(json_data)
+        relation_found = False
+        try:
+            res = self.intro_document.create_arc(data)
+            self.intro_document.update_lists()
+            for r in self.intro_document.relations:
+                if r[1] == 'Located' and r[2][0][1] == "T8" and r[2][1][1] == "T7":
+                    relation_found = True
+                    break
+        except Exception as ex:
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
+        self.assertTrue(relation_found, 'New entity not found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_12_create_arc_edit_arc_1(self):
+        json_data = """{
+      "action": "createArc",
+      "origin": "T4",
+      "target": "T5",
+      "old_target": "T5",
+      "type": "Alias",
+      "old_type": "Family",
+      "id": "T4~Family~T5",
+      "comment": "Prueba2",
+      "protocol": 1
+    }"""
+        data = json.loads(json_data)
+        relation_found = False
+        comment_found = False
+        try:
+            res = self.intro_document.create_arc(data)
+            self.intro_document.update_lists()
+            relation_id = ''
+            for r in self.intro_document.relations:
+                if r[1] == 'Alias' and r[2][0][1] == "T4" and r[2][1][1] == "T5":
+                    relation_found = True
+                    relation_id = r[0]
+                    break
+            for c in self.intro_document.comments:
+                if c[0] == relation_id and c[1] == 'AnnotatorNotes' and c[2] == '\tPrueba2':
+                    comment_found = True
+                    break
+        except Exception as ex:
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
+        self.assertTrue(relation_found, 'Edited relation not found')
+        self.assertTrue(comment_found, 'New comment not found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_13_delete_arc_delete_arc_1(self):
+        json_data = """{
+      "action": "deleteArc",
+      "origin": "T4",
+      "target": "T5",
+      "old_target": "T5",
+      "type": "Family",
+      "old_type": "Family",
+      "id": "T4~Family~T5",
+      "protocol": 1
+    }"""
+        data = json.loads(json_data)
+        relation_found = False
+        try:
+            for r in self.intro_document.relations:
+                if r[0] == 'R1':
+                    relation_found = True
+                    break
+            self.assertTrue(relation_found, 'Initial relation not found')
+            res = self.intro_document.delete_arc(data['origin'], data['target'], data['type'])
+            self.intro_document.update_lists()
+            relation_found = False
+            for e in self.intro_document.relations:
+                if e[0] == 'R1':
+                    relation_found = True
+                    break
+        except Exception as ex:
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
+        self.assertFalse(relation_found, 'Deleted relation was found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_21_instantiate_widget_visualizer_just_entities(self):
         not_error = True
         try:
             just_entities_text = u"Ed O'Kelley was the man who shot the man who shot Jesse James."
@@ -745,11 +836,11 @@ class DocumentTest(unittest.TestCase):
             just_entities = Visualizer(value=just_entities_document,
                                        collection_configuration=self.just_entities_collection_configuration)
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
             not_error = False
         self.assertTrue(not_error, '')
 
-    def test_21_instantiate_widget_visualizer_entities_relations_and_events(self):
+    def test_22_instantiate_widget_visualizer_entities_relations_and_events(self):
         not_error = True
         try:
             entities_relations_and_events_text = u"Ed O'Kelley was the man who shot the man who shot Jesse James."
@@ -792,18 +883,18 @@ class DocumentTest(unittest.TestCase):
             entities_relations_and_events = Visualizer(value=entities_relations_and_events_document,
                                        collection_configuration=self.entities_relations_and_events_collection_configuration)
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
             not_error = False
         self.assertTrue(not_error, '')
 
-    def test_22_instantiate_widget_anotator_intro(self):
+    def test_23_instantiate_widget_anotator_intro(self):
         not_error = True
         try:
             intro = Annotator(value=self.intro_document,
                                    collection_configuration=self.full_collection_configuration,
                                    general_configuration=GeneralConfiguration())
         except Exception as ex:
-            print('Error: Unexpected exception: {ex}')
+            self.assertTrue(False, 'Error: Unexpected exception: {ex}')
             not_error = False
         self.assertTrue(not_error, '')
 

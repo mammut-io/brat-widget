@@ -11,7 +11,7 @@ except ImportError:
 
 from annotation import TextAnnotations, DISCONT_SEP, TextBoundAnnotationWithText, EventAnnotation, TextBoundAnnotation, \
     AttributeAnnotation, NormalizationAnnotation, OnelineCommentAnnotation, ALLOW_RELATIONS_REFERENCE_EVENT_TRIGGERS, \
-    DependingAnnotationDeleteError
+    DependingAnnotationDeleteError, EquivAnnotation, BinaryRelationAnnotation
 from messager import Messager
 from common import ProtocolError, JsonDumpable, ProtocolArgumentError
 
@@ -730,6 +730,326 @@ class Document(JsonDumpable):
         mods_json = mods.json_response()
         mods_json['annotations'] = self._json_from_ann()
         return mods_json
+
+    def create_arc(self, data):
+        origin = data['origin']
+        target = data['target']
+        type = data['type']
+        attributes = None
+        if 'attributes' in data:
+            attributes = data['attributes']
+        old_type = None
+        if 'old_type' in data:
+            old_type = data['old_type']
+        old_target = None
+        if 'old_target' in data:
+            old_target = data['old_target']
+        comment = None
+        if 'comment' in data:
+            comment = data['comment']
+
+        return self._create_arc(origin, target, type, attributes, old_type, old_target, comment)
+
+    # TODO: undo support
+    def _create_arc(self, origin, target, type, attributes=None,
+                   old_type=None, old_target=None, comment=None):
+        undo_resp = {}
+
+        mods = ModificationTracker()
+
+        origin = self.ann_obj.get_ann_by_id(origin)
+        target = self.ann_obj.get_ann_by_id(target)
+
+        # if there is a previous annotation and the arcs aren't in
+        # the same category (e.g. relation vs. event arg), process
+        # as delete + create instead of update.
+        if old_type is not None and (
+                        self.collection_configuration.is_relation_type(old_type) !=
+                        self.collection_configuration.is_relation_type(type) or
+                        self.collection_configuration.is_equiv_type(old_type) !=
+                        self.collection_configuration.is_equiv_type(type)):
+            self._delete_arc_with_ann(origin.id, old_target, old_type, mods)
+            old_target, old_type = None, None
+
+        if self.collection_configuration.is_equiv_type(type):
+            ann = self._create_equiv(mods, origin, target,
+                                type, attributes, old_type, old_target)
+
+        elif self.collection_configuration.is_relation_type(type):
+            ann = self._create_relation(mods, origin, target,
+                                   type, attributes, old_type, old_target)
+        else:
+            ann = self._create_argument(mods, origin, target,
+                                   type, attributes, old_type, old_target)
+
+        # process comments
+        if ann is not None:
+            self._set_comments(ann, comment, mods,
+                          undo_resp=undo_resp)
+        elif comment is not None:
+            Messager.warning('create_arc: non-empty comment for None annotation (unsupported type for comment?)')
+
+        mods_json = mods.json_response()
+        mods_json['annotations'] = self._json_from_ann()
+        return mods_json
+
+    def _delete_arc_with_ann(self, origin, target, type_, mods):
+        origin_ann = self.ann_obj.get_ann_by_id(origin)
+
+        # specifics of delete determined by arc type (equiv relation,
+        # other relation, event argument)
+        if self.collection_configuration.is_relation_type(type_):
+            if self.collection_configuration.is_equiv_type(type_):
+                self._delete_arc_equiv(origin, target, type_, mods)
+            else:
+                self._delete_arc_nonequiv_rel(origin, target, type_, mods)
+        elif self.collection_configuration.is_event_type(origin_ann.type):
+            self._delete_arc_event_arg(origin, target, type_, mods)
+        else:
+            Messager.error('Unknown annotation types for delete')
+
+    # helper for delete_arc
+    def _delete_arc_equiv(self, origin, target, type_, mods):
+        # TODO: this is slow, we should have a better accessor
+        for eq_ann in self.ann_obj.get_equivs():
+            # We don't assume that the ids only occur in one Equiv, we
+            # keep on going since the data "could" be corrupted
+            if (unicode(origin) in eq_ann.entities and
+                        unicode(target) in eq_ann.entities and
+                        type_ == eq_ann.type):
+                before = unicode(eq_ann)
+                eq_ann.entities.remove(unicode(origin))
+                eq_ann.entities.remove(unicode(target))
+                mods.change(before, eq_ann)
+
+            if len(eq_ann.entities) < 2:
+                # We need to delete this one
+                try:
+                    self.ann_obj.del_annotation(eq_ann)
+                    mods.deletion(eq_ann)
+                except DependingAnnotationDeleteError as e:
+                    # TODO: This should never happen, dep on equiv
+                    raise
+
+                    # TODO: warn on failure to delete?
+
+    # helper for delete_arc
+    def _delete_arc_nonequiv_rel(self, origin, target, type_, mods):
+        # TODO: this is slow, we should have a better accessor
+        for ann in self.ann_obj.get_relations():
+            if ann.type == type_ and ann.arg1 == origin and ann.arg2 == target:
+                self.ann_obj.del_annotation(ann)
+                mods.deletion(ann)
+
+                # TODO: warn on failure to delete?
+
+    # helper for delete_arc
+    def _delete_arc_event_arg(self, origin, target, type_, mods):
+        event_ann = self.ann_obj.get_ann_by_id(origin)
+        # Try if it is an event
+        arg_tup = (type_, unicode(target))
+        if arg_tup in event_ann.args:
+            before = unicode(event_ann)
+            event_ann.args.remove(arg_tup)
+            mods.change(before, event_ann)
+        else:
+            # What we were to remove did not even exist in the first place
+            # TODO: warn on failure to delete?
+            pass
+
+    def _create_equiv(self, mods, origin, target, type, attributes,
+                      old_type, old_target):
+        # due to legacy representation choices for Equivs (i.e. no
+        # unique ID), support for attributes for Equivs would need
+        # some extra work. Getting the easy non-Equiv case first.
+        if attributes is not None:
+            Messager.warning(
+                '_create_equiv: attributes for Equiv annotation not supported yet, please tell the devs if you need this feature (mention "issue #799").')
+            attributes = None
+
+        ann = None
+
+        if old_type is None:
+            # new annotation
+
+            # sanity
+            assert old_target is None, '_create_equiv: incoherent args: old_type is None, old_target is not None (client/protocol error?)'
+
+            ann = EquivAnnotation(type, [unicode(origin.id),
+                                         unicode(target.id)], '')
+            self.ann_obj.add_annotation(ann)
+            mods.addition(ann)
+
+            # TODO: attributes
+            assert attributes is None, "INTERNAL ERROR"  # see above
+        else:
+            # change to existing Equiv annotation. Other than the no-op
+            # case, this remains TODO.
+            assert self.collection_configuration.is_equiv_type(
+                old_type), 'attempting to change equiv relation to non-equiv relation, operation not supported'
+
+            # sanity
+            assert old_target is not None, '_create_equiv: incoherent args: old_type is not None, old_target is None (client/protocol error?)'
+
+            if old_type != type:
+                Messager.warning(
+                    '_create_equiv: equiv type change not supported yet, please tell the devs if you need this feature (mention "issue #798").')
+
+            if old_target != target.id:
+                Messager.warning(
+                    '_create_equiv: equiv reselect not supported yet, please tell the devs if you need this feature (mention "issue #797").')
+
+            # TODO: attributes
+            assert attributes is None, "INTERNAL ERROR"  # see above
+
+        return ann
+
+    def _create_relation(self, mods, origin, target, type,
+                         attributes, old_type, old_target, undo_resp={}):
+        attributes = self._parse_attributes(attributes)
+
+        if old_type is not None or old_target is not None:
+            assert type in self.collection_configuration.get_relation_types(), (
+                ('attempting to convert relation to non-relation "%s" ' % (target.type,)) +
+                ('(legit types: %s)' % (unicode(self.collection_configuration.get_relation_types()),)))
+
+            sought_target = (old_target
+                             if old_target is not None else target.id)
+            sought_type = (old_type
+                           if old_type is not None else type)
+            sought_origin = origin.id
+
+            # We are to change the type, target, and/or attributes
+            found = None
+            for ann in self.ann_obj.get_relations():
+                if (ann.arg1 == sought_origin and ann.arg2 == sought_target and
+                            ann.type == sought_type):
+                    found = ann
+                    break
+
+            if found is None:
+                # TODO: better response
+                Messager.error('_create_relation: failed to identify target relation (type %s, target %s) (deleted?)' % (
+                str(old_type), str(old_target)))
+            elif found.arg2 == target.id and found.type == type:
+                # no changes to type or target
+                pass
+            else:
+                # type and/or target changed, mark.
+                before = unicode(found)
+                found.arg2 = target.id
+                found.type = type
+                mods.change(before, found)
+
+            target_ann = found
+        else:
+            # Create a new annotation
+            new_id = self.ann_obj.get_new_id('R')
+            # TODO: do we need to support different relation arg labels
+            # depending on participant types? This doesn't.
+            rels = self.collection_configuration.get_relations_by_type(type)
+            rel = rels[0] if rels else None
+            assert rel is not None and len(rel['args']) == 2
+            a1l = rel['args'][0]['role']
+            a2l = rel['args'][1]['role']
+            ann = BinaryRelationAnnotation(new_id, type, a1l, origin.id, a2l, target.id, '\t')
+            mods.addition(ann)
+            self.ann_obj.add_annotation(ann)
+
+            target_ann = ann
+
+        # process attributes
+        if target_ann is not None:
+            self._set_attributes(target_ann, attributes, mods, undo_resp)
+        elif attributes != None:
+            Messager.error(
+                '_create_relation: cannot set arguments: failed to identify target relation (type %s, target %s) (deleted?)' % (
+                str(old_type), str(old_target)))
+
+        return target_ann
+
+    def _create_argument(self, mods, origin, target, type,
+                         attributes, old_type, old_target):
+        try:
+            arg_tup = (type, unicode(target.id))
+
+            # Is this an addition or an update?
+            if old_type is None and old_target is None:
+                if arg_tup not in origin.args:
+                    before = unicode(origin)
+                    origin.add_argument(type, unicode(target.id))
+                    mods.change(before, origin)
+                else:
+                    # It already existed as an arg, we were called to do nothing...
+                    pass
+            else:
+                # Construct how the old arg would have looked like
+                old_arg_tup = (type if old_type is None else old_type,
+                               target if old_target is None else old_target)
+
+                if old_arg_tup in origin.args and arg_tup not in origin.args:
+                    before = unicode(origin)
+                    origin.args.remove(old_arg_tup)
+                    origin.add_argument(type, unicode(target.id))
+                    mods.change(before, origin)
+                else:
+                    # Collision etc. don't do anything
+                    pass
+        except AttributeError:
+            # The annotation did not have args, it was most likely an entity
+            # thus we need to create a new Event...
+            new_id = self.ann_obj.get_new_id('E')
+            ann = EventAnnotation(
+                origin.id,
+                [arg_tup],
+                new_id,
+                origin.type,
+                ''
+            )
+            self.ann_obj.add_annotation(ann)
+            mods.addition(ann)
+
+        # No addressing mechanism for arguments at the moment
+        return None
+
+    def delete_arc(self, origin, target, type):
+        mods = ModificationTracker()
+
+        self._delete_arc_with_ann(origin, target, type, mods)
+
+        mods_json = mods.json_response()
+        mods_json['annotations'] = self._json_from_ann()
+        return mods_json
+
+        # TODO: error handling?
+
+    def reverse_arc(self, origin, target, type, attributes=None):
+        # undo_resp = {} # TODO
+        # mods = ModificationTracker() # TODO
+        if self.collection_configuration.is_equiv_type(type):
+            Messager.warning('Cannot reverse Equiv arc')
+        elif not self.collection_configuration.is_relation_type(type):
+            Messager.warning('Can only reverse configured binary relations')
+        else:
+            # OK to reverse
+            found = None
+            # TODO: more sensible lookup
+            for ann in self.ann_obj.get_relations():
+                if (ann.arg1 == origin and ann.arg2 == target and
+                            ann.type == type):
+                    found = ann
+                    break
+            if found is None:
+                Messager.error('reverse_arc: failed to identify target relation (from %s to %s, type %s) (deleted?)' % (
+                str(origin), str(target), str(type)))
+            else:
+                # found it; just adjust this
+                found.arg1, found.arg2 = found.arg2, found.arg1
+                # TODO: modification tracker
+
+        json_response = {}
+        json_response['annotations'] = self._json_from_ann()
+        return json_response
 
 
 class ModificationTracker(object):
