@@ -1,21 +1,4 @@
 # coding=utf-8
-# !/usr/bin/env python
-# -*- Mode: Python; tab-width: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-# vim:set ft=python ts=4 sw=4 sts=4 autoindent:
-
-'''
-Annotator functionality, editing and retrieving status.
-
-Author:     Pontus Stenetorp
-Version:    2011-04-22
-'''
-
-# XXX: This module is messy, re-factor to be done
-
-from __future__ import with_statement
-
-from os.path import join as path_join
-from os.path import split as path_split
 from re import compile as re_compile
 
 from annotation import (OnelineCommentAnnotation, TEXT_FILE_SUFFIX,
@@ -23,119 +6,11 @@ from annotation import (OnelineCommentAnnotation, TEXT_FILE_SUFFIX,
                         EventAnnotation, EquivAnnotation, open_textfile,
                         AnnotationsIsReadOnlyError, AttributeAnnotation,
                         NormalizationAnnotation, SpanOffsetOverlapError, DISCONT_SEP)
-from common import ProtocolError, ProtocolArgumentError
-
-try:
-    from config import DEBUG
-except ImportError:
-    DEBUG = False
-from document import real_directory
-from jsonwrap import loads as json_loads, dumps as json_dumps
-from message import Messager
-from projectconfig import ProjectConfiguration, ENTITY_CATEGORY, EVENT_CATEGORY, RELATION_CATEGORY, UNKNOWN_CATEGORY
 
 ### Constants
 MUL_NL_REGEX = re_compile(r'\n+')
 
 
-###
-
-# TODO: Couldn't we incorporate this nicely into the Annotations class?
-# TODO: Yes, it is even gimped compared to what it should do when not. This
-#       has been a long pending goal for refactoring.
-class ModificationTracker(object):
-    def __init__(self):
-        self.__added = []
-        self.__changed = []
-        self.__deleted = []
-
-    def __len__(self):
-        return len(self.__added) + len(self.__changed) + len(self.__deleted)
-
-    def addition(self, added):
-        self.__added.append(added)
-
-    def deletion(self, deleted):
-        self.__deleted.append(deleted)
-
-    def change(self, before, after):
-        self.__changed.append((before, after))
-
-    def json_response(self, response=None):
-        if response is None:
-            response = {}
-
-        # debugging
-        if DEBUG:
-            msg_str = ''
-            if self.__added:
-                msg_str += ('Added the following line(s):\n'
-                            + '\n'.join([unicode(a).rstrip() for a in self.__added]))
-            if self.__changed:
-                changed_strs = []
-                for before, after in self.__changed:
-                    changed_strs.append('\t%s\n\tInto:\n\t%s' % (unicode(before).rstrip(), unicode(after).rstrip()))
-                msg_str += ('Changed the following line(s):\n'
-                            + '\n'.join([unicode(a).rstrip() for a in changed_strs]))
-            if self.__deleted:
-                msg_str += ('Deleted the following line(s):\n'
-                            + '\n'.join([unicode(a).rstrip() for a in self.__deleted]))
-            if msg_str:
-                Messager.info(msg_str, duration=3 * len(self))
-            else:
-                Messager.info('No changes made')
-
-        # highlighting
-        response['edited'] = []
-        # TODO: implement cleanly, e.g. add a highlightid() method to Annotation classes
-        for a in self.__added:
-            try:
-                response['edited'].append(a.reference_id())
-            except AttributeError:
-                pass  # not all implement reference_id()
-        for b, a in self.__changed:
-            # can't mark "before" since it's stopped existing
-            try:
-                response['edited'].append(a.reference_id())
-            except AttributeError:
-                pass  # not all implement reference_id()
-
-        # unique, preserve order
-        seen = set()
-        uniqued = []
-        for i in response['edited']:
-            s = str(i)
-            if s not in seen:
-                uniqued.append(i)
-                seen.add(s)
-        response['edited'] = uniqued
-
-        return response
-
-
-# TODO: revive the "unconfirmed annotation" functionality;
-# the following currently unused bit may help
-# def confirm_span(docdir, docname, span_id):
-#     document = path_join(docdir, docname)
-
-#     txt_file_path = document + '.' + TEXT_FILE_SUFFIX
-
-#     with TextAnnotations(document) as ann_obj:
-#         mods = ModificationTracker()
-
-#         # find AnnotationUnconfirmed comments that refer
-#         # to the span and remove them
-#         # TODO: error checking
-#         for ann in ann_obj.get_oneline_comments():
-#             if ann.type == "AnnotationUnconfirmed" and ann.target == span_id:
-#                 ann_obj.del_annotation(ann, mods)
-
-#         mods_json = mods.json_response()
-#         # save a roundtrip and send the annotations also
-#         j_dic = _json_from_ann(ann_obj)
-#         mods_json['annotations'] = j_dic
-#         add_messages_to_json(mods_json)
-#         print dumps(mods_json)
 
 def _json_from_ann(ann_obj):
     # Returns json with ann_obj contents and the relevant text.  Used
@@ -163,32 +38,8 @@ from annotation import TextBoundAnnotation, TextBoundAnnotationWithText
 from copy import deepcopy
 
 
-def _offsets_equal(o1, o2):
-    """
-    Given two lists of (start, end) integer offset sets, returns
-    whether they identify the same sets of characters.
-    """
-    # TODO: full implementation; current doesn't check for special
-    # cases such as dup or overlapping (start, end) pairs in a single
-    # set.
-
-    # short-circuit (expected to be the most common case)
-    if o1 == o2:
-        return True
-    return sorted(o1) == sorted(o2)
 
 
-def _text_for_offsets(text, offsets):
-    """
-    Given a text and a list of (start, end) integer offsets, returns
-    the (catenated) text corresponding to those offsets, joined
-    appropriately for use in a TextBoundAnnotation(WithText).
-    """
-    try:
-        return DISCONT_SEP.join(text[s:e] for s, e in offsets)
-    except Exception:
-        Messager.error('_text_for_offsets: failed to get text for given offsets (%s)' % str(offsets))
-        raise ProtocolArgumentError
 
 
 def _edit_span(ann_obj, mods, id, offsets, projectconf, attributes, type,
@@ -419,33 +270,6 @@ def _set_attributes(ann_obj, ann, attributes, mods, undo_resp={}):
             mods.addition(new_attr)
 
 
-def _json_offsets_to_list(offsets):
-    try:
-        offsets = json_loads(offsets)
-    except Exception:
-        Messager.error(
-            'create_span: protocol argument error: expected offsets as JSON, but failed to parse "%s"' % str(offsets))
-        raise ProtocolArgumentError
-    try:
-        offsets = [(int(s), int(e)) for s, e in offsets]
-    except Exception:
-        Messager.error(
-            'create_span: protocol argument error: expected offsets as list of int pairs, received "%s"' % str(offsets))
-        raise ProtocolArgumentError
-    return offsets
-
-
-# TODO: unshadow Python internals like "type" and "id"
-def create_span(collection, document, offsets, type, attributes=None,
-                normalizations=None, id=None, comment=None):
-    # offsets should be JSON string corresponding to a list of (start,
-    # end) pairs; convert once at this interface
-    offsets = _json_offsets_to_list(offsets)
-
-    return _create_span(collection, document, offsets, type, attributes,
-                        normalizations, id, comment)
-
-
 def _set_normalizations(ann_obj, ann, normalizations, mods, undo_resp={}):
     # Find existing normalizations (if any)
     existing_norm_anns = set((a for a in ann_obj.get_normalizations()
@@ -498,47 +322,8 @@ def _set_normalizations(ann_obj, ann, normalizations, mods, undo_resp={}):
             mods.addition(new_norm)
 
 
-# helper for _create methods
-def _parse_attributes(attributes):
-    if attributes is None:
-        _attributes = {}
-    else:
-        try:
-            _attributes = json_loads(attributes)
-        except ValueError:
-            # Failed to parse, warn the client
-            Messager.warning((u'Unable to parse attributes string "%s" for '
-                              u'"createSpan", ignoring attributes for request and '
-                              u'assuming no attributes set') % (attributes,))
-            _attributes = {}
-
-        ### XXX: Hack since the client is sending back False and True as values...
-        # These are __not__ to be sent, they violate the protocol
-        for _del in [k for k, v in _attributes.items() if v == False]:
-            del _attributes[_del]
-
-        # These are to be old-style modifiers without values
-        for _revalue in [k for k, v in _attributes.items() if v == True]:
-            _attributes[_revalue] = True
-            ###
-    return _attributes
 
 
-# helper for _create_span
-def _parse_span_normalizations(normalizations):
-    if normalizations is None:
-        _normalizations = {}
-    else:
-        try:
-            _normalizations = json_loads(normalizations)
-        except ValueError:
-            # Failed to parse, warn the client
-            Messager.warning((u'Unable to parse normalizations string "%s" for '
-                              u'"createSpan", ignoring normalizations for request and '
-                              u'assuming no normalizations set') % (normalizations,))
-            _normalizations = {}
-
-    return _normalizations
 
 
 # Helper for _create functions
@@ -582,23 +367,6 @@ def _set_comments(ann_obj, ann, comment, mods, undo_resp={}):
             ann_obj.del_annotation(found)
             mods.deletion(found)
 
-
-# Sanity check, a span can't overlap itself
-def _offset_overlaps(offsets):
-    for i in xrange(len(offsets)):
-        i_start, i_end = offsets[i]
-        for j in xrange(i + 1, len(offsets)):
-            j_start, j_end = offsets[j]
-            if (
-                    # i overlapping or in j
-                                (j_start <= i_start < j_end) or (j_start < i_end < j_end)
-                        or
-                        # j overlapping or in i
-                            (i_start <= j_start < i_end) or (i_start < j_end < i_end)
-            ):
-                return True
-    # No overlap detected
-    return False
 
 
 # TODO: ONLY determine what action to take! Delegate to Annotations!

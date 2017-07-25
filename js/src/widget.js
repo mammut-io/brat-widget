@@ -47,7 +47,7 @@ var VisualizerModel = widgets.DOMWidgetModel.extend({
         _view_module: 'brat-widget',
         _model_module_version: '0.1.0',
         _view_module_version: '0.1.0',
-        collection: {},
+        collection_configuration: {},
         value: {}
     })
 });
@@ -71,23 +71,25 @@ var VisualizerView = widgets.DOMWidgetView.extend({
             var $divSvg = $('<div id="' + this.el.id + '_svg"></div>');
             this.embed($divSvg);
         }
-        this.model.get('value').collection = null;
+        this.model.get('value').collection_configuration = null;
         this.collection_changed();
         this.value_changed();
-        this.model.on('change:collection', this.collection_changed, this);
+        this.model.on('change:collection_configuration', this.collection_changed, this);
         this.model.on('change:value', this.value_changed, this);
     },
 
     value_changed: function () {
         if (this.dispatcher !== undefined) {
-            var docData = this.model.get('value');
+            var docData = JSON.parse(this.model.get('value'));
+            // var docData = this.model.get('value');
             this.dispatcher.post('requestRenderData', [docData]);
         }
     },
 
     collection_changed: function () {
         if (this.dispatcher !== undefined) {
-            var collData = this.model.get('collection');
+            var collData = JSON.parse(this.model.get('collection_configuration'));
+            // var collData = this.model.get('collection_configuration');
             this.dispatcher.post('collectionLoaded', [collData]);
         }
     },
@@ -182,6 +184,8 @@ var AnnotatorView = VisualizerView.extend({
             if(!content.success){
                 options.error(content.response, content.textStatus, content.errorThrown);
             }
+            else
+                options.success(content.response);
             delete this.simulated_ajax_calls_options[content.id];
         }
         else
@@ -201,7 +205,7 @@ var AnnotatorView = VisualizerView.extend({
                 break;
             case 'getDocument':
                 console.log('AJAX SIMULATOR: getting document.');
-                response = this.model.get('value');
+                response = JSON.parse(this.model.get('value'));
                 $.extend(response, {action: options.data.action});
                 options.success(response);
                 break;

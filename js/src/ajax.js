@@ -35,7 +35,7 @@ var Ajax = (function($, window, undefined) {
             success: function(response) {
               pending--;
               // If no exception is set, verify the server results
-              if (response.exception == undefined && response.action !== data.action) {
+              if (response.exception === undefined && response.action !== data.action) {
                 console.error('Action ' + data.action +
                   ' returned the results of action ' + response.action);
                 response.exception = true;

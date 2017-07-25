@@ -1,83 +1,10 @@
 import ipywidgets as widgets
 from traitlets import Unicode, Dict, Instance
-import json
 
-class GeneralVisualConfiguration:
-    def __init__(self):
-        self.marginX = 2
-        self.marginY = 1
-        self.arcTextMargin = 1
-        self.boxSpacing = 1
-        self.curlyHeight = 4
-        self.arcSpacing = 9 # 10
-        self.arcStartHeight = 19 # 23 # 25
-
-    def get_dict(self):
-        return {
-            'margin': {
-                'x': self.marginX,
-                'y': self.marginY
-            },
-            'arcTextMargin': self.arcTextMargin,
-            'boxSpacing': self.boxSpacing,
-            'curlyHeight': self.curlyHeight,
-            'arcSpacing': self.arcSpacing,
-            'arcStartHeight': self.arcStartHeight
-        }
-
-    def set_from_dict(self, dict):
-        self.marginX = dict['margin']['x']
-        self.marginY = dict['margin']['y']
-        self.arcTextMargin = dict['arcTextMargin']
-        self.boxSpacing = dict['boxSpacing']
-        self.curlyHeight = dict['curlyHeight']
-        self.arcSpacing = dict['arcSpacing']
-        self.arcStartHeight = dict['arcStartHeight']
-
-
-class GeneralConfiguration:
-    def __init__(self):
-        self.abbrevsOn = True
-        self.textBackgrounds = "striped"
-        self.svgWidth = '100%'
-        self.rapidModeOn = False
-        self.confirmModeOn = True
-        self.autorefreshOn = False
-        self.typeCollapseLimit = 30
-        self.visual = GeneralVisualConfiguration()
-
-    def get_dict(self):
-        return {
-            'abbrevsOn': self.abbrevsOn,
-            'textBackgrounds': self.textBackgrounds,
-            'svgWidth': self.svgWidth,
-            'rapidModeOn': self.rapidModeOn,
-            'confirmModeOn': self.confirmModeOn,
-            'autorefreshOn': self.autorefreshOn,
-            'typeCollapseLimit': self.typeCollapseLimit,
-            'visual': self.visual.get_dict()
-        }
-
-    def set_from_dict(self, dict):
-        self.abbrevsOn = dict['abbrevsOn']
-        self.textBackgrounds = dict['textBackgrounds']
-        self.svgWidth = dict['svgWidth']
-        self.rapidModeOn = dict['rapidModeOn']
-        self.confirmModeOn = dict['confirmModeOn']
-        self.autorefreshOn = dict['autorefreshOn']
-        self.typeCollapseLimit = dict['typeCollapseLimit']
-        self.visual.set_from_dict(dict['visual'])
-
-    @classmethod
-    def to_json(cls, conf, widget_model):
-        return json.dumps(conf.get_dict())
-
-    @classmethod
-    def from_json(cls, json_str, widget_model):
-        dict = json.loads(json_str)
-        res = GeneralConfiguration()
-        res.set_from_dict(dict)
-        return res
+from common import ProtocolError
+from configuration import GeneralConfiguration, CollectionConfiguration
+from document import Document
+from messager import Messager
 
 
 @widgets.register('brat.Visualizer')
@@ -89,8 +16,15 @@ class Visualizer(widgets.DOMWidget):
     _model_module = Unicode('brat-widget').tag(sync=True)
     _view_module_version = Unicode('^0.1.0').tag(sync=True)
     _model_module_version = Unicode('^0.1.0').tag(sync=True)
-    value = Dict().tag(sync=True)
-    collection = Dict().tag(sync=True)
+    value = Instance(klass=Document,default_value=Document()).tag(sync=True,
+                                                                  to_json=Document.to_json,
+                                                                  from_json=Document.from_json)
+    collection_configuration = Instance(klass=CollectionConfiguration,
+                                     default_value=CollectionConfiguration()).tag(sync=True,
+                                                                               to_json=CollectionConfiguration.to_json,
+                                                                               from_json=CollectionConfiguration.from_json)
+    # value = Dict().tag(sync=True)
+    # collection_configuration = Dict().tag(sync=True)
 
 @widgets.register('brat.Annotator')
 class Annotator(Visualizer):
@@ -113,17 +47,42 @@ class Annotator(Visualizer):
                                                                                to_json=GeneralConfiguration.to_json,
                                                                                from_json=GeneralConfiguration.from_json)
 
+    def _get_action_executor(self, action):
+        def createSpan(data):
+            return self.value.create_span(data)
+
+        executor = None
+        if action == 'createSpan':
+            executor = createSpan
+        return executor
+
     def _custom_message_handler(self, widget, content, buffers):
-        content_dict = content#json.loads(content)
+        content_dict = content
         action = content_dict['data']['action']
         current_id = content_dict['id']
+        executor = self._get_action_executor(action)
+        response = {'action': action}
         response_dict = {
             'action': action,
             'id': current_id,
-            'success': False,
-            'response': {'statusText': 'Not supported action.'},
-            'textStatus': 'Not supported action ' + action,
-            'errorThrown': ''
+            'success': True
         }
+        if executor:
+            try:
+                response.update(executor(content_dict['data']))
+            except ProtocolError as pe:
+                print('Error: ' + str(pe))
+                pe.json(response)
+            except Exception as e:
+                print('Error: ' + str(e))
+                response['exception'] = 'Unexpected exception: ' + e.message
+        else:
+            response['statusText'] = 'Not supported action.'
+            #This was inherited from the original brat implementation. It was used to handle the ajax errors
+            response_dict['success'] = False
+            response_dict['textStatus'] = 'Not supported action ' + action
+            response_dict['errorThrown'] = ''
+        Messager.output_json(response)
+        response_dict['response'] = response
         self.send(response_dict)
-        print('Borrar - _custom_message_handler: {0} - {1}'.format(current_id, action))
+        print('Borrar - _custom_message_handler: {0} - {1} \n {2}'.format(current_id, action, content_dict['data']))

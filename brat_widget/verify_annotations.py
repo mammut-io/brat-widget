@@ -1,14 +1,6 @@
-#!/usr/bin/env python
-# -*- Mode: Python; tab-width: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-# vim:set ft=python ts=4 sw=4 sts=4 autoindent:
-
-# Verification of BioNLP Shared Task - style annotations.
+# coding=utf-8
 
 from __future__ import with_statement
-
-import annotation
-
-from projectconfig import ProjectConfiguration
 
 # Issue types. Values should match with annotation interface.
 AnnotationError = "AnnotationError"
@@ -85,12 +77,12 @@ def check_textbound_overlap(anns):
 
     return overlapping
 
-def verify_equivs(ann_obj, projectconf):
+def verify_equivs(ann_obj, collection_configuration):
     issues = []
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     for eq in ann_obj.get_equivs():
         # get the equivalent annotations
@@ -112,11 +104,11 @@ def verify_equivs(ann_obj, projectconf):
         marked = {}
 
         for t1, t2 in type_pairs:
-            reltypes = projectconf.relation_types_from_to(t1, t2)
+            reltypes = collection_configuration.relation_types_from_to(t1, t2)
             # TODO: this is too convoluted; use projectconf directly
             equiv_type_found = False
             for rt in reltypes:
-                if projectconf.is_equiv_type(rt):
+                if collection_configuration.is_equiv_type(rt):
                     equiv_type_found = True
             if not equiv_type_found:
                 # Avoid redundant output
@@ -129,43 +121,43 @@ def verify_equivs(ann_obj, projectconf):
 
     return issues
 
-def verify_entity_overlap(ann_obj, projectconf):
+def verify_entity_overlap(ann_obj, collection_configuration):
     issues = []
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     # check for overlap between physical entities
-    physical_entities = [a for a in ann_obj.get_textbounds() if projectconf.is_physical_entity_type(a.type)]
+    physical_entities = [a for a in ann_obj.get_textbounds() if collection_configuration.is_physical_entity_type(a.type)]
     overlapping = check_textbound_overlap(physical_entities)
     for a1, a2 in overlapping:
         if a1.same_span(a2):
-            if not projectconf.spans_can_be_equal(a1.type, a2.type):
-                issues.append(AnnotationIssue(a1.id, AnnotationError, "Error: %s cannot have identical span with %s %s" % (disp(a1.type), disp(a2.type), a2.id)))            
+            if not collection_configuration.spans_can_be_equal(a1.type, a2.type):
+                issues.append(AnnotationIssue(a1.id, AnnotationError, "Error: %s cannot have identical span with %s %s" % (disp(a1.type), disp(a2.type), a2.id)))
         elif a2.contains(a1):
-            if not projectconf.span_can_contain(a1.type, a2.type):
+            if not collection_configuration.span_can_contain(a1.type, a2.type):
                 issues.append(AnnotationIssue(a1.id, AnnotationError, "Error: %s cannot be contained in %s (%s)" % (disp(a1.type), disp(a2.type), a2.id)))
         elif a1.contains(a2):
-            if not projectconf.span_can_contain(a2.type, a1.type):
+            if not collection_configuration.span_can_contain(a2.type, a1.type):
                 issues.append(AnnotationIssue(a1.id, AnnotationError, "Error: %s cannot contain %s (%s)" % (disp(a1.type), disp(a2.type), a2.id)))
         else:
-            if not projectconf.spans_can_cross(a1.type, a2.type):
+            if not collection_configuration.spans_can_cross(a1.type, a2.type):
                 issues.append(AnnotationIssue(a1.id, AnnotationError, "Error: annotation cannot have crossing span with %s" % a2.id))
     
     # TODO: generalize to other cases
     return issues
 
-def verify_annotation_types(ann_obj, projectconf):
+def verify_annotation_types(ann_obj, collection_configuration):
     issues = []
 
-    event_types = projectconf.get_event_types()
-    textbound_types = event_types + projectconf.get_entity_types()
-    relation_types = projectconf.get_relation_types()
+    event_types = collection_configuration.get_event_types()
+    textbound_types = event_types + collection_configuration.get_entity_types()
+    relation_types = collection_configuration.get_relation_types()
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     for e in ann_obj.get_events():
         if e.type not in event_types:
@@ -181,7 +173,7 @@ def verify_annotation_types(ann_obj, projectconf):
 
     return issues
 
-def verify_triggers(ann_obj, projectconf):
+def verify_triggers(ann_obj, collection_configuration):
     issues = []
 
     events_by_trigger = {}
@@ -194,7 +186,7 @@ def verify_triggers(ann_obj, projectconf):
     trigger_by_span_and_type = {}
 
     for t in ann_obj.get_textbounds():
-        if not projectconf.is_event_type(t.type):
+        if not collection_configuration.is_event_type(t.type):
             continue
 
         if t.id not in events_by_trigger:
@@ -221,18 +213,18 @@ def verify_triggers(ann_obj, projectconf):
     return issues
 
 def _relation_labels_match(rel, rel_conf):
-    if len(rel_conf.arg_list) != 2:
+    if len(rel_conf['args']) != 2:
         # likely misconfigured relation, can't match
         return False
-    return (rel.arg1l == rel_conf.arg_list[0] and
-            rel.arg2l == rel_conf.arg_list[1])
+    return (rel.arg1l == rel_conf['args'][0]['role'] and
+            rel.arg2l == rel_conf['args'][1]['role'])
 
-def verify_relations(ann_obj, projectconf):
+def verify_relations(ann_obj, collection_configuration):
     issues = []
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     # TODO: rethink this function.
     for r in ann_obj.get_relations():
@@ -241,9 +233,9 @@ def verify_relations(ann_obj, projectconf):
         match_found = False
 
         # check for argument order a1, a2
-        if r.type in projectconf.relation_types_from_to(a1.type, a2.type):
+        if r.type in collection_configuration.relation_types_from_to(a1.type, a2.type):
             # found for argument order a1, a2; check labels
-            conf_rels = projectconf.get_relations_by_type(r.type)
+            conf_rels = collection_configuration.get_relations_by_type(r.type)
             if any(c for c in conf_rels if _relation_labels_match(r, c)):
                 match_found = True
         if match_found:
@@ -252,8 +244,8 @@ def verify_relations(ann_obj, projectconf):
         # no match for argument order a1, a2; try a2, a1
         # temp inversion for check
         r.arg1, r.arg2, r.arg1l, r.arg2l = r.arg2, r.arg1, r.arg2l, r.arg1l
-        if r.type in projectconf.relation_types_from_to(a2.type, a1.type):
-            conf_rels = projectconf.get_relations_by_type(r.type)
+        if r.type in collection_configuration.relation_types_from_to(a2.type, a1.type):
+            conf_rels = collection_configuration.get_relations_by_type(r.type)
             if any(c for c in conf_rels if _relation_labels_match(r, c)):
                 match_found = True
         r.arg1, r.arg2, r.arg1l, r.arg2l = r.arg2, r.arg1, r.arg2l, r.arg1l
@@ -265,7 +257,7 @@ def verify_relations(ann_obj, projectconf):
 
     return issues
 
-def verify_missing_arguments(ann_obj, projectconf):
+def verify_missing_arguments(ann_obj, collection_configuration):
     """
     Checks for events having too few mandatory arguments.
     """
@@ -273,14 +265,14 @@ def verify_missing_arguments(ann_obj, projectconf):
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
     
     for e in ann_obj.get_events():
         nonum_arg_counts = event_nonum_arg_count(e)
-        for m in projectconf.mandatory_arguments(e.type):
+        for m in collection_configuration.mandatory_arguments_for_event(e.type):
             c = nonum_arg_counts.get(m, 0)
-            amin = projectconf.argument_minimum_count(e.type, m)
-            amax = projectconf.argument_maximum_count(e.type, m)
+            amin = collection_configuration.argument_minimum_count_for_event(e.type, m)
+            amax = collection_configuration.argument_maximum_count_for_event(e.type, m)
             if c < amin:
                 # insufficient, pick appropriate string and add issue
                 if amin == 1:
@@ -296,7 +288,7 @@ def verify_missing_arguments(ann_obj, projectconf):
 
     return issues
 
-def verify_disallowed_arguments(ann_obj, projectconf):
+def verify_disallowed_arguments(ann_obj, collection_configuration):
     """
     Checks for events with arguments they are not allowed to
     have.
@@ -305,10 +297,10 @@ def verify_disallowed_arguments(ann_obj, projectconf):
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     for e in ann_obj.get_events():
-        allowed = projectconf.arc_types_from(e.type)
+        allowed = collection_configuration.arc_types_from(e.type)
         eargs = event_nonum_args(e)
         for a in eargs:
             if a not in allowed:
@@ -316,12 +308,12 @@ def verify_disallowed_arguments(ann_obj, projectconf):
             else:
                 for rid in eargs[a]:
                     r = ann_obj.get_ann_by_id(rid)
-                    if a not in projectconf.arc_types_from_to(e.type, r.type):
+                    if a not in collection_configuration.arc_types_from_to(e.type, r.type):
                         issues.append(AnnotationIssue(e.id, AnnotationError, "Error: %s argument %s cannot be of type %s" % (disp(e.type), disp(a), disp(r.type))))
 
     return issues
 
-def verify_extra_arguments(ann_obj, projectconf):
+def verify_extra_arguments(ann_obj, collection_configuration):
     """
     Checks for events with excessively many allowed arguments.
     """
@@ -329,21 +321,20 @@ def verify_extra_arguments(ann_obj, projectconf):
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     for e in ann_obj.get_events():
         nonum_arg_counts = event_nonum_arg_count(e)
-        multiple_allowed = projectconf.multiple_allowed_arguments(e.type)
         for a in [m for m in nonum_arg_counts if nonum_arg_counts[m] > 1]:
-            amax = projectconf.argument_maximum_count(e.type, a)
-            if a not in multiple_allowed:
+            amax = collection_configuration.argument_maximum_count_for_event(e.type, a)
+            if amax <= 1:
                 issues.append(AnnotationIssue(e.id, AnnotationError, "Error: %s cannot take multiple %s arguments" % (disp(e.type), disp(a))))
             elif nonum_arg_counts[a] > amax:
                 issues.append(AnnotationIssue(e.id, AnnotationError, "Error: %s can take at most %d %s arguments" % (disp(e.type), amax, disp(a))))
     
     return issues
 
-def verify_attributes(ann_obj, projectconf):
+def verify_attributes(ann_obj, collection_configuration):
     """
     Checks for instances of attributes attached to annotations that
     are not allowed to have them.
@@ -352,81 +343,42 @@ def verify_attributes(ann_obj, projectconf):
 
     # shortcut
     def disp(s):
-        return projectconf.preferred_display_form(s)
+        return collection_configuration.preferred_display_form(s)
 
     for a in ann_obj.get_attributes():
         tid = a.target
         t = ann_obj.get_ann_by_id(tid)
-        allowed = projectconf.attributes_for(t.type)
+        allowed = collection_configuration.attributes_for(t.type)
         
         if a.type not in allowed:
-            issues.append(AnnotationIssue(t.id, AnnotationError, "Error: %s cannot take a %s attribute" % (disp(t.type), disp(a.type))))
+            issues.append(AnnotationIssue(tid, AnnotationError, "Error: %s cannot take a %s attribute" % (disp(t.type), disp(a.type))))
 
     return issues
 
-def verify_annotation(ann_obj, projectconf):
+def verify_annotation(ann_obj, collection_configuration):
     """
     Verifies the correctness of a given AnnotationFile.
     Returns a list of AnnotationIssues.
     """
     issues = []
 
-    issues += verify_annotation_types(ann_obj, projectconf)
+    issues += verify_annotation_types(ann_obj, collection_configuration)
 
-    issues += verify_equivs(ann_obj, projectconf)
+    issues += verify_equivs(ann_obj, collection_configuration)
 
-    issues += verify_entity_overlap(ann_obj, projectconf)
+    issues += verify_entity_overlap(ann_obj, collection_configuration)
 
-    issues += verify_triggers(ann_obj, projectconf)
+    issues += verify_triggers(ann_obj, collection_configuration)
 
-    issues += verify_relations(ann_obj, projectconf)
+    issues += verify_relations(ann_obj, collection_configuration)
 
-    issues += verify_missing_arguments(ann_obj, projectconf)
+    issues += verify_missing_arguments(ann_obj, collection_configuration)
 
-    issues += verify_disallowed_arguments(ann_obj, projectconf)
+    issues += verify_disallowed_arguments(ann_obj, collection_configuration)
 
-    issues += verify_extra_arguments(ann_obj, projectconf)
+    issues += verify_extra_arguments(ann_obj, collection_configuration)
 
-    issues += verify_attributes(ann_obj, projectconf)
+    issues += verify_attributes(ann_obj, collection_configuration)
     
     return issues
 
-def argparser():
-    import argparse
-
-    ap=argparse.ArgumentParser(description="Verify BioNLP Shared Task annotations.")
-    ap.add_argument("-v", "--verbose", default=False, action="store_true", help="Verbose output.")
-    ap.add_argument("files", metavar="FILE", nargs="+", help="Files to verify.")
-    return ap
-
-def main(argv=None):
-    import sys
-    import os
-
-    if argv is None:
-        argv = sys.argv
-    arg = argparser().parse_args(argv[1:])
-
-    for fn in arg.files:
-        try:
-            projectconf = ProjectConfiguration(os.path.dirname(fn))
-            # remove ".a2" or ".rel" suffixes for Annotations to prompt
-            # parsing of .a1 also.
-            # (TODO: temporarily removing .ann also to work around a
-            # bug in TextAnnotations, but this should not be necessary.)
-            nosuff_fn = fn.replace(".a2","").replace(".rel","").replace(".ann","")
-            with annotation.TextAnnotations(nosuff_fn) as ann_obj:
-                issues = verify_annotation(ann_obj, projectconf)
-                for i in issues:
-                    print "%s:\t%s" % (fn, i.human_readable_str())
-        except annotation.AnnotationFileNotFoundError:
-            print >> sys.stderr, "%s:\tFailed check: file not found" % fn
-        except annotation.AnnotationNotFoundError, e:
-            print >> sys.stderr, "%s:\tFailed check: %s" % (fn, e)
-
-    if arg.verbose:
-        print >> sys.stderr, "Check complete."
-
-if __name__ == "__main__":
-    import sys
-    sys.exit(main())

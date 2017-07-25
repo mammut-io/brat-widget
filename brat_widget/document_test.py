@@ -2,7 +2,9 @@
 import unittest
 import json
 
-from configuration import CollectionConfiguration
+from messager import Messager
+from widget import Visualizer, Annotator
+from configuration import CollectionConfiguration, GeneralConfiguration
 from document import Document
 
 
@@ -21,22 +23,23 @@ class DocumentTest(unittest.TestCase):
             # Use a slightly darker version of the bgColor for the border
             'borderColor': 'darken'
         }]
-
+        cls.just_entities_collection_configuration.initialize()
 
         cls.entities_relations_and_events_collection_configuration = CollectionConfiguration()
         cls.entities_relations_and_events_collection_configuration.entity_types = [{
             "type": "Person",
             "labels": ["Person", "Per"],
             "bgColor": "#7fa2ff",
+            'attributes': [u'Notorious'],
             "borderColor": "darken"
-        }],
+        }]
         cls.entities_relations_and_events_collection_configuration.entity_attribute_types = [{
             "type": "Notorious",
             "values": {
                 "Notorious": {"glyph": "★"}
             },
             "bool": "Notorious"
-        }],
+        }]
         cls.entities_relations_and_events_collection_configuration.relation_types = [{
             "type": "Anaphora",
             "labels": ["Anaphora", "Ana"],
@@ -49,7 +52,7 @@ class DocumentTest(unittest.TestCase):
                 "role": "Entity",
                 "targets": ["Person"]
             }]
-        }],
+        }]
         cls.entities_relations_and_events_collection_configuration.event_types = [{
             "type": "Assassination",
             "labels": ["Assassination", "Assas"],
@@ -57,13 +60,16 @@ class DocumentTest(unittest.TestCase):
             "borderColor": "darken",
             "arcs": [{
                 "type": "Victim",
-                "labels": ["Victim", "Vict"]
+                "labels": ["Victim", "Vict"],
+                'targets': [u'<ANY>']
             }, {
                 "type": "Perpetrator",
                 "labels": ["Perpetrator", "Perp"],
-                "color": "green"
+                "color": "green",
+                'targets': [u'<ANY>']
             }]
         }]
+        cls.entities_relations_and_events_collection_configuration.initialize()
 
         cls.full_collection_configuration = CollectionConfiguration()
         cls.full_collection_configuration.description = None
@@ -92,13 +98,16 @@ class DocumentTest(unittest.TestCase):
              'labels': None,
              'children': [
                  {'borderColor': u'darken',
-                  'normalizations': [], 'name': u'Be born',
+                  'normalizations': [],
+                  'name': u'Be born',
                   'arcs': [{'labelArrow': u'none',
                             'arrowHead': u'triangle,5',
                             'color': u'black',
+                            'name': u'Person',
                             'labels': [u'Person'],
                             'dashArray': u',',
                             'type': u'Person-Arg',
+                            'count': '{1-5}', # '{2}', '', '?', '*', '+'
                             'targets': [u'Person']},
                            {'labelArrow': u'none',
                             'arrowHead': u'triangle,5',
@@ -138,7 +147,9 @@ class DocumentTest(unittest.TestCase):
                   'attributes': ['Negation', u'Confidence'],
                   'type': u'Marry',
                   'fgColor': u'black'},
-                 {'borderColor': u'darken', 'normalizations': [], 'name': u'Divorce',
+                 {'borderColor': u'darken',
+                  'normalizations': [],
+                  'name': u'Divorce',
                   'arcs': [{'labelArrow': u'none',
                             'arrowHead': u'triangle,5',
                             'color': u'black',
@@ -255,7 +266,10 @@ class DocumentTest(unittest.TestCase):
              'attributes': ['Negation', u'Confidence'],
              'type': u'Transaction',
              'fgColor': u'black'},
-            {'borderColor': u'darken', 'normalizations': [], 'name': u'Business', 'labels': None,
+            {'borderColor': u'darken',
+             'normalizations': [],
+             'name': u'Business',
+             'labels': None,
              'children': [{'borderColor': u'darken', 'normalizations': [], 'name': u'Start org',
                            'arcs': [{'labelArrow': u'none', 'arrowHead': u'triangle,5',
                                      'color': u'black', 'labels': [u'Agent'], 'dashArray': u',',
@@ -312,148 +326,6 @@ class DocumentTest(unittest.TestCase):
             'attributes': u'attributes'}
         cls.full_collection_configuration.normalization_config = []
         cls.full_collection_configuration.visual_options = {'arc_bundle': 'none', 'text_direction': 'ltr'}
-        cls.full_collection_configuration.unconfigured_types = [
-           {
-            'borderColor': u'darken',
-            'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Place',
-            'color': u'black',
-            'labels': [u'Place'],
-            'unused': True,
-            'bgColor': u'lightgreen',
-            'dashArray': u',',
-            'type': u'Place-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken',
-            'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Reporter',
-            'color': u'black',
-            'labels': [u'Reporter'],
-            'unused': True,
-            'bgColor': u'lightgreen',
-            'dashArray': u',',
-            'type': u'Reporter-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Artifact', 'color': u'black',
-            'labels': [u'Artifact'],
-            'unused': True, 'bgColor': u'lightgreen',
-            'dashArray': u',',
-            'type': u'Artifact-Arg', 'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Person', 'color': u'black',
-            'labels': [u'Person'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Person-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5', 'name': u'Buyer',
-            'color': u'black',
-            'labels': [u'Buyer'], 'unused': True,
-            'bgColor': u'lightgreen',
-            'dashArray': u',', 'type': u'Buyer-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Seller', 'color': u'black',
-            'labels': [u'Seller'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Seller-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Recipient', 'color': u'black',
-            'labels': [u'Recipient'],
-            'unused': True, 'bgColor': u'lightgreen',
-            'dashArray': u',',
-            'type': u'Recipient-Arg', 'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Agent', 'color': u'black',
-            'labels': [u'Agent'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Agent-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Org', 'color': u'black',
-            'labels': [u'Org'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Org-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Event', 'color': u'black',
-            'labels': [u'Event'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Event-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Giver', 'color': u'black',
-            'labels': [u'Giver'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Giver-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Beneficiary', 'color': u'black',
-            'labels': [u'Beneficiary'],
-            'unused': True, 'bgColor': u'lightgreen',
-            'dashArray': u',',
-            'type': u'Beneficiary-Arg', 'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Money', 'color': u'black',
-            'labels': [u'Money'], 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Money-Arg',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Confidence', 'color': u'black',
-            'labels': None, 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Confidence',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Mention', 'color': u'black',
-            'labels': None, 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Mention',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': 'ARC_DEFAULT', 'color': u'black',
-            'labels': None, 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': 'ARC_DEFAULT',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': 'Negation', 'color': u'black',
-            'labels': None, 'unused': True,
-            'bgColor': u'lightgreen', 'type': 'Negation',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': u'Individual', 'color': u'black',
-            'labels': None, 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': u'Individual',
-            'fgColor': u'black'},
-           {'borderColor': u'darken', 'labelArrow': u'none',
-            'arrowHead': u'triangle,5',
-            'name': 'SPAN_DEFAULT', 'color': u'black',
-            'labels': None, 'unused': True,
-            'bgColor': u'lightgreen', 'dashArray': u',',
-            'type': 'SPAN_DEFAULT',
-            'fgColor': u'black'}],
         cls.full_collection_configuration.messages = []
         cls.full_collection_configuration.event_attribute_types = [
             {
@@ -516,26 +388,32 @@ class DocumentTest(unittest.TestCase):
              'dashArray': u'3,3', 'attributes': [], 'type': u'Alias',
              'properties': {u'symmetric': True, u'transitive': True}}]
         cls.full_collection_configuration.entity_types = [
-            {'borderColor': u'darken', 'normalizations': [], 'name': u'Person',
-            'arcs': [{'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
-                      'labels': [u'Located'], 'dashArray': u',', 'type': u'Located',
-                      'targets': [u'GPE']}, {'labelArrow': u'none', 'arrowHead': u'triangle,5',
-                                             'color': u'black', 'labels': [u'Family'],
-                                             'dashArray': u',', 'type': u'Family',
-                                             'targets': [u'Person']},
-                     {'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
-                      'labels': [u'Employment', u'Employ'], 'dashArray': u',',
-                      'type': u'Employment', 'targets': [u'GPE']},
-                     {'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
-                      'labels': [u'Ownership'], 'dashArray': u',', 'type': u'Ownership',
-                      'targets': [u'Organization']},
-                     {'labelArrow': u'none', 'arrowHead': u'none', 'color': u'black',
-                      'labels': [u'Alias'], 'dashArray': u'3,3', 'type': u'Alias',
-                      'targets': [u'Person']}],
+            {'borderColor': u'darken',
+             'normalizations': [],
+             'name': u'Person',
+             'arcs': [{'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
+                       'name': u'Located', 'labels': [u'Located'], 'dashArray': u',', 'type': u'Located',
+                       'targets': [u'GPE']},
+                      {'labelArrow': u'none', 'arrowHead': u'triangle,5',
+                       'color': u'black', 'labels': [u'Family'],
+                       'dashArray': u',', 'type': u'Family',
+                       'targets': [u'Person']},
+                      {'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
+                       'labels': [u'Employment', u'Employ'], 'dashArray': u',',
+                       'type': u'Employment', 'targets': [u'GPE']},
+                      {'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
+                       'labels': [u'Ownership'], 'dashArray': u',', 'type': u'Ownership',
+                       'targets': [u'Organization']},
+                      {'labelArrow': u'none', 'arrowHead': u'none', 'color': u'black',
+                       'labels': [u'Alias'], 'dashArray': u'3,3', 'type': u'Alias',
+                       'targets': [u'Person']}],
              'labels': [u'Person'],
              'children': [],
-            'unused': False, 'bgColor': u'#FF821C', 'attributes': [u'Individual', u'Mention'],
-            'type': u'Person', 'fgColor': u'black'},
+             'unused': False,
+             'bgColor': u'#FF821C',
+             'attributes': [u'Individual', u'Mention'],
+             'type': u'Person',
+             'fgColor': u'black'},
             {'borderColor': u'darken', 'normalizations': [], 'name': u'Organization',
              'arcs': [{'labelArrow': u'none', 'arrowHead': u'triangle,5', 'color': u'black',
                        'labels': [u'Origin'], 'dashArray': u',', 'type': u'Origin',
@@ -563,38 +441,12 @@ class DocumentTest(unittest.TestCase):
              'attributes': [u'Individual', u'Mention'],
              'type': u'Money', 'fgColor': u'white'}]
         cls.full_collection_configuration.relation_attribute_types = []
+        cls.full_collection_configuration.initialize()
 
     def setUp(self):
         print("Starting test...")
-        self.intro_document = Document(self.full_collection_configuration)
-        self.intro_document.modifications = []
-        self.intro_document.normalizations = [[u'N1', u'Reference', u'T5', u'Wikipedia', u'64488',
-                                               u'Carlos Salinas de Gortari']]
-        self.intro_document.ctime = 1498628240.0
-        self.intro_document.triggers = [[u'T3', u'Transfer-money', [(443, 449)]],
-                                        [u'T11', u'End-org', [(329, 333)]],
-                                        [u'T13', u'Divorce', [(722, 730)]]]
-        self.intro_document.text = u"Welcome to the Brat Rapid Annotation Tool (brat) tutorial!\n\nbrat is a web-based tool for structured text annotation and visualization. The easiest way to explain what this means is by example: see the following sentence illustrating various types of annotation. Take a moment to study this example, moving your mouse cursor over some of the annotations. Hold the cursor still over an annotation for more detail.\n\n\n1 ) Citibank was involved in moving about $100 million for Raul Salinas de Gortari, brother of a former Mexican president, to banks in Switzerland.\n\n\nIf this example seems complicated, don't panic! This tutorial will present the key features of brat interactively, with each document presenting one or a few features. If you follow this brief tutorial, you'll be able to understand and create annotations such as those above in no time.\n\nTry moving to the next document now by clicking on the arrow to the right on the blue bar at the top left corner of the page.\n"
-        self.intro_document.mtime = 1498628240.0
-        self.intro_document.sentence_offsets = [(0, 58), (60, 411), (414, 561), (564, 850), (852, 977)]
-        self.intro_document.relations = [[u'R2', u'Origin', [(u'Arg1', u'T6'), (u'Arg2', u'T7')]],
-                                         [u'R1', u'Family', [(u'Arg1', u'T4'), (u'Arg2', u'T5')]]]
-        self.intro_document.entities = [[u'T1', u'Organization', [(418, 426)]],
-                                        [u'T2', u'Money', [(456, 468)]],
-                                        [u'T4', u'Person', [(473, 496)]],
-                                        [u'T5', u'Person', [(511, 535)]],
-                                        [u'T6', u'Organization', [(540, 545)]],
-                                        [u'T7', u'GPE', [(549, 560)]],
-                                        [u'T8', u'Person', [(290, 297)]],
-                                        [u'T9', u'Organization', [(311, 316)]],
-                                        [u'T10', u'Organization', [(299, 305)]],
-                                        [u'T12', u'Person', [(659, 688)]]]
-        self.intro_document.comments = [[u'T2', u'AnnotatorNotes', u'100000000 USD'],
-                                        (u'E2', 'AnnotationIncomplete',
-                                         u'Incomplete: exactly one Org argument required for event'),
-                                        (u'E3', 'AnnotationIncomplete',
-                                         u'Incomplete: exactly 2 Person arguments required for event')]
-        self.intro_document.token_offsets = [(0, 7), (8, 10), (11, 14), (15, 19), (20, 25), (26, 36), (37, 41),
+        text = u"Welcome to the Brat Rapid Annotation Tool (brat) tutorial!\n\nbrat is a web-based tool for structured text annotation and visualization. The easiest way to explain what this means is by example: see the following sentence illustrating various types of annotation. Take a moment to study this example, moving your mouse cursor over some of the annotations. Hold the cursor still over an annotation for more detail.\n\n\n1 ) Citibank was involved in moving about $100 million for Raul Salinas de Gortari, brother of a former Mexican president, to banks in Switzerland.\n\n\nIf this example seems complicated, don't panic! This tutorial will present the key features of brat interactively, with each document presenting one or a few features. If you follow this brief tutorial, you'll be able to understand and create annotations such as those above in no time.\n\nTry moving to the next document now by clicking on the arrow to the right on the blue bar at the top left corner of the page.\n"
+        token_offsets = [(0, 7), (8, 10), (11, 14), (15, 19), (20, 25), (26, 36), (37, 41),
                                              (42, 48), (49, 58),
                                              (60, 64), (65, 67), (68, 69), (70, 79), (80, 84), (85, 88), (89, 99),
                                              (100, 104), (105, 115),
@@ -640,6 +492,33 @@ class DocumentTest(unittest.TestCase):
                                              (942, 944),
                                              (945, 948), (949, 952), (953, 957), (958, 964), (965, 967), (968, 971),
                                              (972, 977)]
+        sentence_offsets = [(0, 58), (60, 411), (414, 561), (564, 850), (852, 977)]
+        self.intro_document = Document(text, token_offsets, sentence_offsets, self.full_collection_configuration)
+        self.intro_document.ctime = 1498628240.0
+        self.intro_document.mtime = 1498628240.0
+        self.intro_document.entities = [
+            [u'T1', u'Organization', [(418, 426)]],
+            [u'T2', u'Money', [(456, 468)]],
+            [u'T4', u'Person', [(473, 496)]],
+            [u'T5', u'Person', [(511, 535)]],
+            [u'T6', u'Organization', [(540, 545)]],
+            [u'T7', u'GPE', [(549, 560)]],
+            [u'T8', u'Person', [(290, 297)]],
+            [u'T9', u'Organization', [(311, 316)]],
+            [u'T10', u'Organization', [(299, 305)]],
+            [u'T12', u'Person', [(659, 688)]],
+            #Triggers
+            [u'T3', u'Transfer-money', [(443, 449)]],
+            [u'T11', u'End-org', [(329, 333)]],
+            [u'T13', u'Divorce', [(722, 730)]]
+        ]
+        self.intro_document.relations = [[u'R2', u'Origin', [(u'Arg1', u'T6'), (u'Arg2', u'T7')]],
+                                         [u'R1', u'Family', [(u'Arg1', u'T4'), (u'Arg2', u'T5')]]]
+        self.intro_document.events = [
+            [u'E1', u'T3', [(u'Giver-Arg', u'T1'), (u'Money-Arg', u'T2'), (u'Beneficiary-Arg', u'T4'),
+                            (u'Recipient-Arg', u'T6')]],
+            [u'E2', u'T11', []],
+            [u'E3', u'T13', []]]
         self.intro_document.attributes = [[u'A1', u'Mention', u'T4', u'Name'],
                                           [u'A2', u'Individual', u'T4', True],
                                           [u'A3', u'Mention', u'T5', u'Nominal'],
@@ -650,12 +529,16 @@ class DocumentTest(unittest.TestCase):
                                           [u'A8', u'Mention', u'T9', u'Nominal'],
                                           [u'A9', u'Individual', u'T9', True],
                                           [u'A10', u'Confidence', u'E2', u'High']]
+        self.intro_document.comments = [[u'T2', u'AnnotatorNotes', u'100000000 USD'],
+                                        (u'E2', 'AnnotationIncomplete',
+                                         u'Incomplete: exactly one Org argument required for event'),
+                                        (u'E3', 'AnnotationIncomplete',
+                                         u'Incomplete: exactly 2 Person arguments required for event')]
         self.intro_document.equivs = []
-        self.intro_document.events = [
-            [u'E1', u'T3', [(u'Giver-Arg', u'T1'), (u'Money-Arg', u'T2'), (u'Beneficiary-Arg', u'T4'),
-                            (u'Recipient-Arg', u'T6')]],
-            [u'E2', u'T11', []],
-            [u'E3', u'T13', []]]
+        self.intro_document.normalizations = [[u'N1', u'Reference', u'T5', u'Wikipedia', u'64488',
+                                               u'Carlos Salinas de Gortari']]
+        self.intro_document.modifications = []
+        self.intro_document.initialize()
 
     def test_01_create_span_create_entity_1(self):
         json_data = """{
@@ -663,8 +546,231 @@ class DocumentTest(unittest.TestCase):
       "offsets": "[[384,394]]",
       "type": "Money",
       "comment": "prueba",
-      "attributes": "{\"Individual\":true,\"Mention\":\"Nominal\"}",
+      "attributes": "{\\"Individual\\":true,\\"Mention\\":\\"Nominal\\"}",
       "normalizations": "[]",
       "protocol": 1
     }"""
         data = json.loads(json_data)
+        entity_found = False
+        try:
+            res = self.intro_document.create_span(data)
+            self.intro_document.update_lists()
+            for e in self.intro_document.entities:
+                if e[1] == 'Money' and e[2][0][0] == 384 and e[2][0][1] == 394:
+                    entity_found = True
+                    break
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+        self.assertTrue(entity_found, 'New entity not found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_02_create_span_create_event_1(self):
+        json_data = """{
+      "action": "createSpan",
+      "offsets": "[[354,358]]",
+      "type": "Transfer-money",
+      "comment": "prueba",
+      "attributes": "{\\"Negation\\":true,\\"Confidence\\":\\"High\\"}",
+      "normalizations": "[]",
+      "protocol": 1
+    }"""
+        data = json.loads(json_data)
+        entity_found = False
+        try:
+            res = self.intro_document.create_span(data)
+            self.intro_document.update_lists()
+            for e in self.intro_document.entities:
+                if e[1] == 'Transfer-money' and e[2][0][0] == 354 and e[2][0][1] == 358:
+                    entity_found = True
+                    break
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+        self.assertTrue(entity_found, 'New entity not found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_03_create_span_edit_entity_1(self):
+        json_data = """{
+      "action": "createSpan",
+      "offsets": "[[511, 535]]",
+      "type": "Person",
+      "id": "T5",
+      "comment": "prueba2",
+      "attributes": "{\\"Individual\\":true,\\"Mention\\":\\"Nominal\\"}",
+      "normalizations": "[]",
+      "protocol": 1
+    }"""
+        data = json.loads(json_data)
+        entity_found = False
+        comment_found = False
+        try:
+            res = self.intro_document.create_span(data)
+            self.intro_document.update_lists()
+            for e in self.intro_document.entities:
+                if e[1] == 'Person' and e[2][0][0] == 511 and e[2][0][1] == 535:
+                    entity_found = True
+                    break
+            for c in self.intro_document.comments:
+                if c[0] == 'T5' and c[1] == 'AnnotatorNotes' and c[2] == '\tprueba2':
+                    comment_found = True
+                    break
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+        self.assertTrue(entity_found, 'Edited entity not found')
+        self.assertTrue(comment_found, 'New comment not found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_04_create_span_edit_event_1(self):
+        json_data = """{
+      "action": "createSpan",
+      "offsets": "[[329, 333]]",
+      "type": "End-org",
+      "id": "E2",
+      "comment": "prueba2",
+      "attributes": "{\\"Confidence\\":\\"High\\"}",
+      "normalizations": "[]",
+      "protocol": 1
+    }"""
+        data = json.loads(json_data)
+        entity_found = False
+        comment_found = False
+        try:
+            res = self.intro_document.create_span(data)
+            self.intro_document.update_lists()
+            for e in self.intro_document.entities:
+                if e[1] == 'End-org' and e[2][0][0] == 329 and e[2][0][1] == 333:
+                    entity_found = True
+                    break
+            for c in self.intro_document.comments:
+                if c[0] == 'E2' and c[1] == 'AnnotatorNotes' and c[2] == '\tprueba2':
+                    comment_found = True
+                    break
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+        self.assertTrue(entity_found, 'Edited event not found')
+        self.assertTrue(comment_found, 'New comment not found')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    @unittest.skip("Not implemented yet")
+    def test_05_delete_span_delete_entity_1(self):
+        json_data = """"""
+        data = json.loads(json_data)
+        entity_found = False
+        try:
+            res = self.intro_document.delete_span(data)
+            self.intro_document.update_lists()
+            for e in self.intro_document.entities:
+                if e[1] == '' and e[2][0][0] == 0 and e[2][0][1] == 0:
+                    entity_found = True
+                    break
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+        self.assertTrue(entity_found, '')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+
+    @unittest.skip("Not implemented yet")
+    def test_06_delete_span_delete_event_1(self):
+        json_data = """"""
+        data = json.loads(json_data)
+        entity_found = False
+        try:
+            res = self.intro_document.delete_span(data)
+            self.intro_document.update_lists()
+            for e in self.intro_document.entities:
+                if e[1] == '' and e[2][0][0] == 0 and e[2][0][1] == 0:
+                    entity_found = True
+                    break
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+        self.assertTrue(entity_found, '')
+        msg_count = Messager.get_pending_messages_count()
+        self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
+
+    def test_20_instantiate_widget_visualizer_just_entities(self):
+        not_error = True
+        try:
+            just_entities_text = u"Ed O'Kelley was the man who shot the man who shot Jesse James."
+            just_entities_token_offsets = []
+            just_entities_sentence_offsets = []
+            just_entities_document = Document(just_entities_text, just_entities_token_offsets,
+                                              just_entities_sentence_offsets,
+                                              self.just_entities_collection_configuration)
+            just_entities_document.entities = [
+                # Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
+                # note that range of the offsets are [${START},${END})
+                ['T1', 'Person', [(0, 11)]],
+                ['T2', 'Person', [(20, 23)]],
+                ['T3', 'Person', [(37, 40)]],
+                ['T4', 'Person', [(50, 61)]]
+            ]
+            just_entities_document.initialize()
+            just_entities = Visualizer(value=just_entities_document,
+                                       collection_configuration=self.just_entities_collection_configuration)
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+            not_error = False
+        self.assertTrue(not_error, '')
+
+    def test_21_instantiate_widget_visualizer_entities_relations_and_events(self):
+        not_error = True
+        try:
+            entities_relations_and_events_text = u"Ed O'Kelley was the man who shot the man who shot Jesse James."
+            entities_relations_and_events_token_offsets = []
+            entities_relations_and_events_sentence_offsets = []
+            entities_relations_and_events_document = Document(entities_relations_and_events_text, entities_relations_and_events_token_offsets,
+                                              entities_relations_and_events_sentence_offsets,
+                                              self.entities_relations_and_events_collection_configuration)
+            entities_relations_and_events_document.entities = [
+                # Format: [${ID}, ${TYPE}, [[${START}, ${END}]]]
+                # note that range of the offsets are [${START},${END})
+                ['T1', 'Person', [(0, 11)]],
+                ['T2', 'Person', [(20, 23)]],
+                ['T3', 'Person', [(37, 40)]],
+                ['T4', 'Person', [(50, 61)]],
+                ["T5", "Assassination", [(45, 49)]],
+                ["T6", "Assassination", [(28, 32)]]
+            ]
+            entities_relations_and_events_document.attributes = [ [ "A1", "Notorious", "T4", True ] ]
+            entities_relations_and_events_document.relations = [
+                [
+                    "R1",
+                    "Anaphora",
+                    [["Anaphor", "T2"], ["Entity", "T1"]]
+                ]
+            ]
+            entities_relations_and_events_document.events = [
+                [
+                    "E1",
+                    "T5",
+                    [["Perpetrator", "T3"], ["Victim", "T4"]]
+                ],
+                [
+                    "E2",
+                    "T6",
+                    [["Perpetrator", "T2"], ["Victim", "T3"]]
+                ]
+            ]
+            entities_relations_and_events_document.initialize()
+            entities_relations_and_events = Visualizer(value=entities_relations_and_events_document,
+                                       collection_configuration=self.entities_relations_and_events_collection_configuration)
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+            not_error = False
+        self.assertTrue(not_error, '')
+
+    def test_22_instantiate_widget_anotator_intro(self):
+        not_error = True
+        try:
+            intro = Annotator(value=self.intro_document,
+                                   collection_configuration=self.full_collection_configuration,
+                                   general_configuration=GeneralConfiguration())
+        except Exception as ex:
+            print('Error: Unexpected exception: {ex}')
+            not_error = False
+        self.assertTrue(not_error, '')
+
