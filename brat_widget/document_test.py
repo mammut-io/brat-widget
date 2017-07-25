@@ -654,40 +654,73 @@ class DocumentTest(unittest.TestCase):
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
 
-    @unittest.skip("Not implemented yet")
     def test_05_delete_span_delete_entity_1(self):
-        json_data = """"""
+        json_data = """{
+      "action": "deleteSpan",
+      "offsets": "[[659, 688]]",
+      "type": "Person",
+      "id": "T12",
+      "protocol": 1
+    }"""
         data = json.loads(json_data)
         entity_found = False
         try:
-            res = self.intro_document.delete_span(data)
-            self.intro_document.update_lists()
             for e in self.intro_document.entities:
-                if e[1] == '' and e[2][0][0] == 0 and e[2][0][1] == 0:
+                if e[0] == 'T12':
+                    entity_found = True
+                    break
+            self.assertTrue(entity_found, 'Initial entity not found')
+            res = self.intro_document.delete_span(data['id'])
+            self.intro_document.update_lists()
+            entity_found = False
+            for e in self.intro_document.entities:
+                if e[0] == 'T12':
                     entity_found = True
                     break
         except Exception as ex:
             print('Error: Unexpected exception: {ex}')
-        self.assertTrue(entity_found, '')
+        self.assertFalse(entity_found, 'Deleted entity was found')
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
 
-
-    @unittest.skip("Not implemented yet")
     def test_06_delete_span_delete_event_1(self):
-        json_data = """"""
+        json_data = """{
+      "action": "deleteSpan",
+      "offsets": "[[722, 730]]",
+      "type": "Divorce",
+      "id": "E3",
+      "protocol": 1
+    }"""
         data = json.loads(json_data)
         entity_found = False
+        event_found = False
         try:
-            res = self.intro_document.delete_span(data)
-            self.intro_document.update_lists()
+            for e in self.intro_document.events:
+                if e[0] == 'E3':
+                    event_found = True
+                    break
+            self.assertTrue(event_found, 'Initial entity not found')
             for e in self.intro_document.entities:
-                if e[1] == '' and e[2][0][0] == 0 and e[2][0][1] == 0:
+                if e[0] == 'T13':
+                    entity_found = True
+                    break
+            self.assertTrue(entity_found, 'Initial entity not found')
+            res = self.intro_document.delete_span(data['id'])
+            self.intro_document.update_lists()
+            event_found = False
+            for e in self.intro_document.events:
+                if e[0] == 'E3':
+                    event_found = True
+                    break
+            entity_found = False
+            for e in self.intro_document.entities:
+                if e[0] == 'T13':
                     entity_found = True
                     break
         except Exception as ex:
             print('Error: Unexpected exception: {ex}')
-        self.assertTrue(entity_found, '')
+        self.assertFalse(entity_found, 'Deleted entity was found')
+        self.assertFalse(event_found, 'Deleted event was found')
         msg_count = Messager.get_pending_messages_count()
         self.assertEquals(msg_count, 0, "Some unexpected messages generated.")
 

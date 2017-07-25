@@ -799,46 +799,6 @@ def delete_arc(collection, document, origin, target, type):
         # TODO: error handling?
 
 
-# TODO: ONLY determine what action to take! Delegate to Annotations!
-def delete_span(collection, document, id):
-    directory = collection
-
-    real_dir = real_directory(directory)
-
-    document = path_join(real_dir, document)
-
-    with TextAnnotations(document) as ann_obj:
-        # bail as quick as possible if read-only
-        if ann_obj._read_only:
-            raise AnnotationsIsReadOnlyError(ann_obj.get_document())
-
-        mods = ModificationTracker()
-
-        # TODO: Handle a failure to find it
-        # XXX: Slow, O(2N)
-        ann = ann_obj.get_ann_by_id(id)
-        try:
-            # Note: need to pass the tracker to del_annotation to track
-            # recursive deletes. TODO: make usage consistent.
-            ann_obj.del_annotation(ann, mods)
-            try:
-                trig = ann_obj.get_ann_by_id(ann.trigger)
-                try:
-                    ann_obj.del_annotation(trig, mods)
-                except DependingAnnotationDeleteError:
-                    # Someone else depended on that trigger
-                    pass
-            except AttributeError:
-                pass
-        except DependingAnnotationDeleteError, e:
-            Messager.error(e.html_error_str())
-            return {
-                'exception': True,
-            }
-
-        mods_json = mods.json_response()
-        mods_json['annotations'] = _json_from_ann(ann_obj)
-        return mods_json
 
 
 class AnnotationSplitError(ProtocolError):

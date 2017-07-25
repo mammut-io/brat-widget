@@ -51,9 +51,14 @@ class Annotator(Visualizer):
         def createSpan(data):
             return self.value.create_span(data)
 
+        def deleteSpan(data):
+            return self.value.delete_span(data['id'])
+
         executor = None
         if action == 'createSpan':
             executor = createSpan
+        elif action == 'deleteSpan':
+            executor = deleteSpan
         return executor
 
     def _custom_message_handler(self, widget, content, buffers):

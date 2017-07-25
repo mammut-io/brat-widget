@@ -10,7 +10,8 @@ except ImportError:
     DEBUG = False
 
 from annotation import TextAnnotations, DISCONT_SEP, TextBoundAnnotationWithText, EventAnnotation, TextBoundAnnotation, \
-    AttributeAnnotation, NormalizationAnnotation, OnelineCommentAnnotation, ALLOW_RELATIONS_REFERENCE_EVENT_TRIGGERS
+    AttributeAnnotation, NormalizationAnnotation, OnelineCommentAnnotation, ALLOW_RELATIONS_REFERENCE_EVENT_TRIGGERS, \
+    DependingAnnotationDeleteError
 from messager import Messager
 from common import ProtocolError, JsonDumpable, ProtocolArgumentError
 
@@ -700,6 +701,35 @@ class Document(JsonDumpable):
         self._enrich_json_with_data(j_dic)
         return j_dic
 
+    # TODO: ONLY determine what action to take! Delegate to Annotations!
+    def delete_span(self, id):
+        mods = ModificationTracker()
+
+        # TODO: Handle a failure to find it
+        # XXX: Slow, O(2N)
+        ann = self.ann_obj.get_ann_by_id(id)
+        try:
+            # Note: need to pass the tracker to del_annotation to track
+            # recursive deletes. TODO: make usage consistent.
+            self.ann_obj.del_annotation(ann, mods)
+            try:
+                trig = self.ann_obj.get_ann_by_id(ann.trigger)
+                try:
+                    self.ann_obj.del_annotation(trig, mods)
+                except DependingAnnotationDeleteError:
+                    # Someone else depended on that trigger
+                    pass
+            except AttributeError:
+                pass
+        except DependingAnnotationDeleteError as e:
+            Messager.error(e.html_error_str())
+            return {
+                'exception': True,
+            }
+
+        mods_json = mods.json_response()
+        mods_json['annotations'] = self._json_from_ann()
+        return mods_json
 
 
 class ModificationTracker(object):
