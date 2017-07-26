@@ -550,7 +550,7 @@ class CollectionConfiguration(JsonDumpable):
                     minimum_count = 1
                     if 'count' in arc:
                         count_str = arc['count']
-                        minimum_count = self.get_count_from_str(count_str, False)
+                        minimum_count = self._get_count_from_str(count_str, False)
                     if minimum_count > 0:
                         res.append(arc['type'])
             return res
