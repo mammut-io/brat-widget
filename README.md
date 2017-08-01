@@ -25,8 +25,8 @@ For a development installation (requires npm),
     npm install karma-chrome-launcher
     npm install karma-requirejs
     npm install -g karma-cli
-    conda create -n brat-27 python=2.7
-    source activate brat-27
+    conda create -n brat-36 python=3.6
+    source activate brat-36
     conda install jupyter
     conda install -c conda-forge jupyter_contrib_nbextensions
     conda install nb_conda_kernels

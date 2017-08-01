@@ -137,7 +137,6 @@ var AnnotatorView = VisualizerView.extend({
         this.model.on('msg:custom', this.custom_message_handler, this);
         var localDispatcher = this.dispatcher;
         this.once('displayed', function () {
-            console.log('Borrar - displayed');
             localDispatcher.post('init');
         })
     },
@@ -175,7 +174,6 @@ var AnnotatorView = VisualizerView.extend({
     simulated_ajax_calls_options: {},
 
     custom_message_handler : function (content, buffers) {
-        console.log('Borrar - customMessHandler');
         console.log(arguments);
 
         if (this.simulated_ajax_calls_options.hasOwnProperty(content.id)) {
@@ -216,7 +214,6 @@ var AnnotatorView = VisualizerView.extend({
     },
 
     make_obsolete_simulated_ajax_calls_options: function (all) {
-        console.log('Borrar - make_obsolete_simulated_ajax_calls_options - all: ' + all);
         if (all) {
           this.simulated_ajax_calls_options = {};
         } else {

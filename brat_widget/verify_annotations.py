@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from __future__ import with_statement
+from re import match as re_match
 
 # Issue types. Values should match with annotation interface.
 AnnotationError = "AnnotationError"
@@ -32,7 +32,6 @@ def event_nonum_args(e):
     Given an EventAnnotatation, returns its arguments without trailing
     numbers (e.g. "Theme1" -> "Theme").
     """
-    from re import match as re_match
 
     nna = {}
     for arg, aid in e.args:
@@ -50,7 +49,6 @@ def event_nonum_arg_count(e):
     of its argument without trailing numbers (e.g. "Theme1" ->
     "Theme") the number of times the argument appears.
     """
-    from re import match as re_match
 
     nnc = {}
     for arg, aid in e.args:

@@ -1,10 +1,10 @@
 import ipywidgets as widgets
 from traitlets import Unicode, Dict, Instance
 
-from common import ProtocolError
-from configuration import GeneralConfiguration, CollectionConfiguration
-from document import Document
-from messager import Messager
+from .common import ProtocolError
+from .configuration import GeneralConfiguration, CollectionConfiguration
+from .document import Document
+from .messager import Messager
 
 
 @widgets.register('brat.Visualizer')
@@ -90,7 +90,7 @@ class Annotator(Visualizer):
                 pe.json(response)
             except Exception as e:
                 print('Error: ' + str(e))
-                response['exception'] = 'Unexpected exception: ' + e.message
+                response['exception'] = 'Unexpected exception: ' + str(e)
         else:
             response['statusText'] = 'Not supported action.'
             #This was inherited from the original brat implementation. It was used to handle the ajax errors
@@ -100,4 +100,3 @@ class Annotator(Visualizer):
         Messager.output_json(response)
         response_dict['response'] = response
         self.send(response_dict)
-        print('Borrar - _custom_message_handler: {0} - {1} \n {2}'.format(current_id, action, content_dict['data']))

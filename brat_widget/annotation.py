@@ -4,8 +4,8 @@ from itertools import chain, takewhile
 from time import time
 from re import match as re_match
 
-from common import ProtocolError
-from messager import Messager
+from .common import ProtocolError
+from .messager import Messager
 
 # String used to catenate texts of discontinuous annotations in reference text
 DISCONT_SEP = ' '
@@ -105,13 +105,13 @@ class DependingAnnotationDeleteError(Exception):
 
     def __str__(self):
         return u'%s can not be deleted due to depending annotations %s' % (
-            unicode(self.target).rstrip(), ",".join([unicode(d).rstrip() for d in self.dependants]))
+            str(self.target).rstrip(), ",".join([str(d).rstrip() for d in self.dependants]))
 
     def html_error_str(self, response=None):
         return u'''Annotation:
         %s
         Has depending annotations attached to it:
-        %s''' % (unicode(self.target).rstrip(), ",".join([unicode(d).rstrip() for d in self.dependants]))
+        %s''' % (str(self.target).rstrip(), ",".join([str(d).rstrip() for d in self.dependants]))
 
 
 def __split_annotation_id(id):
@@ -349,7 +349,7 @@ class Annotations(object):
         try:
             self._ann_by_id[ann.id] = ann
             pre, num = annotation_id_prefix(ann.id), annotation_id_number(ann.id)
-            self._max_id_num_by_prefix[pre] = max(num, self._max_id_num_by_prefix[pre])
+            self._max_id_num_by_prefix[pre] = max(int(num), self._max_id_num_by_prefix[pre])
         except AttributeError:
             # The annotation simply lacked an id which is fine
             pass
@@ -384,7 +384,7 @@ class Annotations(object):
 
         for other_ann in self:
             soft_deps, hard_deps = other_ann.get_deps()
-            if unicode(ann.id) in soft_deps | hard_deps:
+            if str(ann.id) in soft_deps | hard_deps:
                 ann_deps.append(other_ann)
 
         # If all depending are AttributeAnnotations or EquivAnnotations,
@@ -413,8 +413,8 @@ class Annotations(object):
                             tracker.deletion(d)
                     else:
                         if tracker is not None:
-                            before = unicode(d)
-                        d.entities.remove(unicode(ann.id))
+                            before = str(d)
+                        d.entities.remove(str(ann.id))
                         if tracker is not None:
                             tracker.change(before, d)
                 elif isinstance(d, OnelineCommentAnnotation):
@@ -496,14 +496,14 @@ class Annotations(object):
         if suffix is None:
             suffix = ''
         # XXX: Arbitrary constant!
-        for suggestion in (prefix + unicode(i) + suffix for i in xrange(1, 2 ** 15)):
+        for suggestion in (prefix + str(i) + suffix for i in range(1, 2 ** 15)):
             # This is getting more complicated by the minute, two checks since
             # the developers no longer know when it is an id or string.
             if suggestion not in self._ann_by_id:
                 return suggestion
 
     def __str__(self):
-        s = u'\n'.join(unicode(ann).rstrip(u'\r\n') for ann in self)
+        s = u'\n'.join(str(ann).rstrip(u'\r\n') for ann in self)
         if not s:
             return u''
         else:
@@ -553,7 +553,7 @@ class Annotation(object):
         raise NotImplementedError()
 
     def __repr__(self):
-        return u'%s("%s")' % (unicode(self.__class__), unicode(self))
+        return u'%s("%s")' % (str(self.__class__), str(self))
 
     def get_deps(self):
         return (set(), set())
@@ -718,7 +718,7 @@ class EquivAnnotation(TypedAnnotation):
     def __str__(self):
         return u'*\t%s %s%s' % (
             self.type,
-            ' '.join([unicode(e) for e in self.entities]),
+            ' '.join([str(e) for e in self.entities]),
             self.tail
         )
 
@@ -739,7 +739,7 @@ class EquivAnnotation(TypedAnnotation):
             return ['equiv', self.type, self.entities]
 
     def reference_text(self):
-        return '(' + ','.join([unicode(e) for e in self.entities]) + ')'
+        return '(' + ','.join([str(e) for e in self.entities]) + ')'
 
     @classmethod
     def from_list(cls, list, annotations):
@@ -761,7 +761,7 @@ class AttributeAnnotation(IdedAnnotation):
             self.type,
             self.target,
             # We hack in old modifiers with this trick using bools
-            ' ' + unicode(self.value) if self.value != True else '',
+            ' ' + str(self.value) if self.value != True else '',
             self.tail,
         )
 

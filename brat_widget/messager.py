@@ -4,7 +4,7 @@ import re
 # for cleaning up control chars from a string, from
 # http://stackoverflow.com/questions/92438/stripping-non-printable-characters-from-a-string-in-python
 # allow tab (9) and [unix] newline (10)
-__control_chars = ''.join(map(unichr, range(0, 9) + range(11, 32) + range(127, 160)))
+__control_chars = ''.join(map(chr, list(range(0, 9)) + list(range(11, 32)) + list(range(127, 160))))
 __control_char_re = re.compile('[%s]' % re.escape(__control_chars))
 
 
@@ -105,7 +105,7 @@ class Messager:
     __escape = staticmethod(__escape)
 
     def __message(msg, type, duration, escaped):
-        if not isinstance(msg, str) and not isinstance(msg, unicode):
+        if not isinstance(msg, str):
             msg = str(msg)
         if not escaped:
             msg = Messager.__escape(msg)

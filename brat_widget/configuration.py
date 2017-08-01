@@ -3,8 +3,8 @@ import re
 
 import sys
 
-from messager import Messager
-from common import JsonDumpable
+from .messager import Messager
+from .common import JsonDumpable
 
 ENTITY_CATEGORY, EVENT_CATEGORY, RELATION_CATEGORY, UNKNOWN_CATEGORY = range(4)
 
