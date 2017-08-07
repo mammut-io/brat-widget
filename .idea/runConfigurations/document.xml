@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="document" type="tests" factoryName="Unittests">
+  <configuration default="false" name="document" type="tests" factoryName="Unittests" singleton="true">
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs />
-    <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/brat-27/bin/python" />
+    <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/mammut-36/bin/python" />
     <option name="WORKING_DIRECTORY" value="" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />

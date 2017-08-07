@@ -4,8 +4,8 @@ from itertools import chain, takewhile
 from time import time
 from re import match as re_match
 
-from .common import ProtocolError
-from .messager import Messager
+from brat_widget.common import ProtocolError
+from brat_widget.messager import Messager
 
 # String used to catenate texts of discontinuous annotations in reference text
 DISCONT_SEP = ' '

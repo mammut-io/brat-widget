@@ -163,7 +163,7 @@ var Visualizer = (function($, window, undefined) {
       // this.row = undefined;
       // this.textX = undefined;
       // this.translation = undefined;
-    }
+    };
 
     var Arc = function(eventDesc, role, dist, eventNo) {
       this.origin = eventDesc.id;

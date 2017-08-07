@@ -1,19 +1,19 @@
 # coding=utf-8
 import json
 
-from .configuration import ENTITY_CATEGORY, EVENT_CATEGORY, RELATION_CATEGORY, UNKNOWN_CATEGORY, CollectionConfiguration
-from .verify_annotations import verify_annotation
+from brat_widget.configuration import ENTITY_CATEGORY, EVENT_CATEGORY, RELATION_CATEGORY, UNKNOWN_CATEGORY, CollectionConfiguration
+from brat_widget.verify_annotations import verify_annotation
 
 try:
     from config import DEBUG
 except ImportError:
     DEBUG = False
 
-from .annotation import TextAnnotations, DISCONT_SEP, TextBoundAnnotationWithText, EventAnnotation, TextBoundAnnotation, \
+from brat_widget.annotation import TextAnnotations, DISCONT_SEP, TextBoundAnnotationWithText, EventAnnotation, TextBoundAnnotation, \
     AttributeAnnotation, NormalizationAnnotation, OnelineCommentAnnotation, ALLOW_RELATIONS_REFERENCE_EVENT_TRIGGERS, \
     DependingAnnotationDeleteError, EquivAnnotation, BinaryRelationAnnotation
-from .messager import Messager
-from .common import ProtocolError, JsonDumpable, ProtocolArgumentError
+from brat_widget.messager import Messager
+from brat_widget.common import ProtocolError, JsonDumpable, ProtocolArgumentError
 
 
 class Document(JsonDumpable):
@@ -634,7 +634,7 @@ class Document(JsonDumpable):
         except Exception as e:
             # TODO add an issue about the failure?
             issues = []
-            Messager.error('Error: verify_annotation() failed: %s' % e, -1)
+            Messager.error(f'Error: verify_annotation() failed: {e}', -1)
 
         for i in issues:
             issue = (str(i.ann_id), i.type, i.description)

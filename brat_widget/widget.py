@@ -1,10 +1,10 @@
 import ipywidgets as widgets
 from traitlets import Unicode, Dict, Instance
 
-from .common import ProtocolError
-from .configuration import GeneralConfiguration, CollectionConfiguration
-from .document import Document
-from .messager import Messager
+from brat_widget.common import ProtocolError
+from brat_widget.configuration import GeneralConfiguration, CollectionConfiguration
+from brat_widget.document import Document
+from brat_widget.messager import Messager
 
 
 @widgets.register('brat.Visualizer')
