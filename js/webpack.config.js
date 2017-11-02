@@ -77,7 +77,7 @@ module.exports = [
         entry: './src/embed.js',
         output: {
             filename: 'index.js',
-            path: path.relative('brat_widget/js/', 'brat_widget/brat_widget/static'),
+            path: path.relative('brat_widget/js/', 'brat_widget/js/dist'),
             libraryTarget: 'amd',
             publicPath: 'https://unpkg.com/brat-widget@' + version + '/dist/'
         },
