@@ -1,3 +1,4 @@
+var path = require('path');
 var version = require('./package.json').version;
 var webpack = require("webpack");
 var brat_fonts_selector = /static\/fonts\/*\.(svg|ttf)/;
@@ -28,7 +29,7 @@ module.exports = [
         entry: './src/extension.js',
         output: {
             filename: 'extension.js',
-            path: '/Users/Edilmo/git/brat-widget/brat_widget/static',
+            path: path.relative('brat_widget/js/', 'brat_widget/brat_widget/static'),
             libraryTarget: 'amd'
         }
     },
@@ -41,7 +42,7 @@ module.exports = [
         entry: './src/index.js',
         output: {
             filename: 'index.js',
-            path: '/Users/Edilmo/git/brat-widget/brat_widget/static',
+            path: path.relative('brat_widget/js/', 'brat_widget/brat_widget/static'),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
@@ -76,7 +77,7 @@ module.exports = [
         entry: './src/embed.js',
         output: {
             filename: 'index.js',
-            path: '/Users/Edilmo/git/brat-widget/js/dist/',
+            path: path.relative('brat_widget/js/', 'brat_widget/brat_widget/static'),
             libraryTarget: 'amd',
             publicPath: 'https://unpkg.com/brat-widget@' + version + '/dist/'
         },
