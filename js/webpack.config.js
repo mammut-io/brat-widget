@@ -29,7 +29,7 @@ module.exports = [
         entry: './src/extension.js',
         output: {
             filename: 'extension.js',
-            path: path.relative('brat_widget/js/', 'brat_widget/brat_widget/static'),
+            path: path.resolve('brat_widget/static'),
             libraryTarget: 'amd'
         }
     },
@@ -42,7 +42,7 @@ module.exports = [
         entry: './src/index.js',
         output: {
             filename: 'index.js',
-            path: path.relative('brat_widget/js/', 'brat_widget/brat_widget/static'),
+            path: path.resolve('brat_widget/static'),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
@@ -77,7 +77,7 @@ module.exports = [
         entry: './src/embed.js',
         output: {
             filename: 'index.js',
-            path: path.relative('brat_widget/js/', 'brat_widget/js/dist'),
+            path: path.resolve('brat_widget/dist'),
             libraryTarget: 'amd',
             publicPath: 'https://unpkg.com/brat-widget@' + version + '/dist/'
         },
