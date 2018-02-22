@@ -142,11 +142,14 @@ setup_args = {
 
     'author': 'Edilmo Palencia',
     'author_email': 'edilmo@gmail.com',
-    'url': 'http://jupyter.org',
+    'url': 'https://github.com/Edilmo/brat-widget',
     'keywords': [
         'ipython',
         'jupyter',
         'widgets',
+        'brat',
+        'annotation'
+        'NLP',
     ],
     'classifiers': [
         'Development Status :: 4 - Beta',

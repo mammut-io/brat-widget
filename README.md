@@ -79,6 +79,17 @@ shift + enter.
 	+ To restart the kernel (i.e. the computational engine), click on 
 	the menu Kernel -> Restart. 
 	This can be useful to start over a computation from scratch
+	
+Packaging
+----------
+
+In order to generate a new package version and distribute it follow the next steps:
+- Install Twine: `pip install twine`
+- Packaging: `python setup.py bdist_wheel`
+- Check description: 
+    - `pip install readme_renderer`
+    - `python setup.py check -r -s`
+- Upload distribution: `twine upload dist/*`
 
 Contribute
 ----------
