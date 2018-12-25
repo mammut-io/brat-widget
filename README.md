@@ -106,9 +106,9 @@ In order to generate a new package version and distribute it follow the next ste
         - Optional: `npm adduser`
         - `npm publish`
         - `popd`
-    - `git tag -a 0.2.1 -m "comment"`
     - Optional: update _version.py (add 'dev' and increment minor)
     - Optional: git add and git commit
+    - Optional: `git tag -a 0.2.1 -m "comment"`
     - Optional: `git push`
     - Optional: `git push --tags`
 
