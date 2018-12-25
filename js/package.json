@@ -1,6 +1,6 @@
 {
   "name": "brat-widget",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Jupiter Widget library for BRAT visualization and annotation functionality.",
   "author": "Edilmo Palencia",
   "main": "src/index.js",
@@ -41,7 +41,7 @@
     "karma-jasmine": "^1.1.0",
     "karma-requirejs": "^1.1.0",
     "karma-webpack": "^2.0.3",
-    "node-gyp": "~3.6.2",
+    "node-gyp": "^3.8.0",
     "requirejs": "^2.3.3",
     "rimraf": "^2.4.1",
     "sinon": "^6.3.5",

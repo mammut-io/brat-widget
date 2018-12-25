@@ -94,23 +94,23 @@ In order to generate a new package version and distribute it follow the next ste
     - `cp -r ./js/brat_widget/static ./brat_widget/`
     - `python setup.py sdist`
     - `python setup.py bdist_wheel`
-    - `git tag -a 0.2.0 -m 'comment'`
+    - Check description: 
+        - `pip install readme_renderer`
+        - `twine check dist/*`
+    - Upload distribution: `twine upload dist/*`
+    - Upload to npm:
+        - `pushd js`
+        - `git clean -fdx`
+        - `npm install`
+        - `npm pack`
+        - Optional: `npm adduser`
+        - `npm publish`
+        - `popd`
+    - `git tag -a 0.2.1 -m "comment"`
     - Optional: update _version.py (add 'dev' and increment minor)
-    - Optional: `git add and git commit`
+    - Optional: git add and git commit
     - Optional: `git push`
     - Optional: `git push --tags`
-- Check description: 
-    - `pip install readme_renderer`
-    - `twine check dist/*`
-- Upload distribution: `twine upload dist/*`
-- Upload to npm:
-    - `pushd js`
-    - `git clean -fdx`
-    - `npm install`
-    - `npm pack`
-    - Optional: `npm adduser`
-    - `npm publish`
-    - `popd`
 
 Contribute
 ----------
