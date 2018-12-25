@@ -11,6 +11,9 @@ body .ui-widget {
   font-size: 0.9em; /* override jQuery UI */
 }
 
+.ui-menu-item-wrapper {
+    background-color: white;
+}
 
 #navbuttons * {
   vertical-align: middle;
@@ -462,6 +465,10 @@ div.scroll_wrapper_upper div.scroller {
 }
 .ui-dialog {
   position: fixed;
+  background-color: white;
+  border-color: orange;
+  border-width: medium;
+  border-style: solid;
 }
 
 .file {
@@ -511,10 +518,12 @@ div.scroll_wrapper_upper div.scroller {
 .ui-combobox {
   position: relative;
   display: inline-block;
+  background-color: white;
 }
 .ui-combobox-input {
   margin: 0;
   padding: 2px;
+  background-color: white;
 }
 .ui-combobox, .ui-combobox input, .ui-autocomplete {
   font-size: 11px !important;

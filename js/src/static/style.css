@@ -116,20 +116,8 @@ div.center {
   text-shadow: #000 0 0 3px;
 }
 
-#main {
-  width:960px;
-  padding-left: 2em;
-  padding-right: 2em;
-}
 #content {
   margin: 15px;
-}
-
-#manual-main {
-  max-width:960px;
-  padding-left: 2em;
-  padding-right: 2em;
-  padding-bottom: 5em;
 }
 
 #footer {
@@ -137,7 +125,7 @@ div.center {
   color: gray;
   border-top: 1px solid lightgray;
   margin-top: 5em;
-  margin-bottom: 5em;  
+  margin-bottom: 5em;
   clear: both;
 }
 

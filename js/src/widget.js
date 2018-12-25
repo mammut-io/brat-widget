@@ -1,4 +1,4 @@
-var widgets = require('jupyter-js-widgets');
+var widgets = require('@jupyter-widgets/base');
 var _ = require('underscore');
 
 //brat images
@@ -22,6 +22,7 @@ var URLMonitor = require('./url_monitor').URLMonitor;
 var AnnotatorUI = require('./annotator_ui');
 var Spinner = require('./spinner');
 var AnnotationLog = require('./annotation_log');
+var semver_range = "^" + require("../package.json").version;
 
 
 // Custom Model. Custom widgets models must at least provide default values
@@ -45,8 +46,8 @@ var VisualizerModel = widgets.DOMWidgetModel.extend({
         _view_name: 'VisualizerView',
         _model_module: 'brat-widget',
         _view_module: 'brat-widget',
-        _model_module_version: '0.1.0',
-        _view_module_version: '0.1.0',
+        _model_module_version: semver_range,
+        _view_module_version: semver_range,
         collection_configuration: {},
         value: {}
     })
@@ -57,6 +58,10 @@ var AnnotatorModel = VisualizerModel.extend({
     defaults: _.extend(_.result(this, 'widgets.DOMWidgetModel.prototype.defaults'), {
         _model_name: 'AnnotatorModel',
         _view_name: 'AnnotatorView',
+        _model_module: 'brat-widget',
+        _view_module: 'brat-widget',
+        _model_module_version: semver_range,
+        _view_module_version: semver_range,
         general_configuration: {}
     })
 });

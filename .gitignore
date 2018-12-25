@@ -2,6 +2,13 @@ node_modules/
 
 # Compiled javascript
 brat_widget/static/
+js/brat_widget/
+js/yarn.lock
+js/package-lock.json
+js/brat-widget-*.tgz
+js/dist/
+js/node_modules/
+brat_widget.egg-info/
 
 # OS X
 .DS_Store

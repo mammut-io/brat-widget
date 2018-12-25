@@ -7,8 +7,7 @@ if (window.require) {
     window.require.config({
         map: {
             "*" : {
-                "brat-widget": "nbextensions/brat-widget/index",
-                "jupyter-js-widgets": "nbextensions/jupyter-js-widgets/extension"
+                "brat-widget": "nbextensions/brat-widget/index"
             }
         }
     });

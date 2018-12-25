@@ -27,30 +27,29 @@ Installation
 ------------
 For development purposes, you need [npm 3.10](https://www.npmjs.com/get-npm) and [node.js 6.11](https://nodejs.org/es/) installed, 
 and some python packages than can be see it in the following list of steps using 
-[conda](https://conda.io/docs/user-guide/install/index.html#regular-installation) 
+[virtualenv](https://virtualenv.pypa.io/en/latest/installation/) 
 as package-enviroment manager.
 
 Install $brat-widget by running:
 
 ```bash
-    conda create -n brat-36 python=3.6
-    source activate brat-36
-    conda install jupyter
-    conda install -c conda-forge jupyter_contrib_nbextensions
-    conda install nb_conda_kernels
-    conda install widgetsnbextension
-    conda install ipywidgets
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
-    git clone https://github.com/Edilmo/brat-widget.git
-    cd brat-widget
+virtualenv --system-site-packages -p python3 env
+source ./env/bin/activate
+pip install jupyter
+pip install jupyterlab
+pip install jupyter_contrib_nbextensions
+jupyter nbextension enable --py --sys-prefix widgetsnbextension
+pip install nodejs
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
 ```
+
 After these steps a small hack is necessary. 
 You have to edit the file `js/webpack.config.js` by changing all the occurrences of the 
 path `./brat-widget` for the exact location of this git project in your station.
 
 The easiest way to star playing with the widget is using the reinit.sh script that is 
-included in this project. Asuming that you have your conda environment already activated 
-(the second step in the list above `source activate brat-36`), you have the following 
+included in this project. Asuming that you have your virtualenv environment already activated 
+(the second step in the list above `source ./env/bin/activate`), you have the following 
 options:  
 - `./reinit.sh -c`: clear all the npm installations made previously, prepare the 
 					brad-widget python package from the scratch, and install it. 
@@ -85,11 +84,33 @@ Packaging
 
 In order to generate a new package version and distribute it follow the next steps:
 - Install Twine: `pip install twine`
-- Packaging: `python setup.py bdist_wheel`
+- Packaging: 
+    - Optional: git add and git commit
+    - `jupyter labextension uninstall brat-widget`
+    - `jupyter nbextension uninstall --sys-prefix brat_widget`
+    - `pip uninstall -y brat-widget`
+    - `./dev-clean.sh`
+    - `python setup.py build`
+    - `cp -r ./js/brat_widget/static ./brat_widget/`
+    - `python setup.py sdist`
+    - `python setup.py bdist_wheel`
+    - `git tag -a 0.2.0 -m 'comment'`
+    - Optional: update _version.py (add 'dev' and increment minor)
+    - Optional: `git add and git commit`
+    - Optional: `git push`
+    - Optional: `git push --tags`
 - Check description: 
     - `pip install readme_renderer`
     - `python setup.py check -r -s`
 - Upload distribution: `twine upload dist/*`
+- Upload to npm:
+    - `pushd js`
+    - `git clean -fdx`
+    - `npm install`
+    - `npm pack`
+    - Optional: `npm adduser`
+    - `npm publish`
+    - `popd`
 
 Contribute
 ----------

@@ -66,8 +66,8 @@ class NPM(Command):
     node_modules = os.path.join(node_root, 'node_modules')
 
     targets = [
-        os.path.join(here, 'brat_widget', 'static', 'extension.js'),
-        os.path.join(here, 'brat_widget', 'static', 'index.js')
+        os.path.join(here, 'js', 'brat_widget', 'static', 'extension.js'),
+        os.path.join(here, 'js', 'brat_widget', 'static', 'index.js')
     ]
 
     def initialize_options(self):
@@ -123,9 +123,9 @@ setup_args = {
     'include_package_data': True,
     'data_files': [
         ('share/jupyter/nbextensions/brat-widget', [
-            'brat_widget/static/extension.js',
-            'brat_widget/static/index.js',
-            'brat_widget/static/index.js.map',
+            'js/brat_widget/static/extension.js',
+            'js/brat_widget/static/index.js',
+            'js/brat_widget/static/index.js.map',
         ]),
     ],
     'install_requires': [

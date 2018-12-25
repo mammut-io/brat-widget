@@ -9,6 +9,12 @@ Update _version.py (set release version, remove 'dev')
 
 ```
 git add and git commit
+jupyter labextension uninstall brat-widget
+jupyter nbextension uninstall --sys-prefix brat_widget
+pip uninstall -y brat-widget
+./dev-clean.sh
+python setup.py build
+cp -r ./js/brat_widget/static ./brat_widget/
 python setup.py sdist upload
 python setup.py bdist_wheel upload
 git tag -a X.X.X -m 'comment'

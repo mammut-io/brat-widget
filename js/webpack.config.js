@@ -53,7 +53,7 @@ module.exports = [
             fs: 'empty',
             child_process: 'empty'
         },
-        externals: ['jupyter-js-widgets'],
+        externals: ['@jupyter-widgets/base'],
         plugins: [
             new webpack.ProvidePlugin({
                 jQuery: "jquery"
@@ -89,7 +89,33 @@ module.exports = [
             fs: 'empty',
             child_process: 'empty'
         },
-        externals: ['jupyter-js-widgets'],
+        externals: ['@jupyter-widgets/base'],
+        plugins: [
+            new webpack.ProvidePlugin({
+                jQuery: "jquery"
+            })
+        ]
+    },
+    {// Bundle for the jupyterlab extension
+        //
+        // This bundle is generally almost identical to the notebook bundle
+        // containing the custom widget views and models.
+        //
+        entry: './src/jupyterlab-plugin.js',
+        output: {
+            filename: 'jupyterlab-plugin.js',
+            path: path.resolve('brat_widget/static'),
+            libraryTarget: 'amd'
+        },
+        devtool: 'source-map',
+        module: {
+            loaders: loaders
+        },
+        node: {
+            fs: 'empty',
+            child_process: 'empty'
+        },
+        externals: ['@jupyter-widgets/base'],
         plugins: [
             new webpack.ProvidePlugin({
                 jQuery: "jquery"

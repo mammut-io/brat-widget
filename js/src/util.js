@@ -2,6 +2,8 @@
 // vim:set ft=javascript ts=2 sw=2 sts=2 cindent:
 
 require('./lib/webfont');
+//jquery
+var $ = require('jquery');
 
 var Util = (function(window, undefined) {
 

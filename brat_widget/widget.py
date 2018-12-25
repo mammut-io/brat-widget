@@ -6,6 +6,7 @@ from brat_widget.configuration import GeneralConfiguration, CollectionConfigurat
 from brat_widget.document import Document
 from brat_widget.messager import Messager
 
+from ._version import __frontend_version__
 
 @widgets.register('brat.Visualizer')
 class Visualizer(widgets.DOMWidget):
@@ -14,8 +15,8 @@ class Visualizer(widgets.DOMWidget):
     _model_name = Unicode('VisualizerModel').tag(sync=True)
     _view_module = Unicode('brat-widget').tag(sync=True)
     _model_module = Unicode('brat-widget').tag(sync=True)
-    _view_module_version = Unicode('^0.1.0').tag(sync=True)
-    _model_module_version = Unicode('^0.1.0').tag(sync=True)
+    _view_module_version = Unicode(__frontend_version__).tag(sync=True)
+    _model_module_version = Unicode(__frontend_version__).tag(sync=True)
     value = Instance(klass=Document,default_value=Document()).tag(sync=True,
                                                                   to_json=Document.to_json,
                                                                   from_json=Document.from_json)
@@ -40,8 +41,8 @@ class Annotator(Visualizer):
     _model_name = Unicode('AnnotatorModel').tag(sync=True)
     _view_module = Unicode('brat-widget').tag(sync=True)
     _model_module = Unicode('brat-widget').tag(sync=True)
-    _view_module_version = Unicode('^0.1.0').tag(sync=True)
-    _model_module_version = Unicode('^0.1.0').tag(sync=True)
+    _view_module_version = Unicode(__frontend_version__).tag(sync=True)
+    _model_module_version = Unicode(__frontend_version__).tag(sync=True)
     general_configuration = Instance(klass=GeneralConfiguration,
                                      default_value=GeneralConfiguration()).tag(sync=True,
                                                                                to_json=GeneralConfiguration.to_json,
