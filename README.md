@@ -101,7 +101,7 @@ In order to generate a new package version and distribute it follow the next ste
     - Optional: `git push --tags`
 - Check description: 
     - `pip install readme_renderer`
-    - `python setup.py check -r -s`
+    - `twine check dist/*`
 - Upload distribution: `twine upload dist/*`
 - Upload to npm:
     - `pushd js`
