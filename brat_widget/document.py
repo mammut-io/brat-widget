@@ -1127,8 +1127,8 @@ class SpanOffsetOverlapError(ProtocolError):
         self.offsets = offsets
 
     def __str__(self):
-        return u'The offsets [%s] overlap' % (', '.join(str(e)
-                                                        for e in self.offsets, ))
+        offsetsStr = (', '.join(str(e) for e in self.offsets, ))
+        return f'The offsets {offsetsStr} overlap'
 
     def json(self, json_dic):
         json_dic['exception'] = 'spanOffsetOverlapError'

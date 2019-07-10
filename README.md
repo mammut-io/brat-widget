@@ -33,7 +33,7 @@ as package-enviroment manager.
 Install $brat-widget by running:
 
 ```bash
-virtualenv --system-site-packages -p python3 env
+virtualenv -p python3 env
 source ./env/bin/activate
 pip install jupyter
 pip install jupyterlab
@@ -108,7 +108,7 @@ In order to generate a new package version and distribute it follow the next ste
         - `popd`
     - Optional: update _version.py (add 'dev' and increment minor)
     - Optional: git add and git commit
-    - Optional: `git tag -a 0.2.1 -m "comment"`
+    - Optional: `git tag -a 0.2.3 -m "comment"`
     - Optional: `git push`
     - Optional: `git push --tags`
 
