@@ -1,6 +1,6 @@
 {
   "name": "brat-widget",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Jupiter Widget library for BRAT visualization and annotation functionality.",
   "author": "Edilmo Palencia",
   "main": "src/index.js",

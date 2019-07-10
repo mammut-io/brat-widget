@@ -108,7 +108,7 @@ In order to generate a new package version and distribute it follow the next ste
         - `popd`
     - Optional: update _version.py (add 'dev' and increment minor)
     - Optional: git add and git commit
-    - Optional: `git tag -a 0.2.3 -m "comment"`
+    - Optional: `git tag -a 0.2.4 -m "comment"`
     - Optional: `git push`
     - Optional: `git push --tags`
 
