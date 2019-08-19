@@ -1,21 +1,28 @@
+var fs = require('fs-extra');
 var path = require('path');
 var version = require('./package.json').version;
 var webpack = require("webpack");
-var brat_fonts_selector = /static\/fonts\/*\.(svg|ttf)/;
-// Custom webpack loaders are generally the same for all webpack bundles, hence
+// var CopyPlugin = require('copy-webpack-plugin');
+//var brat_fonts_selector = /fonts\/*\.(svg|ttf)/;
+// Custom webpack rules are generally the same for all webpack bundles, hence
 // stored in a separate local variable.
-var loaders = [
-    {test: /\.json$/, loader: 'json-loader'},
-    {test: /\.css$/, loader: 'style-loader!css-loader'},
+var rules = [
+    { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+    { test: /\.json$/, loader: 'json-loader' },
     // Generic file loader, Should be used for anything but leaflet's
     // marker-icon.png, marker-icon-2x.png or marker-shadow.png
-    {test: /\.(jpg|png|gif|svg|ttf)$/, loader: 'file-loader', exclude: brat_fonts_selector},
-    { test: brat_fonts_selector, loader: 'file-loader?name=[name].[ext]' },
-    {
-        test: /[\/\\]src[\/\\]lib[\/\\]webfont\.js$/,
-        loader: "imports-loader?this=>window"
-    }
-];
+    { test: /\.(jpe?g|png|gif)$/, loader: 'file-loader' },
+    { test: /static\/fonts\/.*\.(svg|ttf)$/, loader: 'file-loader', options: {name: 'static/fonts/[name].[ext]'} },
+    { test: /[\/\\]src[\/\\]lib[\/\\]webfont\.js$/, use: ["imports-loader?this=>window"]}
+]
+
+// The static file directory.
+var staticDir = path.resolve(__dirname, '..', 'brat_widget', 'static');
+
+
+// Copy the package.json to static so we can inspect its version.
+fs.copySync('./package.json', path.join(staticDir, 'package.json'))
+
 
 module.exports = [
     {// Notebook extension
@@ -29,7 +36,7 @@ module.exports = [
         entry: './src/extension.js',
         output: {
             filename: 'extension.js',
-            path: path.resolve('brat_widget/static'),
+            path: staticDir,
             libraryTarget: 'amd'
         }
     },
@@ -42,19 +49,24 @@ module.exports = [
         entry: './src/index.js',
         output: {
             filename: 'index.js',
-            path: path.resolve('brat_widget/static'),
+            path: staticDir,
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
         module: {
-            loaders: loaders
+            rules: rules
         },
+        externals: ['@jupyter-widgets/base'],
         node: {
             fs: 'empty',
             child_process: 'empty'
         },
-        externals: ['@jupyter-widgets/base'],
         plugins: [
+            // new CopyPlugin([
+            //     { from: './src/static/fonts', to: 'static/fonts' },
+            //     { from: './src/static/img', to: 'static/img' },
+            //     { from: './src/static/jquery-theme/images', to: 'static/jquery-theme/images' },
+            // ]),
             new webpack.ProvidePlugin({
                 jQuery: "jquery"
             })
@@ -77,20 +89,25 @@ module.exports = [
         entry: './src/embed.js',
         output: {
             filename: 'index.js',
-            path: path.resolve('brat_widget/dist'),
+            path: path.resolve(__dirname, 'dist'),
             libraryTarget: 'amd',
             publicPath: 'https://unpkg.com/brat-widget@' + version + '/dist/'
         },
         devtool: 'source-map',
         module: {
-            loaders: loaders
+            rules: rules
         },
+        externals: ['@jupyter-widgets/base'],
         node: {
             fs: 'empty',
             child_process: 'empty'
         },
-        externals: ['@jupyter-widgets/base'],
         plugins: [
+            // new CopyPlugin([
+            //     { from: './src/static/fonts', to: 'static/fonts' },
+            //     { from: './src/static/img', to: 'static/img' },
+            //     { from: './src/static/jquery-theme/images', to: 'static/jquery-theme/images' },
+            // ]),
             new webpack.ProvidePlugin({
                 jQuery: "jquery"
             })
@@ -104,19 +121,24 @@ module.exports = [
         entry: './src/jupyterlab-plugin.js',
         output: {
             filename: 'jupyterlab-plugin.js',
-            path: path.resolve('brat_widget/static'),
+            path: path.resolve(__dirname, '..', 'brat_widget', 'static'),
             libraryTarget: 'amd'
         },
         devtool: 'source-map',
         module: {
-            loaders: loaders
+            rules: rules
         },
+        externals: ['@jupyter-widgets/base'],
         node: {
             fs: 'empty',
             child_process: 'empty'
         },
-        externals: ['@jupyter-widgets/base'],
         plugins: [
+            // new CopyPlugin([
+            //     { from: './src/static/fonts', to: 'static/fonts' },
+            //     { from: './src/static/img', to: 'static/img' },
+            //     { from: './src/static/jquery-theme/images', to: 'static/jquery-theme/images' },
+            // ]),
             new webpack.ProvidePlugin({
                 jQuery: "jquery"
             })

@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 
+jupyter labextension uninstall brat-widget
+jupyter nbextension uninstall --sys-prefix brat_widget
+jupyter labextension uninstall @jupyter-widgets/jupyterlab-manager
+pip uninstall -y brat-widget
+
+pushd ./js
+npm run clean
+popd
+
 rm ./js/package-lock.json
 rm ./js/brat-widget-*.tgz
+rm -f brat_widget/brat-widget-*.tgz
 rm -rf ./js/dist/
 rm -rf ./js/node_modules/
 rm -rf ./js/brat_widget/

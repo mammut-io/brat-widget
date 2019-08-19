@@ -4,16 +4,19 @@ from setuptools.command.sdist import sdist
 from setuptools.command.build_py import build_py
 from setuptools.command.egg_info import egg_info
 from subprocess import check_call
+import glob
 import os
 import sys
 import platform
+from os.path import join as pjoin
 
 here = os.path.dirname(os.path.abspath(__file__))
-node_root = os.path.join(here, 'js')
-is_repo = os.path.exists(os.path.join(here, '.git'))
+node_root = pjoin(here, 'js')
+is_repo = os.path.exists(pjoin(here, '.git'))
+tar_path = pjoin(here, 'brat_widget', '*.tgz')
 
 npm_path = os.pathsep.join([
-    os.path.join(node_root, 'node_modules', '.bin'),
+    pjoin(node_root, 'node_modules', '.bin'),
                 os.environ.get('PATH', os.defpath),
 ])
 
@@ -58,16 +61,40 @@ def update_package_data(distribution):
     build_py.finalize_options()
 
 
+def get_data_files():
+    """Get the data files for the package.
+    """
+    return [
+        ('share/jupyter/nbextensions/brat-widget', [
+            'brat_widget/static/extension.js',
+            'brat_widget/static/index.js',
+            'brat_widget/static/index.js.map',
+            'brat_widget/static/package.json'
+            'brat_widget/static/jupyterlab-plugin.js',
+            'brat_widget/static/static/fonts/Astloch-Bold.ttf',
+            'brat_widget/static/static/fonts/Liberation_Sans-Regular.svg',
+            'brat_widget/static/static/fonts/Liberation_Sans-Regular.ttf',
+            'brat_widget/static/static/fonts/PT_Sans-Caption-Web-Regular.svg',
+            'brat_widget/static/static/fonts/PT_Sans-Caption-Web-Regular.ttf',
+        ]),
+        ('share/jupyter/lab/extensions', [
+            os.path.relpath(f, '.') for f in glob.glob(tar_path)
+        ]),
+        ('etc/jupyter/nbconfig/notebook.d' , ['brat-widget.json'])
+    ]
+
+
 class NPM(Command):
     description = 'install package.json dependencies using npm'
 
     user_options = []
 
-    node_modules = os.path.join(node_root, 'node_modules')
+    node_modules = pjoin(node_root, 'node_modules')
 
     targets = [
-        os.path.join(here, 'js', 'brat_widget', 'static', 'extension.js'),
-        os.path.join(here, 'js', 'brat_widget', 'static', 'index.js')
+        pjoin(here, 'brat_widget', 'static', 'extension.js'),
+        pjoin(here, 'brat_widget', 'static', 'index.js'),
+        pjoin(here, 'brat_widget', 'static', 'package.json')
     ]
 
     def initialize_options(self):
@@ -76,16 +103,26 @@ class NPM(Command):
     def finalize_options(self):
         pass
 
+    def get_npm_name(self):
+        npmName = 'npm';
+        if platform.system() == 'Windows':
+            npmName = 'npm.cmd';
+            
+        return npmName;
+    
     def has_npm(self):
+        npmName = self.get_npm_name();
         try:
-            check_call(['npm', '--version'])
+            check_call([npmName, '--version'])
             return True
         except:
             return False
 
     def should_run_npm_install(self):
-        package_json = os.path.join(node_root, 'package.json')
         node_modules_exists = os.path.exists(self.node_modules)
+        return self.has_npm() and not node_modules_exists
+
+    def should_run_npm_pack(self):
         return self.has_npm()
 
     def run(self):
@@ -95,24 +132,33 @@ class NPM(Command):
 
         env = os.environ.copy()
         env['PATH'] = npm_path
+        npmName = self.get_npm_name();
 
         if self.should_run_npm_install():
             log.info("Installing build dependencies with npm.  This may take a while...")
-            check_call(['npm', 'install'], cwd=node_root, stdout=sys.stdout, stderr=sys.stderr)
+            check_call([npmName, 'install'], cwd=node_root, stdout=sys.stdout, stderr=sys.stderr)
             os.utime(self.node_modules, None)
+
+        if self.should_run_npm_pack():
+            check_call([npmName, 'pack', node_root], cwd=pjoin(here, 'brat_widget'), stdout=sys.stdout, stderr=sys.stderr)
+
+        files = glob.glob(tar_path)
+        self.targets.append(tar_path if not files else files[0])
 
         for t in self.targets:
             if not os.path.exists(t):
                 msg = 'Missing file: %s' % t
                 if not has_npm:
-                    msg += '\nnpm is required to build a development version of widgetsnbextension'
+                    msg += '\nnpm is required to build a development version of a widget extension'
                 raise ValueError(msg)
+
+        self.distribution.data_files = get_data_files()
 
         # update package data in case this created new files
         update_package_data(self.distribution)
 
 version_ns = {}
-with open(os.path.join(here, 'brat_widget', '_version.py')) as f:
+with open(pjoin(here, 'brat_widget', '_version.py')) as f:
     exec(f.read(), {}, version_ns)
 
 setup_args = {
@@ -121,15 +167,9 @@ setup_args = {
     'description': 'Jupiter Widget library for BRAT visualization and annotation functionality.',
     'long_description': LONG_DESCRIPTION,
     'include_package_data': True,
-    'data_files': [
-        ('share/jupyter/nbextensions/brat-widget', [
-            'js/brat_widget/static/extension.js',
-            'js/brat_widget/static/index.js',
-            'js/brat_widget/static/index.js.map',
-        ]),
-    ],
+    'data_files': get_data_files(),
     'install_requires': [
-        'ipywidgets>=6.0.0',
+        'ipywidgets>=7.0.0',
     ],
     'packages': find_packages(),
     'zip_safe': False,
@@ -141,8 +181,8 @@ setup_args = {
     },
 
     'author': 'Edilmo Palencia',
-    'author_email': 'edilmo@gmail.com',
-    'url': 'https://github.com/Edilmo/brat-widget',
+    'author_email': 'edilmo@mammut.io',
+    'url': 'https://github.com/mammut-io/brat-widget',
     'keywords': [
         'ipython',
         'jupyter',

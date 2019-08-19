@@ -8,6 +8,8 @@ js/brat-widget-*.tgz
 js/dist/
 js/node_modules/
 brat_widget.egg-info/
+js/package-lock.json
+brat_widget/brat-widget-0.2.5.tgz
 
 # OS X
 .DS_Store
@@ -112,3 +114,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# vscode files
+.vscode

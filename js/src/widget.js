@@ -7,9 +7,9 @@ var fugueShadowlessMagnifierPng = require('./static/img/Fugue-shadowless-magnifi
 var fugueShadowlessExternalPng = require('./static/img/Fugue-shadowless-external.png');
 //brat fonts
 var webFontURLs = [
-    require('file-loader!./static/fonts/Astloch-Bold.ttf'),
-    require('file-loader!./static/fonts/PT_Sans-Caption-Web-Regular.ttf'),
-    require('file-loader!./static/fonts/Liberation_Sans-Regular.ttf')
+    require('./static/fonts/Astloch-Bold.ttf'),
+    require('./static/fonts/PT_Sans-Caption-Web-Regular.ttf'),
+    require('./static/fonts/Liberation_Sans-Regular.ttf')
 ];
 //jquery
 var $ = require('jquery');

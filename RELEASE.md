@@ -5,13 +5,10 @@ and this could be as follows:
 
 - On PyPI:
 
-Update _version.py (set release version, remove 'dev')
+Update brat_widget/_version.py (set release version, remove 'dev') and js/package.json
 
 ```
 git add and git commit
-jupyter labextension uninstall brat-widget
-jupyter nbextension uninstall --sys-prefix brat_widget
-pip uninstall -y brat-widget
 ./dev-clean.sh
 python setup.py build
 cp -r ./js/brat_widget/static ./brat_widget/
