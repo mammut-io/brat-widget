@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="58145099-5f12-43d9-99dc-54ae22959e84" name="Default Changelist" comment="Fixing bug in Document to string">
-      <change afterPath="$PROJECT_DIR$/brat-widget.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="58145099-5f12-43d9-99dc-54ae22959e84" name="Default Changelist" comment="Fixing error in setup.py">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MANIFEST.in" beforeDir="false" afterPath="$PROJECT_DIR$/MANIFEST.in" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notebooks/Test.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Notebooks/Test.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RELEASE.md" beforeDir="false" afterPath="$PROJECT_DIR$/RELEASE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/brat_widget/_version.py" beforeDir="false" afterPath="$PROJECT_DIR$/brat_widget/_version.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dev-clean.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dev-clean.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/extension.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/src/extension.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/jupyterlab-plugin.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/src/jupyterlab-plugin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/widget.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/src/widget.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/webpack.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reinit.sh" beforeDir="false" afterPath="$PROJECT_DIR$/reinit.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -102,7 +90,7 @@
       <workItem from="1562802266352" duration="120000" />
       <workItem from="1562821813185" duration="5003000" />
       <workItem from="1565448693919" duration="4361000" />
-      <workItem from="1565504393288" duration="35671000" />
+      <workItem from="1565504393288" duration="37852000" />
     </task>
     <task id="LOCAL-00001" summary="Fixing bug in Document to string">
       <created>1562743529179</created>
@@ -118,12 +106,12 @@
       <option name="project" value="LOCAL" />
       <updated>1562802333352</updated>
     </task>
-    <task id="LOCAL-00003" summary="Several failed test">
-      <created>1498091397147</created>
+    <task id="LOCAL-00003" summary="Adding compatibility with new version un jupyter">
+      <created>1566172931556</created>
       <option name="number" value="00003" />
       <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1498091397147</updated>
+      <updated>1566172931556</updated>
     </task>
     <task id="LOCAL-00004" summary="Simple test with a hardcoded SVG">
       <created>1498098603364</created>
@@ -440,7 +428,7 @@
       <option name="project" value="LOCAL" />
       <updated>1545777772585</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -478,7 +466,8 @@
       <path value="$PROJECT_DIR$/brat" />
     </ignored-roots>
     <MESSAGE value="Fixing bug in Document to string" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing bug in Document to string" />
+    <MESSAGE value="Adding compatibility with new version un jupyter" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding compatibility with new version un jupyter" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

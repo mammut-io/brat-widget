@@ -8,22 +8,23 @@ and this could be as follows:
 Update brat_widget/_version.py (set release version, remove 'dev') and js/package.json
 
 ```
-git add and git commit
+git add -A
+git commit -m 'comment'
 ./dev-clean.sh
-python setup.py build
-cp -r ./js/brat_widget/static ./brat_widget/
-python setup.py sdist upload
-python setup.py bdist_wheel upload
+python setup.py sdist bdist_wheel
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+twine upload dist/*
 git tag -a X.X.X -m 'comment'
 Update _version.py (add 'dev' and increment minor)
-git add and git commit
+git add -A
+git commit
 git push
 git push --tags
 ```
 - On NPM:
 
 ```
-nuke the  `dist` and `node_modules`
+./dev-clean.sh
 git clean -fdx
 npm install
 npm publish

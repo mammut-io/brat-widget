@@ -69,7 +69,7 @@ def get_data_files():
             'brat_widget/static/extension.js',
             'brat_widget/static/index.js',
             'brat_widget/static/index.js.map',
-            'brat_widget/static/package.json'
+            'brat_widget/static/package.json',
             'brat_widget/static/jupyterlab-plugin.js',
             'brat_widget/static/static/fonts/Astloch-Bold.ttf',
             'brat_widget/static/static/fonts/Liberation_Sans-Regular.svg',

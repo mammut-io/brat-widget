@@ -35,6 +35,7 @@ source ./env/bin/activate
 pip install ipywidgets
 pip install jupyterlab
 jupyter nbextension enable --py widgetsnbextension --sys-prefix
+pip install twine
 ```
 
 The easiest way to star playing with the widget is using the reinit.sh script that is
